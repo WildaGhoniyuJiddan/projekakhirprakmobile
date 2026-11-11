@@ -12,7 +12,7 @@ Kerangka aplikasi (Phase Minus) sudah berjalan:
 - Aset katalog retail, data toko, dan ilustrasi kategori
 - `flutter analyze` bersih, `flutter test` lulus, APK debug berhasil dibangun
 
-Fitur bisnis (analyzer katalog, Hive, HTTP kurs, peta, notifikasi, LBS) menyusul pada phase berikutnya. Rencana lengkap ada di [`PLAN.md`](PLAN.md).
+Fitur bisnis (analyzer katalog, Hive, HTTP kurs, peta, notifikasi, LBS) menyusul pada phase berikutnya.
 
 ## Struktur
 

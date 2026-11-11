@@ -1,7 +1,23 @@
-# Baseline clone — bukan bagian dari deliverable
+# Dokumen perencanaan — tidak dikumpulkan
+/PLAN.md
+
+# Baseline clone repo acuan — tidak dikumpulkan
 /reference/
 
-# Flutter/Dart artifacts (app/.gitignore juga menangani sebagian)
+# Tool bantu generate aset — tidak dibutuhkan untuk build tugas
+/tool/
+
+# Platform selain Android — tugas ini Android-only
+/app/ios/
+/app/linux/
+/app/macos/
+/app/web/
+/app/windows/
+
+# README bawaan Flutter — tidak dipakai
+/app/README.md
+
+# Flutter/Dart artifacts
 /app/.dart_tool/
 /app/build/
 /app/.flutter-plugins
