@@ -1,0 +1,63 @@
+name: worthbang_lite
+description: "WorthBang Lite — cek kelayakan harga komponen PC, offline-first."
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.13.4
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # Modul 5 — HTTP publik
+  http: ^1.6.0
+
+  # Modul 6 — local storage
+  shared_preferences: ^2.5.6
+  hive: ^2.2.3
+  hive_flutter: ^1.1.0
+
+  # Modul 7 — LBS + notification + peta
+  geolocator: ^14.1.2
+  flutter_map: ^8.3.2
+  latlong2: ^0.10.1
+  flutter_local_notifications: ^22.3.1
+  timezone: ^0.11.2
+  flutter_timezone: ^5.1.1
+
+  # Utility
+  intl: ^0.20.3
+  crypto: ^3.0.8
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/icon.png
+    - assets/images/gpu.png
+    - assets/images/cpu.png
+    - assets/images/motherboard.png
+    - assets/images/ram.png
+    - assets/images/storage.png
+    - assets/data/retail_catalog.json
+    - assets/data/stores.json
+
+  fonts:
+    - family: PlusJakartaSans
+      fonts:
+        - asset: assets/fonts/PlusJakartaSans-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/PlusJakartaSans-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/PlusJakartaSans-SemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/PlusJakartaSans-Bold.ttf
+          weight: 700
+        - asset: assets/fonts/PlusJakartaSans-ExtraBold.ttf
+          weight: 800

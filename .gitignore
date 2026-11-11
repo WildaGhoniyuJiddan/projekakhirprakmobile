@@ -1,0 +1,23 @@
+# Baseline clone — bukan bagian dari deliverable
+/reference/
+
+# Flutter/Dart artifacts (app/.gitignore juga menangani sebagian)
+/app/.dart_tool/
+/app/build/
+/app/.flutter-plugins
+/app/.flutter-plugins-dependencies
+/app/.packages
+/app/android/.gradle/
+/app/android/local.properties
+/app/ios/Flutter/.last_build_id
+
+# Python
+__pycache__/
+*.pyc
+
+# IDE / OS
+.idea/
+.vscode/
+*.iml
+.DS_Store
+Thumbs.db

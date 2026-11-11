@@ -1,0 +1,599 @@
+[
+  {
+    "id": 1,
+    "name": "Enter Komputer Mangga Dua",
+    "address": "Jl. Mangga Dua Raya No.12, Jakarta Utara",
+    "city": "Jakarta",
+    "lat": -6.1375,
+    "lng": 106.8245,
+    "prices": {
+      "RTX 4060": 4750000,
+      "Ryzen 5 5600": 1890000,
+      "RTX 3060": 3950000
+    }
+  },
+  {
+    "id": 2,
+    "name": "Nanovision Harco Mangga Dua",
+    "address": "Harco Mangga Dua Lantai 2, Jakarta Utara",
+    "city": "Jakarta",
+    "lat": -6.1368,
+    "lng": 106.8252,
+    "prices": {
+      "RTX 4060": 4690000,
+      "Ryzen 5 5600": 1850000,
+      "RTX 4060 Ti": 6850000
+    }
+  },
+  {
+    "id": 3,
+    "name": "Citra Computer",
+    "address": "Jl. Cempaka Mas No.88, Jakarta Pusat",
+    "city": "Jakarta",
+    "lat": -6.1678,
+    "lng": 106.8667,
+    "prices": {
+      "RTX 4060": 4820000,
+      "Ryzen 7 7800X3D": 6900000
+    }
+  },
+  {
+    "id": 4,
+    "name": "Toko Komputer Ratu Plaza",
+    "address": "Ratu Plaza Lantai 3, Jl. Jend. Sudirman, Jakarta Selatan",
+    "city": "Jakarta",
+    "lat": -6.2253,
+    "lng": 106.8012,
+    "prices": {
+      "RTX 4060": 4780000,
+      "MacBook Air M1": 11500000
+    }
+  },
+  {
+    "id": 5,
+    "name": "Agres ID Pondok Indah",
+    "address": "Jl. Metro Pondok Indah, Jakarta Selatan",
+    "city": "Jakarta",
+    "lat": -6.2658,
+    "lng": 106.7832,
+    "prices": {
+      "RTX 4060": 4850000,
+      "Lenovo LOQ 15": 13999000
+    }
+  },
+  {
+    "id": 6,
+    "name": "Jaya PC Kelapa Gading",
+    "address": "Jl. Boulevard Raya, Kelapa Gading, Jakarta Utara",
+    "city": "Jakarta",
+    "lat": -6.1589,
+    "lng": 106.9087,
+    "prices": {
+      "RTX 4060": 4720000,
+      "Ryzen 5 5600": 1875000,
+      "RTX 3060": 3890000
+    }
+  },
+  {
+    "id": 7,
+    "name": "Quantum Computer ITC Cempaka Mas",
+    "address": "ITC Cempaka Mas Lantai 4, Jakarta Timur",
+    "city": "Jakarta",
+    "lat": -6.1685,
+    "lng": 106.8675,
+    "prices": {
+      "RTX 4060": 4810000,
+      "ASUS TUF A15": 15499000
+    }
+  },
+  {
+    "id": 8,
+    "name": "Mitra Computer Glodok",
+    "address": "Jl. Gajah Mada No.188, Jakarta Barat",
+    "city": "Jakarta",
+    "lat": -6.1423,
+    "lng": 106.8098,
+    "prices": {
+      "RTX 4060": 4770000,
+      "Ryzen 5 5600": 1900000
+    }
+  },
+  {
+    "id": 9,
+    "name": "Starlight PC Tebet",
+    "address": "Jl. Tebet Raya No.45, Jakarta Selatan",
+    "city": "Jakarta",
+    "lat": -6.2389,
+    "lng": 106.8521,
+    "prices": {
+      "RTX 4060": 4830000,
+      "RTX 4060 Ti": 6790000
+    }
+  },
+  {
+    "id": 10,
+    "name": "Galaxy Komputer Depok Timur",
+    "address": "Jl. Margonda Raya No.210, Depok",
+    "city": "Jakarta",
+    "lat": -6.3725,
+    "lng": 106.8334,
+    "prices": {
+      "RTX 4060": 4740000,
+      "Ryzen 5 5600": 1860000
+    }
+  },
+  {
+    "id": 11,
+    "name": "Orbit PC Bekasi",
+    "address": "Jl. Ahmad Yani No.33, Bekasi",
+    "city": "Jakarta",
+    "lat": -6.2383,
+    "lng": 106.9756,
+    "prices": {
+      "RTX 4060": 4760000,
+      "Lenovo LOQ 15": 14199000
+    }
+  },
+  {
+    "id": 12,
+    "name": "Nova Computer Tangerang",
+    "address": "Jl. MH Thamrin No.5, Tangerang",
+    "city": "Jakarta",
+    "lat": -6.1783,
+    "lng": 106.6319,
+    "prices": {
+      "RTX 4060": 4790000,
+      "Ryzen 5 5600": 1885000
+    }
+  },
+  {
+    "id": 13,
+    "name": "Computa",
+    "address": "Jl. Cik Di Tiro No.10, Terban, Gondokusuman, Kota Yogyakarta 55223",
+    "city": "Yogyakarta",
+    "lat": -7.78063,
+    "lng": 110.37561,
+    "prices": {}
+  },
+  {
+    "id": 14,
+    "name": "ELS Computer",
+    "address": "Jl. C. Simanjuntak No.38, Terban, Gondokusuman, Kota Yogyakarta 55223",
+    "city": "Yogyakarta",
+    "lat": -7.77749,
+    "lng": 110.37395,
+    "prices": {}
+  },
+  {
+    "id": 15,
+    "name": "Harrisma Computer",
+    "address": "Jl. C. Simanjuntak No.33-37, Terban, Gondokusuman, Kota Yogyakarta 55223",
+    "city": "Yogyakarta",
+    "lat": -7.77796,
+    "lng": 110.37371,
+    "prices": {}
+  },
+  {
+    "id": 16,
+    "name": "Agres.ID Jogja",
+    "address": "Jl. C. Simanjuntak No.101, Terban, Gondokusuman, Kota Yogyakarta 55223",
+    "city": "Yogyakarta",
+    "lat": -7.77633,
+    "lng": 110.37353,
+    "prices": {}
+  },
+  {
+    "id": 17,
+    "name": "Prima Computer",
+    "address": "Jl. Magelang No.26, Bumijo, Jetis, Kota Yogyakarta 55231",
+    "city": "Yogyakarta",
+    "lat": -7.78067,
+    "lng": 110.36109,
+    "prices": {}
+  },
+  {
+    "id": 18,
+    "name": "Yescom Yogyakarta",
+    "address": "Jl. Tegal Panggung No.16, Danurejan, Kota Yogyakarta 55212",
+    "city": "Yogyakarta",
+    "lat": -7.79603,
+    "lng": 110.37105,
+    "prices": {}
+  },
+  {
+    "id": 19,
+    "name": "Sonju Computer",
+    "address": "Jl. Gajah Mada No.23E, Pakualaman, Kota Yogyakarta 55166",
+    "city": "Yogyakarta",
+    "lat": -7.79974,
+    "lng": 110.37337,
+    "prices": {}
+  },
+  {
+    "id": 20,
+    "name": "Sehati Computer",
+    "address": "Jl. Krasak Timur No.38, Kotabaru, Gondokusuman, Kota Yogyakarta 55224",
+    "city": "Yogyakarta",
+    "lat": -7.78843,
+    "lng": 110.37792,
+    "prices": {}
+  },
+  {
+    "id": 21,
+    "name": "Hosea Computer",
+    "address": "Jl. Timoho No.29, Baciro, Gondokusuman, Kota Yogyakarta 55225",
+    "city": "Yogyakarta",
+    "lat": -7.79062,
+    "lng": 110.39334,
+    "prices": {}
+  },
+  {
+    "id": 22,
+    "name": "Prisma Computer & Laptop",
+    "address": "Jl. KH Wahid Hasyim No.7B, Notoprajan, Ngampilan, Kota Yogyakarta 55262",
+    "city": "Yogyakarta",
+    "lat": -7.80166,
+    "lng": 110.35665,
+    "prices": {}
+  },
+  {
+    "id": 23,
+    "name": "ST Computer",
+    "address": "Jl. Menteri Supeno No.45, Sorosutan, Umbulharjo, Kota Yogyakarta 55162",
+    "city": "Yogyakarta",
+    "lat": -7.816,
+    "lng": 110.37882,
+    "prices": {}
+  },
+  {
+    "id": 24,
+    "name": "JJ Komputer",
+    "address": "Jogjatronik Mall Lantai 2 No.80, Jl. Brigjen Katamso No.75-77, Gondomanan, Kota Yogyakarta 55121",
+    "city": "Yogyakarta",
+    "lat": -7.80599,
+    "lng": 110.36956,
+    "prices": {}
+  },
+  {
+    "id": 25,
+    "name": "SG Computer",
+    "address": "Jogjatronik Mall Lantai 2 No.82, Jl. Brigjen Katamso No.75-77, Gondomanan, Kota Yogyakarta 55121",
+    "city": "Yogyakarta",
+    "lat": -7.80599,
+    "lng": 110.36956,
+    "prices": {}
+  },
+  {
+    "id": 26,
+    "name": "Central Computer",
+    "address": "Jogjatronik Mall Lantai 2 No.53-54, Jl. Brigjen Katamso No.75-77, Gondomanan, Kota Yogyakarta 55121",
+    "city": "Yogyakarta",
+    "lat": -7.80599,
+    "lng": 110.36956,
+    "prices": {}
+  },
+  {
+    "id": 27,
+    "name": "Anugrah 2 Komputer",
+    "address": "Jogjatronik Mall, Jl. Brigjen Katamso No.75-77, Gondomanan, Kota Yogyakarta 55121",
+    "city": "Yogyakarta",
+    "lat": -7.80599,
+    "lng": 110.36956,
+    "prices": {}
+  },
+  {
+    "id": 28,
+    "name": "Importir Laptop Jogja",
+    "address": "Ruko Rafflesia, Jl. Babarsari A No.2C, Kledokan, Caturtunggal, Depok, Sleman, DIY 55281",
+    "city": "Yogyakarta",
+    "lat": -7.77336,
+    "lng": 110.4135,
+    "prices": {}
+  },
+  {
+    "id": 29,
+    "name": "SJ Computer Jakal",
+    "address": "Jl. Kaliurang No.1A Km 6,7, Kentungan, Condongcatur, Depok, Sleman, DIY 55283",
+    "city": "Yogyakarta",
+    "lat": -7.74847,
+    "lng": 110.38715,
+    "prices": {}
+  },
+  {
+    "id": 30,
+    "name": "Kana Komputer",
+    "address": "Jl. Gejayan CT X No.1A, Karang Gayam, Caturtunggal, Depok, Sleman, DIY 55281",
+    "city": "Yogyakarta",
+    "lat": -7.77863,
+    "lng": 110.38828,
+    "prices": {}
+  },
+  {
+    "id": 31,
+    "name": "Starcomp Jakal",
+    "address": "Jl. Kaliurang Km 14, Sleman, DIY",
+    "city": "Yogyakarta",
+    "lat": -7.69602,
+    "lng": 110.405,
+    "prices": {}
+  },
+  {
+    "id": 32,
+    "name": "PEMMZ Yogya",
+    "address": "Jl. Seturan Raya 9A, Kledokan, Caturtunggal, Depok, Sleman, DIY 55281",
+    "city": "Yogyakarta",
+    "lat": -7.76673,
+    "lng": 110.4104,
+    "prices": {}
+  },
+  {
+    "id": 33,
+    "name": "DPJ Komputer (Dinamika Perkasa Jaya)",
+    "address": "Jl. Kaliurang Km 5.5, Gg. Pandega Mandala No.23, Manggung, Caturtunggal, Depok, Sleman, DIY 55281",
+    "city": "Yogyakarta",
+    "lat": -7.75936,
+    "lng": 110.38497,
+    "prices": {}
+  },
+  {
+    "id": 34,
+    "name": "TComp Jogja",
+    "address": "Jl. Ambar Asri No.311, Ambarukmo, Depok, Sleman, DIY 55281",
+    "city": "Yogyakarta",
+    "lat": -7.78353,
+    "lng": 110.39954,
+    "prices": {}
+  },
+  {
+    "id": 35,
+    "name": "Hero Computer",
+    "address": "Jl. Wahid Hasyim No.1, Dabag, Condongcatur, Depok, Sleman, DIY 55281",
+    "city": "Yogyakarta",
+    "lat": -7.77193,
+    "lng": 110.40161,
+    "prices": {}
+  },
+  {
+    "id": 36,
+    "name": "Refresh Computer",
+    "address": "Jl. Kaliurang Km 8,5 No.42, Sinduharjo, Ngaglik, Sleman, DIY 55581",
+    "city": "Yogyakarta",
+    "lat": -7.70585,
+    "lng": 110.40936,
+    "prices": {}
+  },
+  {
+    "id": 37,
+    "name": "Absolute Computer Jogja",
+    "address": "Jl. Nusa Indah No.288A, Dero, Condongcatur, Depok, Sleman, DIY 55281",
+    "city": "Yogyakarta",
+    "lat": -7.75608,
+    "lng": 110.40942,
+    "prices": {}
+  },
+  {
+    "id": 38,
+    "name": "KLA Computer (Lenovo Authorized Store)",
+    "address": "Jl. Prof. Dr. Ir. Herman Johannes No.73, Sagan, Caturtunggal, Depok, Sleman, DIY 55223",
+    "city": "Yogyakarta",
+    "lat": -7.77712,
+    "lng": 110.37993,
+    "prices": {}
+  },
+  {
+    "id": 39,
+    "name": "Starcomp Concat",
+    "address": "Jl. Candi Gebang No.240, Dero, Condongcatur, Depok, Sleman, DIY 55283",
+    "city": "Yogyakarta",
+    "lat": -7.75159,
+    "lng": 110.41093,
+    "prices": {}
+  },
+  {
+    "id": 40,
+    "name": "Aizza Komputer",
+    "address": "Jl. Nyi Tjondrolukito No.78A, Gemawang, Sinduadi, Mlati, DIY 55284",
+    "city": "Yogyakarta",
+    "lat": -7.76302,
+    "lng": 110.36962,
+    "prices": {}
+  },
+  {
+    "id": 41,
+    "name": "Elco Computer Bantul",
+    "address": "Elco Computer Bantul, Jalan Marsda M Adisucipto, Trirenggo Kel., Bantul, Bantul, 55714, Indonesia",
+    "city": "Yogyakarta",
+    "lat": -7.89683,
+    "lng": 110.33804,
+    "prices": {}
+  },
+  {
+    "id": 42,
+    "name": "Mahameru Computer",
+    "address": "Mahameru Computer, Jalan Imogiri Timur, Wonokromo Kel., Pleret, Bantul, 55791, Indonesia",
+    "city": "Yogyakarta",
+    "lat": -7.87736,
+    "lng": 110.39098,
+    "prices": {}
+  },
+  {
+    "id": 43,
+    "name": "Bazar Computer Market",
+    "address": "Bazar Computer Market, Jalan KH Mas Mansyur, Bantul Kel., Bantul, Bantul, 55711, Indonesia",
+    "city": "Yogyakarta",
+    "lat": -7.89228,
+    "lng": 110.33171,
+    "prices": {}
+  },
+  {
+    "id": 44,
+    "name": "SJ Computer",
+    "address": "Jl. Kh Wahid Hasyim No.153, Taskombang, Palbapang, Kec. Bantul, Kabupaten Bantul, Daerah Istimewa Yogyakarta 55713",
+    "city": "Yogyakarta",
+    "lat": -7.90899,
+    "lng": 110.32296,
+    "prices": {}
+  },
+  {
+    "id": 45,
+    "name": "Jogja Aksesoris Komputer",
+    "address": "Jogja Aksesoris Komputer, Jalan Parangtritis, Timbulharjo Kel., Sewon, Bantul, 55797, Indonesia",
+    "city": "Yogyakarta",
+    "lat": -7.86551,
+    "lng": 110.35182,
+    "prices": {}
+  },
+  {
+    "id": 46,
+    "name": "Gallery Notebook Bantul",
+    "address": "Gallery Notebook Bantul, Jalan Bantul, Pendowoharjo Kel., Sewon, Bantul, 55797, Indonesia",
+    "city": "Yogyakarta",
+    "lat": -7.86947,
+    "lng": 110.33754,
+    "prices": {}
+  },
+  {
+    "id": 47,
+    "name": "Cpit Compushop",
+    "address": "Cpit Compushop, Jalan Bantul, Pendowoharjo Kel., Sewon, Bantul, 55797, Indonesia",
+    "city": "Yogyakarta",
+    "lat": -7.86696,
+    "lng": 110.33824,
+    "prices": {}
+  },
+  {
+    "id": 48,
+    "name": "Kayyis Computer",
+    "address": "Kayyis Computer, Jalan Wonocatur, Banguntapan Kel., Banguntapan, Bantul, 55798, Indonesia",
+    "city": "Yogyakarta",
+    "lat": -7.8025,
+    "lng": 110.40573,
+    "prices": {}
+  },
+  {
+    "id": 49,
+    "name": "Dics Computer",
+    "address": "Dics Computer, Jalan Wonosari, Baturetno Kel., Banguntapan, Bantul, 55798, Indonesia",
+    "city": "Yogyakarta",
+    "lat": -7.82009,
+    "lng": 110.41969,
+    "prices": {}
+  },
+  {
+    "id": 50,
+    "name": "Freshmedia Komputer",
+    "address": "Freshmedia Komputer, Jalan Imogiri Timur, Trimulyo Kel., Jetis, Bantul, 55781, Indonesia",
+    "city": "Yogyakarta",
+    "lat": -7.90195,
+    "lng": 110.38393,
+    "prices": {}
+  },
+  {
+    "id": 51,
+    "name": "PRO Computer Jogja",
+    "address": "Pro Computer Jogja, Jalan Imogiri Barat, Sumber Agung Kel., Jetis, Bantul, 55781, Indonesia",
+    "city": "Yogyakarta",
+    "lat": -7.91102,
+    "lng": 110.37291,
+    "prices": {}
+  },
+  {
+    "id": 52,
+    "name": "Hijau Komputer",
+    "address": "Hijau Komputer, Banguntapan Kel., Banguntapan, Bantul, 55798, Indonesia",
+    "city": "Yogyakarta",
+    "lat": -7.81143,
+    "lng": 110.40606,
+    "prices": {}
+  },
+  {
+    "id": 53,
+    "name": "Bara Komputer",
+    "address": "Jomboran, RT.20/RW.09, Janten, Kec. Temon, Kabupaten Kulon Progo, Daerah Istimewa Yogyakarta 55654",
+    "city": "Yogyakarta",
+    "lat": -7.8840531,
+    "lng": 110.063791,
+    "prices": {}
+  },
+  {
+    "id": 54,
+    "name": "DSC Komputer & Aksesoris",
+    "address": "Jl. Baron No.95, Purwosari, Baleharjo, Kec. Wonosari, Kabupaten Gunungkidul, DIY 55851",
+    "city": "Yogyakarta",
+    "lat": -7.97114,
+    "lng": 110.60345,
+    "prices": {}
+  },
+  {
+    "id": 55,
+    "name": "Naraya Komputer",
+    "address": "Jl. Veteran No.5, Trimulyo I, Kepek, Kec. Wonosari, Kabupaten Gunungkidul, DIY 55813",
+    "city": "Yogyakarta",
+    "lat": -7.96721,
+    "lng": 110.59971,
+    "prices": {}
+  },
+  {
+    "id": 56,
+    "name": "SL Komputer",
+    "address": "Jl. Mgr. Sugiyo Pranoto, Mulyosari, Baleharjo, Kec. Wonosari, Kabupaten Gunungkidul, DIY 55811",
+    "city": "Yogyakarta",
+    "lat": -7.97528,
+    "lng": 110.61088,
+    "prices": {}
+  },
+  {
+    "id": 57,
+    "name": "Mitra Mulia Computer",
+    "address": "Jl. Veteran No.20, Trimulyo I, Kepek, Kec. Wonosari, Kabupaten Gunungkidul, DIY 55813",
+    "city": "Yogyakarta",
+    "lat": -7.96843,
+    "lng": 110.59661,
+    "prices": {}
+  },
+  {
+    "id": 58,
+    "name": "Hijrah Komputer",
+    "address": "Jl. Veteran No.55, Trimulyo I, Kepek, Kec. Wonosari, Kabupaten Gunungkidul, DIY 55813",
+    "city": "Yogyakarta",
+    "lat": -7.96921,
+    "lng": 110.5954,
+    "prices": {}
+  },
+  {
+    "id": 59,
+    "name": "Rizki Computer",
+    "address": "Jl. Veteran No.41, Trimulyo I, Kepek, Kec. Wonosari, Kabupaten Gunungkidul, DIY 55813",
+    "city": "Yogyakarta",
+    "lat": -7.96632,
+    "lng": 110.59919,
+    "prices": {}
+  },
+  {
+    "id": 60,
+    "name": "Amanah Komputer Wonosari",
+    "address": "Jl. Ki Ageng Giring Km.2, Besari, Siraman, Kec. Wonosari, Kabupaten Gunungkidul, DIY 55851",
+    "city": "Yogyakarta",
+    "lat": -7.97054,
+    "lng": 110.59252,
+    "prices": {}
+  },
+  {
+    "id": 61,
+    "name": "Asio Komputer",
+    "address": "Jl. Manthous No.12B, Ngawu, Kec. Playen, Kabupaten Gunungkidul, DIY 55861",
+    "city": "Yogyakarta",
+    "lat": -7.944,
+    "lng": 110.55047,
+    "prices": {}
+  },
+  {
+    "id": 62,
+    "name": "Msc Komputer",
+    "address": "Jl. Manthous, Siyono Wetan, Logandeng, Kec. Playen, Kabupaten Gunungkidul, DIY 55861",
+    "city": "Yogyakarta",
+    "lat": -7.94916,
+    "lng": 110.5784,
+    "prices": {}
+  }
+]
