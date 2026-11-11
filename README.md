@@ -19,7 +19,6 @@ Fitur bisnis (analyzer katalog, Hive, HTTP kurs, peta, notifikasi, LBS) menyusul
 ```text
 app/        Proyek Flutter WorthBang Lite
 tool/       Generator ilustrasi kategori etalase
-PLAN.md     Rencana implementasi dan RTM
 ```
 
 ## Menjalankan
