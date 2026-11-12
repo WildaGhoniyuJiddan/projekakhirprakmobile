@@ -2,22 +2,29 @@ import 'package:flutter/material.dart';
 
 import '../core/theme/monex_theme.dart';
 import '../core/widgets/monex_widgets.dart';
+import '../models/product_series.dart';
+import '../state/app_scope.dart';
 import '../widgets/app_logo.dart';
+import '../widgets/product_series_card.dart';
 import 'price_check_screen.dart';
+import 'product_detail_screen.dart';
 
-/// Beranda: pintu masuk fitur utama.
+/// Beranda: ringkasan akun, pintu masuk fitur, dan seri etalase populer.
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key, required this.onOpenTab});
 
   final ValueChanged<int> onOpenTab;
 
-  void _openPage(BuildContext context, Widget page) {
+  void _push(BuildContext context, Widget page) {
     Navigator.of(context).push(MaterialPageRoute<void>(builder: (_) => page));
   }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final scope = AppScope.of(context);
+    final user = scope.sessionController.user;
+    final firstName = (user?.name ?? 'Tamu').split(' ').first;
 
     return Scaffold(
       appBar: AppBar(
@@ -27,11 +34,18 @@ class HomeScreen extends StatelessWidget {
         ),
         title: const Text('WorthBang'),
         actions: [
-          IconButton(
-            tooltip: 'Notifikasi',
-            icon: const Icon(Icons.notifications_none_rounded),
-            onPressed: () =>
-                showMonexToast(context, 'Belum ada notifikasi baru.'),
+          ListenableBuilder(
+            listenable: scope.themeController,
+            builder: (context, _) {
+              final isDark = theme.brightness == Brightness.dark;
+              return IconButton(
+                tooltip: isDark ? 'Mode terang' : 'Mode gelap',
+                icon: Icon(
+                  isDark ? Icons.light_mode_outlined : Icons.dark_mode_outlined,
+                ),
+                onPressed: scope.themeController.toggle,
+              );
+            },
           ),
           const SizedBox(width: 4),
         ],
@@ -45,7 +59,7 @@ class HomeScreen extends StatelessWidget {
         ),
         children: [
           Text(
-            'Mau cek harga apa hari ini?',
+            'Halo, $firstName!',
             style: theme.textTheme.titleLarge?.copyWith(
               fontWeight: FontWeight.w700,
             ),
@@ -57,7 +71,7 @@ class HomeScreen extends StatelessWidget {
           ),
           const SizedBox(height: MonexSpacing.sectionGap),
           MonexGradientCard(
-            onTap: () => _openPage(context, const PriceCheckScreen()),
+            onTap: () => _push(context, const PriceCheckScreen()),
             padding: const EdgeInsets.all(20),
             child: Row(
               children: [
@@ -103,6 +117,14 @@ class HomeScreen extends StatelessWidget {
             ),
           ),
           const SizedBox(height: MonexSpacing.sectionGap),
+          _FeaturedSeries(
+            onSeeAll: () => onOpenTab(1),
+            onOpenSeries: (series) => _push(
+              context,
+              ProductDetailScreen(series: series, sourceLabel: 'Beranda'),
+            ),
+          ),
+          const SizedBox(height: MonexSpacing.sectionGap),
           Text('Jelajahi fitur', style: theme.textTheme.titleLarge),
           const SizedBox(height: MonexSpacing.gridGap),
           GridView.count(
@@ -129,21 +151,158 @@ class HomeScreen extends StatelessWidget {
                 icon: Icons.price_check_rounded,
                 title: 'Cek Harga',
                 subtitle: 'Analisis harga satu komponen.',
-                onTap: () => _openPage(context, const PriceCheckScreen()),
+                onTap: () => _push(context, const PriceCheckScreen()),
               ),
               _HomeMenuCard(
-                icon: Icons.receipt_long_outlined,
-                title: 'Riwayat',
-                subtitle: 'Cek terakhir akan tampil di sini.',
-                onTap: () => showMonexToast(
-                  context,
-                  'Riwayat akan terisi setelah mesin analisis aktif.',
-                ),
+                icon: Icons.person_outline_rounded,
+                title: 'Profil',
+                subtitle: 'Akun, tema, dan pengaturan.',
+                onTap: () => onOpenTab(3),
               ),
             ],
           ),
         ],
       ),
+    );
+  }
+}
+
+/// Strip horizontal seri populer; memuat katalog sendiri agar Beranda tetap
+/// ringan dan punya keadaan loading/error yang jelas.
+class _FeaturedSeries extends StatefulWidget {
+  const _FeaturedSeries({required this.onSeeAll, required this.onOpenSeries});
+
+  final VoidCallback onSeeAll;
+  final ValueChanged<ProductSeries> onOpenSeries;
+
+  @override
+  State<_FeaturedSeries> createState() => _FeaturedSeriesState();
+}
+
+class _FeaturedSeriesState extends State<_FeaturedSeries> {
+  List<ProductSeries>? _series;
+  bool _loading = true;
+  bool _started = false;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_started) return;
+    _started = true;
+    _load();
+  }
+
+  Future<void> _load() async {
+    final catalog = AppScope.of(context).catalogService;
+    try {
+      final series = await catalog.loadSeries();
+      if (!mounted) return;
+      setState(() {
+        _series = series.take(8).toList();
+        _loading = false;
+      });
+    } on Object {
+      if (!mounted) return;
+      setState(() => _loading = false);
+    }
+  }
+
+  void _retry() {
+    setState(() => _loading = true);
+    _load();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Expanded(
+              child: Text('Etalase populer', style: theme.textTheme.titleLarge),
+            ),
+            TextButton(
+              onPressed: widget.onSeeAll,
+              child: const Text('Lihat semua'),
+            ),
+          ],
+        ),
+        const SizedBox(height: 8),
+        SizedBox(height: 210, child: _buildContent(theme)),
+      ],
+    );
+  }
+
+  Widget _buildContent(ThemeData theme) {
+    if (_loading) {
+      return ListView.separated(
+        scrollDirection: Axis.horizontal,
+        itemCount: 3,
+        separatorBuilder: (_, _) => const SizedBox(width: 12),
+        itemBuilder: (context, index) => const SizedBox(
+          width: 164,
+          child: MonexSurfaceCard(
+            padding: EdgeInsets.zero,
+            radius: MonexSpacing.radiusMd,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(child: MonexShimmer(radius: 0)),
+                Padding(
+                  padding: EdgeInsets.all(12),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      MonexShimmer(height: 13, width: 110),
+                      SizedBox(height: 8),
+                      MonexShimmer(height: 10, width: 70),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
+
+    final series = _series;
+    if (series == null) {
+      return MonexSurfaceCard(
+        padding: const EdgeInsets.all(MonexSpacing.cardPadding),
+        child: Row(
+          children: [
+            const Icon(Icons.cloud_off_rounded, color: MonexColors.textMuted),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Text(
+                'Etalase belum bisa dimuat.',
+                style: theme.textTheme.bodyMedium,
+              ),
+            ),
+            TextButton(onPressed: _retry, child: const Text('Coba lagi')),
+          ],
+        ),
+      );
+    }
+
+    return ListView.separated(
+      scrollDirection: Axis.horizontal,
+      itemCount: series.length,
+      separatorBuilder: (_, _) => const SizedBox(width: 12),
+      itemBuilder: (context, index) {
+        final item = series[index];
+        return SizedBox(
+          width: 164,
+          child: ProductSeriesCard(
+            series: item,
+            onTap: () => widget.onOpenSeries(item),
+          ),
+        );
+      },
     );
   }
 }

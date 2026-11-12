@@ -32,6 +32,13 @@ abstract final class AppValidators {
     return null;
   }
 
+  static String? confirmPassword(String? value, String password) {
+    if (value != password) {
+      return 'Ulangi kata sandi dengan benar.';
+    }
+    return null;
+  }
+
   static String? name(String? value) {
     if (value == null || value.trim().isEmpty) {
       return 'Nama wajib diisi.';

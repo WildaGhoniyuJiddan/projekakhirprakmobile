@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:flutter/services.dart';
 import 'package:hive/hive.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:worthbang_lite/models/wishlist_item.dart';
@@ -13,6 +12,9 @@ import 'package:worthbang_lite/services/wishlist_repository.dart';
 import 'package:worthbang_lite/state/app_dependencies.dart';
 import 'package:worthbang_lite/state/session_controller.dart';
 import 'package:worthbang_lite/state/theme_controller.dart';
+
+import 'json_asset_bundle.dart';
+import 'sample_catalog.dart';
 
 /// Lingkungan Hive sementara yang dipakai bersama oleh test.
 class HiveTestEnvironment {
@@ -51,7 +53,7 @@ class HiveTestEnvironment {
     );
     await sessionController.restore();
 
-    final catalogService = CatalogService(rootBundle);
+    final catalogService = CatalogService(JsonAssetBundle(sampleCatalogJson));
 
     return AppDependencies(
       sessionPreferences: sessionPreferences,

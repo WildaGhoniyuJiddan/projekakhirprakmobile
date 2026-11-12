@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'core/theme/monex_theme.dart';
-import 'screens/root_screen.dart';
+import 'screens/splash_screen.dart';
 import 'state/app_dependencies.dart';
 import 'state/app_scope.dart';
 
@@ -25,7 +25,7 @@ class WorthBangApp extends StatelessWidget {
             darkTheme: MonexTheme.darkTheme,
             themeMode: dependencies.themeController.mode,
             locale: const Locale('id', 'ID'),
-            home: const RootScreen(),
+            home: const SplashScreen(),
           );
         },
       ),

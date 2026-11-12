@@ -2,11 +2,12 @@ import 'package:flutter/material.dart';
 
 import '../core/theme/monex_theme.dart';
 import '../core/widgets/monex_widgets.dart';
+import '../models/product_series.dart';
+import '../state/app_scope.dart';
+import '../widgets/product_series_card.dart';
+import 'product_detail_screen.dart';
 
-/// Kerangka tab Cari/Etalase.
-///
-/// Pada fase berikutnya, grid ini diisi satu kartu per seri produk dari
-/// `retail_catalog.json`; saat ini yang tampil adalah kategori katalog.
+/// Tab Cari/Etalase: satu kartu untuk satu seri produk.
 class CatalogScreen extends StatefulWidget {
   const CatalogScreen({super.key});
 
@@ -15,17 +16,30 @@ class CatalogScreen extends StatefulWidget {
 }
 
 class _CatalogScreenState extends State<CatalogScreen> {
-  final _search = TextEditingController();
+  final TextEditingController _search = TextEditingController();
+
+  List<ProductSeries>? _series;
+  Object? _error;
+  bool _loading = true;
+  bool _started = false;
   String _category = 'Semua';
 
   static const _categories = [
-    ('Semua', null),
-    ('GPU', 'assets/images/gpu.png'),
-    ('CPU', 'assets/images/cpu.png'),
-    ('Motherboard', 'assets/images/motherboard.png'),
-    ('RAM', 'assets/images/ram.png'),
-    ('Storage', 'assets/images/storage.png'),
+    'Semua',
+    'GPU',
+    'CPU',
+    'Motherboard',
+    'RAM',
+    'Storage',
   ];
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_started) return;
+    _started = true;
+    _load();
+  }
 
   @override
   void dispose() {
@@ -33,20 +47,65 @@ class _CatalogScreenState extends State<CatalogScreen> {
     super.dispose();
   }
 
-  List<(String, String?)> get _filtered {
+  Future<void> _load() async {
+    final catalog = AppScope.of(context).catalogService;
+    try {
+      final series = await catalog.loadSeries();
+      if (!mounted) return;
+      setState(() {
+        _series = series;
+        _loading = false;
+        _error = null;
+      });
+    } on Object catch (error) {
+      if (!mounted) return;
+      setState(() {
+        _loading = false;
+        _error = error;
+      });
+    }
+  }
+
+  void _retry() {
+    setState(() {
+      _loading = true;
+      _error = null;
+    });
+    _load();
+  }
+
+  void _resetFilters() {
+    _search.clear();
+    setState(() => _category = 'Semua');
+  }
+
+  List<ProductSeries> get _filtered {
+    final all = _series ?? const <ProductSeries>[];
     final query = _search.text.trim().toLowerCase();
-    return _categories.where((entry) {
-      final matchesCategory = _category == 'Semua' || entry.$1 == _category;
-      final matchesQuery =
-          query.isEmpty || entry.$1.toLowerCase().contains(query);
-      return matchesCategory && matchesQuery;
+    return all.where((series) {
+      if (_category != 'Semua' && series.categoryLabel != _category) {
+        return false;
+      }
+      if (query.isEmpty) return true;
+      if (series.name.toLowerCase().contains(query)) return true;
+      return series.variants.any(
+        (variant) => variant.model.toLowerCase().contains(query),
+      );
     }).toList();
+  }
+
+  void _openDetail(ProductSeries series) {
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (_) =>
+            ProductDetailScreen(series: series, sourceLabel: 'Etalase'),
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final items = _filtered;
 
     return Scaffold(
       appBar: AppBar(
@@ -55,188 +114,132 @@ class _CatalogScreenState extends State<CatalogScreen> {
           IconButton(
             tooltip: 'Reset filter',
             icon: const Icon(Icons.tune_rounded),
-            onPressed: () {
-              _search.clear();
-              setState(() => _category = 'Semua');
-            },
+            onPressed: _resetFilters,
           ),
           const SizedBox(width: 4),
         ],
       ),
-      body: ListView(
-        padding: const EdgeInsets.fromLTRB(
-          MonexSpacing.screenPaddingH,
-          MonexSpacing.screenPaddingV,
-          MonexSpacing.screenPaddingH,
-          24,
+      body: SafeArea(child: _buildBody(theme)),
+    );
+  }
+
+  Widget _buildBody(ThemeData theme) {
+    if (_loading) {
+      return const Center(
+        child: MonexOrbitLoader(
+          size: 60,
+          label: 'Memuat etalase',
+          message: 'Mengelompokkan komponen menjadi seri produk...',
         ),
-        children: [
-          TextField(
-            controller: _search,
-            decoration: const InputDecoration(
-              labelText: 'Cari seri produk',
-              hintText: 'cth: RTX 4060, Ryzen 5, B550',
-              prefixIcon: Icon(Icons.search_rounded),
-            ),
-            onChanged: (_) => setState(() {}),
-          ),
-          const SizedBox(height: MonexSpacing.gridGap),
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              children: [
-                for (final category in _categories.skip(1))
-                  Padding(
-                    padding: const EdgeInsets.only(right: 8),
-                    child: ChoiceChip(
-                      label: Text(category.$1),
-                      selected: _category == category.$1,
-                      onSelected: (_) =>
-                          setState(() => _category = category.$1),
-                    ),
-                  ),
-              ],
-            ),
-          ),
-          const SizedBox(height: MonexSpacing.sectionGap),
-          Text('Kategori komponen', style: theme.textTheme.titleLarge),
-          const SizedBox(height: 4),
-          Text(
-            'Satu kartu akan mewakili satu seri produk pada fase katalog.',
-            style: theme.textTheme.bodyMedium,
-          ),
-          const SizedBox(height: MonexSpacing.gridGap),
-          if (items.isEmpty)
-            const MonexEmptyState(
-              icon: Icons.search_off_rounded,
-              title: 'Kategori tidak ditemukan.',
-            )
-          else
-            GridView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: items.length,
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                crossAxisSpacing: MonexSpacing.gridGap,
-                mainAxisSpacing: MonexSpacing.gridGap,
-                childAspectRatio: 0.92,
-              ),
-              itemBuilder: (context, index) {
-                final entry = items[index];
-                return _CategoryCard(
-                  title: entry.$1,
-                  imageAsset: entry.$2,
-                  onTap: () => showModalBottomSheet<void>(
-                    context: context,
-                    showDragHandle: true,
-                    builder: (context) => _CategorySheet(category: entry.$1),
-                  ),
-                );
-              },
-            ),
-        ],
+      );
+    }
+
+    if (_error != null) {
+      return MonexEmptyState(
+        icon: Icons.cloud_off_rounded,
+        title: 'Etalase gagal dimuat.',
+        message: 'Katalog lokal tidak bisa dibaca. Coba muat ulang.',
+        actionLabel: 'Coba lagi',
+        onAction: _retry,
+      );
+    }
+
+    final items = _filtered;
+
+    return ListView(
+      padding: const EdgeInsets.fromLTRB(
+        MonexSpacing.screenPaddingH,
+        MonexSpacing.screenPaddingV,
+        MonexSpacing.screenPaddingH,
+        24,
       ),
-    );
-  }
-}
-
-class _CategoryCard extends StatelessWidget {
-  const _CategoryCard({
-    required this.title,
-    required this.imageAsset,
-    required this.onTap,
-  });
-
-  final String title;
-  final String? imageAsset;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    return MonexSurfaceCard(
-      onTap: onTap,
-      padding: EdgeInsets.zero,
-      radius: MonexSpacing.radiusMd,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Expanded(
-            child: ClipRRect(
-              borderRadius: const BorderRadius.vertical(
-                top: Radius.circular(MonexSpacing.radiusMd),
-              ),
-              child: imageAsset == null
-                  ? Container(
-                      color: MonexColors.surfaceElevated,
-                      child: const Center(
-                        child: Icon(
-                          Icons.grid_view_rounded,
-                          size: 42,
-                          color: MonexColors.lime,
-                        ),
-                      ),
-                    )
-                  : Image.asset(
-                      imageAsset!,
-                      width: double.infinity,
-                      fit: BoxFit.cover,
-                    ),
-            ),
+      children: [
+        TextField(
+          key: const Key('catalog_search'),
+          controller: _search,
+          decoration: InputDecoration(
+            labelText: 'Cari seri produk',
+            hintText: 'cth: RTX 4060, Ryzen 5, B550',
+            prefixIcon: const Icon(Icons.search_rounded),
+            suffixIcon: _search.text.isEmpty
+                ? null
+                : IconButton(
+                    tooltip: 'Hapus pencarian',
+                    icon: const Icon(Icons.close_rounded),
+                    onPressed: () {
+                      _search.clear();
+                      setState(() {});
+                    },
+                  ),
           ),
-          Padding(
-            padding: const EdgeInsets.all(12),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: theme.textTheme.titleSmall,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
+          onChanged: (_) => setState(() {}),
+        ),
+        const SizedBox(height: MonexSpacing.gridGap),
+        SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Row(
+            children: [
+              for (final category in _categories)
+                Padding(
+                  padding: const EdgeInsets.only(right: 8),
+                  child: ChoiceChip(
+                    label: Text(category),
+                    selected: _category == category,
+                    onSelected: (_) => setState(() => _category = category),
+                  ),
                 ),
-                const SizedBox(height: 2),
-                Text('Lihat seri', style: theme.textTheme.bodySmall),
-              ],
+            ],
+          ),
+        ),
+        const SizedBox(height: MonexSpacing.sectionGap),
+        Row(
+          children: [
+            Expanded(
+              child: Text('Etalase seri', style: theme.textTheme.titleLarge),
             ),
+            Text('${items.length} seri', style: theme.textTheme.bodySmall),
+          ],
+        ),
+        const SizedBox(height: 4),
+        Text(
+          'Satu kartu mewakili satu seri. Buka detail untuk spesifikasi dan '
+          'semua varian.',
+          style: theme.textTheme.bodyMedium,
+        ),
+        const SizedBox(height: MonexSpacing.gridGap),
+        if (items.isEmpty)
+          SizedBox(
+            height: 320,
+            child: MonexEmptyState(
+              icon: Icons.search_off_rounded,
+              title: 'Seri tidak ditemukan.',
+              message: 'Coba kata kunci lain atau reset filter.',
+              actionLabel: 'Reset filter',
+              onAction: _resetFilters,
+            ),
+          )
+        else
+          GridView.builder(
+            key: const Key('catalog_grid'),
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: items.length,
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              crossAxisSpacing: MonexSpacing.gridGap,
+              mainAxisSpacing: MonexSpacing.gridGap,
+              childAspectRatio: 0.78,
+            ),
+            itemBuilder: (context, index) {
+              final series = items[index];
+              return ProductSeriesCard(
+                key: ValueKey('series_${series.id}'),
+                series: series,
+                onTap: () => _openDetail(series),
+              );
+            },
           ),
-        ],
-      ),
-    );
-  }
-}
-
-class _CategorySheet extends StatelessWidget {
-  const _CategorySheet({required this.category});
-
-  final String category;
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(24, 8, 24, 32),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'Etalase $category',
-            style: Theme.of(context).textTheme.titleLarge,
-          ),
-          const SizedBox(height: 8),
-          Text(
-            'Kerangka kategori sudah siap. Daftar seri, spesifikasi, dan varian '
-            'akan diisi dari retail_catalog.json pada Phase 3.',
-            style: Theme.of(context).textTheme.bodyMedium,
-          ),
-          const SizedBox(height: 16),
-          MonexPrimaryButton(
-            label: 'Mengerti',
-            onPressed: () => Navigator.of(context).pop(),
-          ),
-        ],
-      ),
+      ],
     );
   }
 }
