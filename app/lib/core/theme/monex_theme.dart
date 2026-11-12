@@ -81,23 +81,23 @@ abstract final class MonexDecorations {
 
   /// Glow Hijau Neon untuk Tombol Utama & FAB.
   static List<BoxShadow> get limeGlowShadow => const [
-        BoxShadow(
-          color: Color.fromRGBO(172, 239, 52, 0.45),
-          blurRadius: 24,
-          spreadRadius: -4,
-          offset: Offset(0, 8),
-        ),
-      ];
+    BoxShadow(
+      color: Color.fromRGBO(172, 239, 52, 0.45),
+      blurRadius: 24,
+      spreadRadius: -4,
+      offset: Offset(0, 8),
+    ),
+  ];
 
   /// Soft Shadow untuk Kartu Highlight.
   static List<BoxShadow> get cardSoftShadow => const [
-        BoxShadow(
-          color: Color.fromRGBO(0, 0, 0, 0.50),
-          blurRadius: 30,
-          spreadRadius: -10,
-          offset: Offset(0, 10),
-        ),
-      ];
+    BoxShadow(
+      color: Color.fromRGBO(0, 0, 0, 0.50),
+      blurRadius: 30,
+      spreadRadius: -10,
+      offset: Offset(0, 10),
+    ),
+  ];
 
   /// Dekorasi Standar Surface Card.
   static BoxDecoration surfaceCard({
@@ -353,8 +353,10 @@ abstract final class MonexTheme {
         filled: true,
         fillColor: p.surface,
         isDense: true,
-        contentPadding:
-            const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 12,
+          vertical: 14,
+        ),
         // Prefix icon default Flutter 48px + prefixText + padding = Row
         // melebihi 320px di layar sempit. Ketatkan constraint agar aman.
         prefixIconConstraints: const BoxConstraints(

@@ -1,18 +1,21 @@
 import 'package:flutter/widgets.dart';
 
+import '../services/history_repository.dart';
+import '../services/wishlist_repository.dart';
+import 'app_dependencies.dart';
+import 'session_controller.dart';
 import 'theme_controller.dart';
 
 /// Dependency container sederhana untuk widget tree.
-///
-/// Pada fase berikutnya, service/repository lain ditambahkan di sini.
 class AppScope extends InheritedWidget {
-  const AppScope({
-    super.key,
-    required this.themeController,
-    required super.child,
-  });
+  const AppScope({super.key, required this.dependencies, required super.child});
 
-  final ThemeController themeController;
+  final AppDependencies dependencies;
+
+  ThemeController get themeController => dependencies.themeController;
+  SessionController get sessionController => dependencies.sessionController;
+  WishlistRepository get wishlistRepository => dependencies.wishlistRepository;
+  HistoryRepository get historyRepository => dependencies.historyRepository;
 
   static AppScope of(BuildContext context) {
     final scope = context.dependOnInheritedWidgetOfExactType<AppScope>();
@@ -22,5 +25,5 @@ class AppScope extends InheritedWidget {
 
   @override
   bool updateShouldNotify(AppScope oldWidget) =>
-      oldWidget.themeController != themeController;
+      oldWidget.dependencies != dependencies;
 }

@@ -197,10 +197,7 @@ class _CategoryCard extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                 ),
                 const SizedBox(height: 2),
-                Text(
-                  'Lihat seri',
-                  style: theme.textTheme.bodySmall,
-                ),
+                Text('Lihat seri', style: theme.textTheme.bodySmall),
               ],
             ),
           ),

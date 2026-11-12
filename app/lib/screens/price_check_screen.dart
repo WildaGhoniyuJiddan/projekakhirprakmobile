@@ -20,8 +20,9 @@ class PriceCheckScreen extends StatefulWidget {
 
 class _PriceCheckScreenState extends State<PriceCheckScreen> {
   final _formKey = GlobalKey<FormState>();
-  late final TextEditingController _query =
-      TextEditingController(text: widget.initialQuery);
+  late final TextEditingController _query = TextEditingController(
+    text: widget.initialQuery,
+  );
   final TextEditingController _price = TextEditingController();
 
   String _condition = 'baru';
@@ -126,7 +127,10 @@ class _PriceCheckScreenState extends State<PriceCheckScreen> {
                   items: const [
                     DropdownMenuItem(value: 'baru', child: Text('Baru')),
                     DropdownMenuItem(value: 'bekas', child: Text('Bekas')),
-                    DropdownMenuItem(value: 'any', child: Text('Semua kondisi')),
+                    DropdownMenuItem(
+                      value: 'any',
+                      child: Text('Semua kondisi'),
+                    ),
                   ],
                   onChanged: (value) =>
                       setState(() => _condition = value ?? 'baru'),

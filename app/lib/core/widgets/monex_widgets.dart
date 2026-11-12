@@ -92,9 +92,7 @@ class MonexGradientCard extends StatelessWidget {
       clipBehavior: Clip.antiAlias,
       child: Ink(
         decoration: MonexDecorations.visaCard(radius: radius),
-        child: onTap == null
-            ? content
-            : InkWell(onTap: onTap, child: content),
+        child: onTap == null ? content : InkWell(onTap: onTap, child: content),
       ),
     );
   }
@@ -145,8 +143,7 @@ class MonexAppBar extends StatelessWidget implements PreferredSizeWidget {
           if (showBack || leadingIcon != null) ...[
             _CircleIconButton(
               icon: leadingIcon ?? Icons.arrow_back_ios_new_rounded,
-              onTap: onLeadingTap ??
-                  () => Navigator.of(context).maybePop(),
+              onTap: onLeadingTap ?? () => Navigator.of(context).maybePop(),
               size: 38,
             ),
             const SizedBox(width: 12),
@@ -248,13 +245,13 @@ class MonexCircleIconButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => _CircleIconButton(
-        icon: icon,
-        onTap: onTap,
-        size: size,
-        tooltip: tooltip,
-        background: background,
-        foreground: foreground,
-      );
+    icon: icon,
+    onTap: onTap,
+    size: size,
+    tooltip: tooltip,
+    background: background,
+    foreground: foreground,
+  );
 }
 
 // ============================================================================
@@ -371,16 +368,9 @@ class MonexSecondaryButton extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          if (icon != null) ...[
-            Icon(icon, size: 18),
-            const SizedBox(width: 8),
-          ],
+          if (icon != null) ...[Icon(icon, size: 18), const SizedBox(width: 8)],
           Flexible(
-            child: Text(
-              label,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
+            child: Text(label, maxLines: 1, overflow: TextOverflow.ellipsis),
           ),
         ],
       ),
@@ -481,7 +471,9 @@ class _SegmentButton extends StatelessWidget {
               Icon(
                 icon,
                 size: 15,
-                color: selected ? MonexColors.lime : theme.textTheme.bodySmall!.color,
+                color: selected
+                    ? MonexColors.lime
+                    : theme.textTheme.bodySmall!.color,
               ),
               const SizedBox(width: 6),
             ],
@@ -591,10 +583,7 @@ class MonexTransactionTile extends StatelessWidget {
                   ],
                 ),
               ),
-              if (trailing != null) ...[
-                const SizedBox(width: 10),
-                trailing!,
-              ],
+              if (trailing != null) ...[const SizedBox(width: 10), trailing!],
             ],
           ),
         ),
@@ -896,9 +885,7 @@ class _SplinePainter extends CustomPainter {
 
   @override
   bool shouldRepaint(covariant _SplinePainter old) =>
-      old.progress != progress ||
-      old.points != points ||
-      old.color != color;
+      old.progress != progress || old.points != points || old.color != color;
 }
 
 // ============================================================================
@@ -920,8 +907,8 @@ void showMonexToast(
   final color = isError
       ? MonexColors.danger
       : isSuccess
-          ? MonexColors.lime
-          : MonexColors.surfaceElevated;
+      ? MonexColors.lime
+      : MonexColors.surfaceElevated;
   final fg = (isError || isSuccess)
       ? MonexColors.textDark
       : Theme.of(context).colorScheme.onSurface;
@@ -936,8 +923,8 @@ void showMonexToast(
             isError
                 ? Icons.error_outline_rounded
                 : isSuccess
-                    ? Icons.check_circle_outline_rounded
-                    : Icons.info_outline_rounded,
+                ? Icons.check_circle_outline_rounded
+                : Icons.info_outline_rounded,
             size: 18,
             color: fg,
           ),
@@ -1011,11 +998,7 @@ class _MonexShimmerState extends State<MonexShimmer>
               gradient: LinearGradient(
                 begin: Alignment(-1 - 2 * _c.value, 0),
                 end: Alignment(1 - 2 * _c.value, 0),
-                colors: [
-                  base,
-                  Color.lerp(base, MonexColors.lime, 0.18)!,
-                  base,
-                ],
+                colors: [base, Color.lerp(base, MonexColors.lime, 0.18)!, base],
                 stops: const [0.0, 0.5, 1.0],
               ),
             ),
@@ -1075,12 +1058,7 @@ class MonexSkeletonList extends StatelessWidget {
 /// Dipakai sebagai loading state penuh layar yang tetap interaktif
 /// (user bisa tetap scroll/keluar) dan bisa diberi [label].
 class MonexOrbitLoader extends StatefulWidget {
-  const MonexOrbitLoader({
-    super.key,
-    this.size = 64,
-    this.label,
-    this.message,
-  });
+  const MonexOrbitLoader({super.key, this.size = 64, this.label, this.message});
 
   final double size;
   final String? label;
@@ -1251,14 +1229,22 @@ class _MonexWaveLoaderState extends State<MonexWaveLoader>
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 3),
                 child: Transform.translate(
-                  offset: Offset(0, -math.sin((_c.value * 2 * math.pi) + i * 0.9) * 3),
+                  offset: Offset(
+                    0,
+                    -math.sin((_c.value * 2 * math.pi) + i * 0.9) * 3,
+                  ),
                   child: Container(
                     width: widget.size,
                     height: widget.size,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       color: color.withValues(
-                        alpha: 0.45 + 0.55 * math.sin((_c.value * 2 * math.pi) + i * 0.9).abs(),
+                        alpha:
+                            0.45 +
+                            0.55 *
+                                math
+                                    .sin((_c.value * 2 * math.pi) + i * 0.9)
+                                    .abs(),
                       ),
                     ),
                   ),
@@ -1352,9 +1338,7 @@ class MonexBottomNavBar extends StatelessWidget {
     return DecoratedBox(
       decoration: BoxDecoration(
         color: theme.colorScheme.surface,
-        border: Border(
-          top: BorderSide(color: MonexColors.borderSubtle),
-        ),
+        border: Border(top: BorderSide(color: MonexColors.borderSubtle)),
       ),
       child: NavigationBar(
         selectedIndex: selectedIndex,

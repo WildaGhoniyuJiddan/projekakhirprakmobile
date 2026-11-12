@@ -1,22 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:worthbang_lite/app.dart';
-import 'package:worthbang_lite/state/theme_controller.dart';
 
-Future<ThemeController> _controller() async {
-  SharedPreferences.setMockInitialValues({});
-  final prefs = await SharedPreferences.getInstance();
-  final controller = ThemeController(prefs);
-  await controller.load();
-  return controller;
-}
+import 'support/hive_test_environment.dart';
 
 void main() {
-  testWidgets('shell menampilkan 4 tab dan berpindah tab', (tester) async {
-    final controller = await _controller();
+  late HiveTestEnvironment env;
 
-    await tester.pumpWidget(WorthBangApp(themeController: controller));
+  setUpAll(() async {
+    env = await HiveTestEnvironment.create();
+  });
+
+  tearDownAll(() async {
+    await env.dispose();
+  });
+
+  testWidgets('shell menampilkan 4 tab dan berpindah tab', (tester) async {
+    final dependencies = await env.dependencies();
+
+    await tester.pumpWidget(WorthBangApp(dependencies: dependencies));
     await tester.pumpAndSettle();
 
     expect(find.byType(BottomNavigationBar), findsOneWidget);
@@ -39,9 +41,9 @@ void main() {
   });
 
   testWidgets('form cek harga memvalidasi input kosong', (tester) async {
-    final controller = await _controller();
+    final dependencies = await env.dependencies();
 
-    await tester.pumpWidget(WorthBangApp(themeController: controller));
+    await tester.pumpWidget(WorthBangApp(dependencies: dependencies));
     await tester.pumpAndSettle();
 
     await tester.tap(find.text('Cek Harga').first);

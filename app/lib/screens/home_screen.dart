@@ -12,9 +12,7 @@ class HomeScreen extends StatelessWidget {
   final ValueChanged<int> onOpenTab;
 
   void _openPage(BuildContext context, Widget page) {
-    Navigator.of(context).push(
-      MaterialPageRoute<void>(builder: (_) => page),
-    );
+    Navigator.of(context).push(MaterialPageRoute<void>(builder: (_) => page));
   }
 
   @override
@@ -32,10 +30,8 @@ class HomeScreen extends StatelessWidget {
           IconButton(
             tooltip: 'Notifikasi',
             icon: const Icon(Icons.notifications_none_rounded),
-            onPressed: () => showMonexToast(
-              context,
-              'Belum ada notifikasi baru.',
-            ),
+            onPressed: () =>
+                showMonexToast(context, 'Belum ada notifikasi baru.'),
           ),
           const SizedBox(width: 4),
         ],

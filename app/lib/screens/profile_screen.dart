@@ -62,10 +62,7 @@ class ProfileScreen extends StatelessWidget {
                 const SizedBox(height: 10),
                 Text('Tamu', style: theme.textTheme.titleLarge),
                 const SizedBox(height: 2),
-                Text(
-                  'Belum masuk ke akun',
-                  style: theme.textTheme.bodySmall,
-                ),
+                Text('Belum masuk ke akun', style: theme.textTheme.bodySmall),
               ],
             ),
           ),
@@ -132,8 +129,11 @@ class ProfileScreen extends StatelessWidget {
             padding: const EdgeInsets.all(MonexSpacing.cardPaddingCompact),
             child: Row(
               children: [
-                const Icon(Icons.info_outline_rounded,
-                    size: 18, color: MonexColors.lime),
+                const Icon(
+                  Icons.info_outline_rounded,
+                  size: 18,
+                  color: MonexColors.lime,
+                ),
                 const SizedBox(width: 10),
                 Expanded(
                   child: Text(

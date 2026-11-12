@@ -8,7 +8,9 @@ abstract final class AppValidators {
   }
 
   static String? price(String? value) {
-    final digits = int.tryParse((value ?? '').replaceAll(RegExp(r'[^0-9]'), ''));
+    final digits = int.tryParse(
+      (value ?? '').replaceAll(RegExp(r'[^0-9]'), ''),
+    );
     if (digits == null || digits <= 0) {
       return 'Masukkan harga yang valid.';
     }

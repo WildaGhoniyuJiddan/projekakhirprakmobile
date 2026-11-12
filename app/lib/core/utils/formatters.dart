@@ -17,4 +17,5 @@ String formatDistance(double km) {
 }
 
 /// Format tanggal ringkas Bahasa Indonesia.
-String formatDate(DateTime date) => DateFormat('d MMM yyyy HH:mm', 'id_ID').format(date);
+String formatDate(DateTime date) =>
+    DateFormat('d MMM yyyy HH:mm', 'id_ID').format(date);
