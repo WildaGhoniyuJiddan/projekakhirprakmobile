@@ -1,10 +1,13 @@
 import 'dart:io';
 
+import 'package:flutter/services.dart';
 import 'package:hive/hive.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:worthbang_lite/models/wishlist_item.dart';
 import 'package:worthbang_lite/services/auth_service.dart';
+import 'package:worthbang_lite/services/catalog_service.dart';
 import 'package:worthbang_lite/services/history_repository.dart';
+import 'package:worthbang_lite/services/price_analyzer.dart';
 import 'package:worthbang_lite/services/session_preferences.dart';
 import 'package:worthbang_lite/services/wishlist_repository.dart';
 import 'package:worthbang_lite/state/app_dependencies.dart';
@@ -48,12 +51,16 @@ class HiveTestEnvironment {
     );
     await sessionController.restore();
 
+    final catalogService = CatalogService(rootBundle);
+
     return AppDependencies(
       sessionPreferences: sessionPreferences,
       sessionController: sessionController,
       themeController: themeController,
       wishlistRepository: WishlistRepository(wishlistBox),
       historyRepository: HistoryRepository(historyBox),
+      catalogService: catalogService,
+      priceAnalyzer: CatalogPriceAnalyzer(catalogService),
     );
   }
 

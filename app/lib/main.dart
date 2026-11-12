@@ -8,8 +8,10 @@ import 'app.dart';
 import 'core/theme/monex_theme.dart';
 import 'core/widgets/monex_widgets.dart';
 import 'services/auth_service.dart';
+import 'services/catalog_service.dart';
 import 'services/history_repository.dart';
 import 'services/hive_service.dart';
+import 'services/price_analyzer.dart';
 import 'services/session_preferences.dart';
 import 'services/wishlist_repository.dart';
 import 'state/app_dependencies.dart';
@@ -46,6 +48,8 @@ Future<void> main() async {
     );
     await sessionController.restore();
 
+    final catalogService = CatalogService(rootBundle);
+
     runApp(
       WorthBangApp(
         dependencies: AppDependencies(
@@ -54,6 +58,8 @@ Future<void> main() async {
           themeController: themeController,
           wishlistRepository: WishlistRepository(HiveService.wishlistBox),
           historyRepository: HistoryRepository(HiveService.historyBox),
+          catalogService: catalogService,
+          priceAnalyzer: CatalogPriceAnalyzer(catalogService),
         ),
       ),
     );

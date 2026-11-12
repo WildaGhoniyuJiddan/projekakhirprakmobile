@@ -1,3 +1,5 @@
+import '../core/utils/series_key.dart';
+
 /// Entitas katalog dengan hierarki tipe komponen.
 ///
 /// Setiap subclass menentukan label seksi dan cara menghitung harga
@@ -11,8 +13,18 @@ abstract class CatalogItem {
   String get section;
   String get sectionLabel;
 
+  /// Kunci seri yang dipakai untuk grouping etalase dan harga referensi.
+  String get seriesKey => SeriesKey.of(section, model);
+
   /// Harga referensi item ini terhadap kumpulan kandidat.
   int referencePrice(List<CatalogItem> pool);
+
+  /// Median harga kandidat; fallback ke harga item ini jika kosong.
+  int medianOrSelf(Iterable<int> values) {
+    final sorted = values.toList()..sort();
+    if (sorted.isEmpty) return price;
+    return sorted[sorted.length ~/ 2];
+  }
 
   /// Nama pendek untuk kartu/etalase.
   String get displayName {
@@ -54,7 +66,15 @@ class CpuItem extends CatalogItem {
   String get sectionLabel => 'CPU';
 
   @override
-  int referencePrice(List<CatalogItem> pool) => price;
+  int referencePrice(List<CatalogItem> pool) {
+    final key = seriesKey;
+    return medianOrSelf(
+      pool
+          .whereType<CpuItem>()
+          .where((item) => item.seriesKey == key)
+          .map((item) => item.price),
+    );
+  }
 }
 
 class GpuItem extends CatalogItem {
@@ -67,7 +87,15 @@ class GpuItem extends CatalogItem {
   String get sectionLabel => 'GPU';
 
   @override
-  int referencePrice(List<CatalogItem> pool) => price;
+  int referencePrice(List<CatalogItem> pool) {
+    final key = seriesKey;
+    return medianOrSelf(
+      pool
+          .whereType<GpuItem>()
+          .where((item) => item.seriesKey == key)
+          .map((item) => item.price),
+    );
+  }
 }
 
 class MotherboardItem extends CatalogItem {
@@ -81,27 +109,13 @@ class MotherboardItem extends CatalogItem {
 
   @override
   int referencePrice(List<CatalogItem> pool) {
-    final chipset = _chipsetOf(model);
-    final candidates = pool
-        .whereType<MotherboardItem>()
-        .where((item) => chipset == null || _chipsetOf(item.model) == chipset)
-        .map((item) => item.price)
-        .toList();
-    return _medianOrSelf(candidates);
-  }
-
-  int _medianOrSelf(List<int> values) {
-    if (values.isEmpty) return price;
-    values.sort();
-    return values[values.length ~/ 2];
-  }
-
-  static String? _chipsetOf(String value) {
-    final match = RegExp(
-      r'\b(A520|A620|B450|B550|B650|B760|B840|H610|H81|H310|H410|H510|X470|X570|X670|Z690|Z790)[A-Z]*',
-      caseSensitive: false,
-    ).firstMatch(value);
-    return match?.group(1)?.toUpperCase();
+    final key = seriesKey;
+    return medianOrSelf(
+      pool
+          .whereType<MotherboardItem>()
+          .where((item) => item.seriesKey == key)
+          .map((item) => item.price),
+    );
   }
 }
 
@@ -116,29 +130,13 @@ class RamItem extends CatalogItem {
 
   @override
   int referencePrice(List<CatalogItem> pool) {
-    final capacity = _capacityOf(model);
-    final candidates = pool
-        .whereType<RamItem>()
-        .where(
-          (item) => capacity == null || _capacityOf(item.model) == capacity,
-        )
-        .map((item) => item.price)
-        .toList();
-    return _medianOrSelf(candidates);
-  }
-
-  int _medianOrSelf(List<int> values) {
-    if (values.isEmpty) return price;
-    values.sort();
-    return values[values.length ~/ 2];
-  }
-
-  static String? _capacityOf(String value) {
-    final match = RegExp(
-      r'\b(\d{1,2})\s?GB\b',
-      caseSensitive: false,
-    ).firstMatch(value);
-    return match?.group(1);
+    final key = seriesKey;
+    return medianOrSelf(
+      pool
+          .whereType<RamItem>()
+          .where((item) => item.seriesKey == key)
+          .map((item) => item.price),
+    );
   }
 }
 
@@ -153,28 +151,12 @@ class StorageItem extends CatalogItem {
 
   @override
   int referencePrice(List<CatalogItem> pool) {
-    final capacity = _capacityOf(model);
-    final candidates = pool
-        .whereType<StorageItem>()
-        .where(
-          (item) => capacity == null || _capacityOf(item.model) == capacity,
-        )
-        .map((item) => item.price)
-        .toList();
-    return _medianOrSelf(candidates);
-  }
-
-  int _medianOrSelf(List<int> values) {
-    if (values.isEmpty) return price;
-    values.sort();
-    return values[values.length ~/ 2];
-  }
-
-  static String? _capacityOf(String value) {
-    final match = RegExp(
-      r'\b(\d{1,4}\s?(?:GB|TB))\b',
-      caseSensitive: false,
-    ).firstMatch(value);
-    return match?.group(1)?.replaceAll(' ', '').toUpperCase();
+    final key = seriesKey;
+    return medianOrSelf(
+      pool
+          .whereType<StorageItem>()
+          .where((item) => item.seriesKey == key)
+          .map((item) => item.price),
+    );
   }
 }

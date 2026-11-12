@@ -1,6 +1,8 @@
 import 'package:flutter/widgets.dart';
 
+import '../services/catalog_service.dart';
 import '../services/history_repository.dart';
+import '../services/price_analyzer.dart';
 import '../services/wishlist_repository.dart';
 import 'app_dependencies.dart';
 import 'session_controller.dart';
@@ -16,6 +18,8 @@ class AppScope extends InheritedWidget {
   SessionController get sessionController => dependencies.sessionController;
   WishlistRepository get wishlistRepository => dependencies.wishlistRepository;
   HistoryRepository get historyRepository => dependencies.historyRepository;
+  CatalogService get catalogService => dependencies.catalogService;
+  PriceAnalyzer get priceAnalyzer => dependencies.priceAnalyzer;
 
   static AppScope of(BuildContext context) {
     final scope = context.dependOnInheritedWidgetOfExactType<AppScope>();
