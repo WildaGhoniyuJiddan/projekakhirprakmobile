@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:hive/hive.dart';
 
 import '../models/price_analysis.dart';
@@ -15,12 +16,16 @@ class HistoryRecord {
 /// Riwayat ringan hasil cek harga di Hive.
 ///
 /// Ini bukan hash chain/blockchain: hanya hash map JSON per hasil analisis.
-class HistoryRepository {
+class HistoryRepository extends ChangeNotifier {
   HistoryRepository(this._box);
 
   final Box<dynamic> _box;
 
-  Future<int> add(PriceAnalysis analysis) => _box.add(analysis.toJson());
+  Future<int> add(PriceAnalysis analysis) async {
+    final key = await _box.add(analysis.toJson());
+    notifyListeners();
+    return key;
+  }
 
   /// Semua riwayat, terbaru lebih dulu. Data korup dilewati.
   List<HistoryRecord> getAll() {
@@ -47,7 +52,15 @@ class HistoryRepository {
 
   List<HistoryRecord> recent({int limit = 3}) => getAll().take(limit).toList();
 
-  Future<void> deleteAt(int index) => _box.deleteAt(index);
+  Future<void> deleteAt(int index) async {
+    await _box.deleteAt(index);
+    notifyListeners();
+  }
+
+  Future<void> deleteByKey(int key) async {
+    await _box.delete(key);
+    notifyListeners();
+  }
 
   int get length => _box.length;
 }

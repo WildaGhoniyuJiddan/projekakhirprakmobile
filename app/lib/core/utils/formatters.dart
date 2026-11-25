@@ -17,5 +17,18 @@ String formatDistance(double km) {
 }
 
 /// Format tanggal ringkas Bahasa Indonesia.
-String formatDate(DateTime date) =>
-    DateFormat('d MMM yyyy HH:mm', 'id_ID').format(date);
+String formatDate(DateTime date) {
+  try {
+    return DateFormat('d MMM yyyy HH:mm', 'id_ID').format(date);
+  } on Object {
+    return DateFormat('d MMM yyyy HH:mm').format(date);
+  }
+}
+
+/// Label kondisi komponen yang ramah pengguna.
+String formatCondition(String condition) => switch (condition) {
+  'baru' => 'Baru',
+  'bekas' => 'Bekas',
+  'any' => 'Semua kondisi',
+  _ => condition,
+};

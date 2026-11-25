@@ -1,15 +1,20 @@
+import 'package:flutter/foundation.dart';
 import 'package:hive/hive.dart';
 
 import '../models/wishlist_item.dart';
 
 /// CRUD penuh wishlist di Hive.
-class WishlistRepository {
+class WishlistRepository extends ChangeNotifier {
   WishlistRepository(this._box);
 
   final Box<WishlistItem> _box;
 
   // Create
-  Future<int> add(WishlistItem item) => _box.add(item);
+  Future<int> add(WishlistItem item) async {
+    final key = await _box.add(item);
+    notifyListeners();
+    return key;
+  }
 
   // Read
   List<WishlistItem> getAll() => _box.values.toList();
@@ -20,11 +25,16 @@ class WishlistRepository {
   }
 
   // Update
-  Future<void> updateAt(int index, WishlistItem item) =>
-      _box.putAt(index, item);
+  Future<void> updateAt(int index, WishlistItem item) async {
+    await _box.putAt(index, item);
+    notifyListeners();
+  }
 
   // Delete
-  Future<void> deleteAt(int index) => _box.deleteAt(index);
+  Future<void> deleteAt(int index) async {
+    await _box.deleteAt(index);
+    notifyListeners();
+  }
 
   int get length => _box.length;
 

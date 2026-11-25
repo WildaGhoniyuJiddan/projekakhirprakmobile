@@ -5,7 +5,9 @@ import '../core/utils/formatters.dart';
 import '../core/widgets/monex_widgets.dart';
 import '../models/catalog_item.dart';
 import '../models/product_series.dart';
+import '../state/app_scope.dart';
 import '../widgets/spec_chip.dart';
+import '../widgets/wishlist_form_dialog.dart';
 import 'price_check_screen.dart';
 
 /// Detail satu seri: spesifikasi, daftar varian, dan aksi cek harga.
@@ -27,6 +29,24 @@ class ProductDetailScreen extends StatelessWidget {
     );
   }
 
+  Future<void> _addToWishlist(BuildContext context) async {
+    final item = await WishlistFormDialog.show(
+      context,
+      initialQuery: series.name,
+      initialTargetPrice: series.minPrice,
+    );
+    if (item == null || !context.mounted) return;
+
+    try {
+      await AppScope.of(context).wishlistRepository.add(item);
+      if (!context.mounted) return;
+      showMonexToast(context, 'Disimpan ke wishlist.', isSuccess: true);
+    } on Object {
+      if (!context.mounted) return;
+      showMonexToast(context, 'Gagal menyimpan ke wishlist.', isError: true);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -37,6 +57,12 @@ class ProductDetailScreen extends StatelessWidget {
         subtitle: '$sourceLabel · ${series.categoryLabel}',
         showBack: true,
         actions: [
+          MonexCircleIconButton(
+            icon: Icons.favorite_border_rounded,
+            tooltip: 'Simpan ke wishlist',
+            onTap: () => _addToWishlist(context),
+          ),
+          const SizedBox(width: 8),
           MonexCircleIconButton(
             icon: Icons.price_check_rounded,
             tooltip: 'Cek harga seri',

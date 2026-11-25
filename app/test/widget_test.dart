@@ -41,6 +41,17 @@ Future<void> _tapWithIo(WidgetTester tester, Finder finder) async {
   await tester.pumpAndSettle();
 }
 
+/// Mengetuk tombol di dalam dialog yang memicu I/O Hive setelah dialog ditutup.
+Future<void> _tapDialogWithIo(WidgetTester tester, Finder finder) async {
+  await tester.ensureVisible(finder);
+  await tester.tap(finder);
+  await tester.pumpAndSettle();
+  await tester.runAsync(
+    () => Future<void>.delayed(const Duration(milliseconds: 150)),
+  );
+  await tester.pumpAndSettle();
+}
+
 Future<void> _login(
   WidgetTester tester, {
   required String email,
@@ -57,6 +68,10 @@ void main() {
 
   setUpAll(() async {
     env = await HiveTestEnvironment.create();
+  });
+
+  setUp(() async {
+    await env.clearBoxes();
   });
 
   tearDownAll(() async {
@@ -212,5 +227,130 @@ void main() {
 
     expect(find.text('Nama produk minimal 2 karakter.'), findsOneWidget);
     expect(find.text('Masukkan harga yang valid.'), findsOneWidget);
+  });
+
+  testWidgets('cek harga menampilkan hasil, menyimpan riwayat, dan simpan ke wishlist', (
+    tester,
+  ) async {
+    final dependencies = await _loggedInDependencies(
+      tester,
+      env,
+      email: 'alur.result@worthbang.test',
+    );
+
+    await _pumpApp(tester, dependencies);
+    await tester.tap(find.text('Cek Harga').first);
+    await tester.pumpAndSettle();
+
+    await tester.enterText(
+      find.byKey(const Key('price_check_query')),
+      'RTX 4060',
+    );
+    await tester.enterText(
+      find.byKey(const Key('price_check_price')),
+      '3800000',
+    );
+    await _tapWithIo(tester, find.byKey(const Key('price_check_submit')));
+
+    expect(find.text('Hasil Analisis'), findsOneWidget);
+    expect(find.text('Worth It'), findsOneWidget);
+    expect(find.text('Ringkasan harga'), findsOneWidget);
+    expect(dependencies.historyRepository.length, 1);
+
+    await tester.ensureVisible(find.byKey(const Key('result_save_wishlist')));
+    await tester.tap(find.byKey(const Key('result_save_wishlist')));
+    await tester.pumpAndSettle();
+    expect(find.text('Tambah Wishlist'), findsOneWidget);
+
+    await _tapDialogWithIo(tester, find.byKey(const Key('wishlist_form_submit')));
+    expect(dependencies.wishlistRepository.length, 1);
+
+    // Tunggu toast menghilang sebelum mengetuk tombol di bagian bawah layar.
+    await tester.pump(const Duration(seconds: 4));
+    await tester.pumpAndSettle();
+
+    await tester.ensureVisible(find.byKey(const Key('result_done')));
+    await tester.tap(find.byKey(const Key('result_done')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byIcon(Icons.arrow_back_ios_new_rounded));
+    await tester.pumpAndSettle();
+
+    // Riwayat tampil di Beranda dan item tampil di Wishlist.
+    await tester.scrollUntilVisible(
+      find.text('Riwayat cek terbaru'),
+      250,
+      scrollable: find.byType(Scrollable).first,
+    );
+    expect(find.text('Riwayat cek terbaru'), findsOneWidget);
+    expect(find.text('RTX 4060'), findsWidgets);
+
+    await tester.tap(find.text('Wishlist').last);
+    await tester.pumpAndSettle();
+    expect(find.text('1 item tersimpan'), findsOneWidget);
+    expect(find.text('RTX 4060'), findsOneWidget);
+  });
+
+  testWidgets('wishlist mendukung create, update, cek harga, dan delete di Hive', (
+    tester,
+  ) async {
+    final dependencies = await _loggedInDependencies(
+      tester,
+      env,
+      email: 'alur.wishlist@worthbang.test',
+    );
+
+    await _pumpApp(tester, dependencies);
+    await tester.tap(find.text('Wishlist').last);
+    await tester.pumpAndSettle();
+    expect(find.text('Wishlist masih kosong.'), findsOneWidget);
+
+    // Create
+    await tester.tap(find.byKey(const Key('wishlist_add_empty')));
+    await tester.pumpAndSettle();
+    await tester.enterText(
+      find.byKey(const Key('wishlist_form_query')),
+      'Ryzen 5 5600',
+    );
+    await tester.enterText(
+      find.byKey(const Key('wishlist_form_price')),
+      '1850000',
+    );
+    await _tapDialogWithIo(tester, find.byKey(const Key('wishlist_form_submit')));
+
+    expect(find.text('1 item tersimpan'), findsOneWidget);
+    expect(find.text('Ryzen 5 5600'), findsOneWidget);
+
+    // Update
+    await tester.tap(find.byIcon(Icons.edit_outlined));
+    await tester.pumpAndSettle();
+    expect(find.text('Ubah Wishlist'), findsOneWidget);
+    await tester.enterText(
+      find.byKey(const Key('wishlist_form_price')),
+      '1700000',
+    );
+    await _tapDialogWithIo(tester, find.byKey(const Key('wishlist_form_submit')));
+
+    expect(dependencies.wishlistRepository.getAt(0)!.targetPrice, 1700000);
+
+    // Shortcut ke Cek Harga
+    await tester.tap(find.byKey(const ValueKey('wishlist_item_0')));
+    await tester.pumpAndSettle();
+    expect(find.text('Cek Harga'), findsOneWidget);
+    expect(find.text('Ryzen 5 5600'), findsWidgets);
+
+    await tester.tap(find.byIcon(Icons.arrow_back_ios_new_rounded));
+    await tester.pumpAndSettle();
+
+    // Delete
+    await tester.tap(find.byIcon(Icons.delete_outline_rounded));
+    await tester.pumpAndSettle();
+    expect(find.text('Hapus dari wishlist?'), findsOneWidget);
+    await _tapDialogWithIo(
+      tester,
+      find.byKey(const Key('wishlist_delete_confirm')),
+    );
+
+    expect(dependencies.wishlistRepository.length, 0);
+    expect(find.text('Wishlist masih kosong.'), findsOneWidget);
   });
 }

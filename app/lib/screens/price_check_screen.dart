@@ -1,18 +1,25 @@
 import 'package:flutter/material.dart';
 
 import '../core/theme/monex_theme.dart';
-import '../core/utils/formatters.dart';
 import '../core/utils/validators.dart';
 import '../core/widgets/monex_widgets.dart';
+import '../models/price_check_request.dart';
+import '../state/app_scope.dart';
+import '../widgets/auth_error_banner.dart';
+import 'result_screen.dart';
 
-/// Kerangka form Cek Harga.
-///
-/// Validasi dan passing input sudah aktif; mesin analisis katalog
-/// dihubungkan pada Phase 3.
+/// Form Cek Harga yang terhubung ke [PriceAnalyzer] dan [HistoryRepository].
 class PriceCheckScreen extends StatefulWidget {
-  const PriceCheckScreen({super.key, this.initialQuery = ''});
+  const PriceCheckScreen({
+    super.key,
+    this.initialQuery = '',
+    this.initialPrice,
+    this.initialCondition = 'baru',
+  });
 
   final String initialQuery;
+  final int? initialPrice;
+  final String initialCondition;
 
   @override
   State<PriceCheckScreen> createState() => _PriceCheckScreenState();
@@ -23,11 +30,15 @@ class _PriceCheckScreenState extends State<PriceCheckScreen> {
   late final TextEditingController _query = TextEditingController(
     text: widget.initialQuery,
   );
-  final TextEditingController _price = TextEditingController();
+  late final TextEditingController _price = TextEditingController(
+    text: widget.initialPrice != null && widget.initialPrice! > 0
+        ? widget.initialPrice.toString()
+        : '',
+  );
 
-  String _condition = 'baru';
-  bool _submitted = false;
-  int _parsedPrice = 0;
+  late String _condition = widget.initialCondition;
+  bool _loading = false;
+  String? _error;
 
   @override
   void dispose() {
@@ -40,16 +51,45 @@ class _PriceCheckScreenState extends State<PriceCheckScreen> {
     return int.tryParse(raw.replaceAll(RegExp(r'[^0-9]'), '')) ?? 0;
   }
 
-  void _submit() {
-    if (!_formKey.currentState!.validate()) {
-      setState(() => _submitted = false);
-      return;
-    }
+  Future<void> _submit() async {
+    if (_loading || !_formKey.currentState!.validate()) return;
     FocusScope.of(context).unfocus();
+
     setState(() {
-      _submitted = true;
-      _parsedPrice = _parsePrice(_price.text);
+      _loading = true;
+      _error = null;
     });
+
+    final scope = AppScope.of(context);
+    try {
+      final request = PriceCheckRequest(
+        query: _query.text,
+        price: _parsePrice(_price.text),
+        condition: _condition,
+      );
+      final analysis = await scope.priceAnalyzer.analyze(request);
+
+      try {
+        await scope.historyRepository.add(analysis);
+      } on Object {
+        // Kegagalan simpan riwayat tidak memblokir tampilan hasil.
+      }
+
+      if (!mounted) return;
+      setState(() => _loading = false);
+
+      await Navigator.of(context).push(
+        MaterialPageRoute<void>(
+          builder: (_) => ResultScreen(analysis: analysis),
+        ),
+      );
+    } on Object {
+      if (!mounted) return;
+      setState(() {
+        _loading = false;
+        _error = 'Gagal menganalisis harga. Periksa input dan coba lagi.';
+      });
+    }
   }
 
   @override
@@ -96,6 +136,7 @@ class _PriceCheckScreenState extends State<PriceCheckScreen> {
                 ),
                 const SizedBox(height: MonexSpacing.sectionGap),
                 TextFormField(
+                  key: const Key('price_check_query'),
                   controller: _query,
                   textInputAction: TextInputAction.next,
                   decoration: const InputDecoration(
@@ -107,6 +148,7 @@ class _PriceCheckScreenState extends State<PriceCheckScreen> {
                 ),
                 const SizedBox(height: MonexSpacing.gridGap),
                 TextFormField(
+                  key: const Key('price_check_price'),
                   controller: _price,
                   keyboardType: TextInputType.number,
                   decoration: const InputDecoration(
@@ -136,45 +178,17 @@ class _PriceCheckScreenState extends State<PriceCheckScreen> {
                       setState(() => _condition = value ?? 'baru'),
                 ),
                 const SizedBox(height: MonexSpacing.sectionGap + 6),
+                if (_error != null) ...[
+                  AuthErrorBanner(message: _error!),
+                  const SizedBox(height: MonexSpacing.gridGap),
+                ],
                 MonexPrimaryButton(
+                  key: const Key('price_check_submit'),
                   label: 'Cek Kelayakan',
                   icon: Icons.analytics_outlined,
+                  loading: _loading,
                   onPressed: _submit,
                 ),
-                if (_submitted) ...[
-                  const SizedBox(height: MonexSpacing.sectionGap),
-                  MonexSurfaceCard(
-                    padding: const EdgeInsets.all(MonexSpacing.cardPadding),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          children: [
-                            const Icon(
-                              Icons.check_circle_outline_rounded,
-                              color: MonexColors.lime,
-                            ),
-                            const SizedBox(width: 8),
-                            Text(
-                              'Input valid',
-                              style: theme.textTheme.titleMedium,
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 10),
-                        Text('Produk: ${_query.text.trim()}'),
-                        Text('Harga: ${formatRupiah(_parsedPrice)}'),
-                        Text('Kondisi: $_condition'),
-                        const SizedBox(height: 10),
-                        Text(
-                          'Mesin analisis katalog dan verdict akan dihubungkan '
-                          'pada Phase 3.',
-                          style: theme.textTheme.bodySmall,
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
               ],
             ),
           ),
@@ -198,9 +212,9 @@ class _InfoSheet extends StatelessWidget {
           Text('Cek Harga', style: Theme.of(context).textTheme.titleLarge),
           const SizedBox(height: 8),
           Text(
-            'Form ini adalah kerangka. Validasi input sudah aktif; '
-            'perhitungan median, skor, dan verdict akan memakai katalog '
-            'retail pada Phase 3.',
+            'Harga yang Anda masukkan dibandingkan dengan median seri yang '
+            'cocok di katalog retail. Rentang wajar berada pada ±10% dari '
+            'median pasar.',
             style: Theme.of(context).textTheme.bodyMedium,
           ),
           const SizedBox(height: 16),
