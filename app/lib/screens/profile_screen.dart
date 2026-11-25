@@ -2,12 +2,70 @@ import 'package:flutter/material.dart';
 
 import '../core/theme/monex_theme.dart';
 import '../core/widgets/monex_widgets.dart';
+import '../services/notification_service.dart';
 import '../state/app_scope.dart';
 import 'login_screen.dart';
 
-/// Profil: identitas akun, preferensi tema, dan logout.
-class ProfileScreen extends StatelessWidget {
+/// Profil: identitas akun, preferensi tema, notifikasi pengingat, dan logout.
+class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
+
+  @override
+  State<ProfileScreen> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
+  bool _initialized = false;
+  late bool _reminderEnabled = false;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_initialized) {
+      _initialized = true;
+      _reminderEnabled =
+          AppScope.of(context).sessionPreferences.isDailyReminderEnabled;
+    }
+  }
+
+  Future<void> _toggleReminder(BuildContext context, bool enabled) async {
+    final scope = AppScope.of(context);
+    if (enabled) {
+      final granted = await scope.notificationService.requestPermission();
+      if (!granted) {
+        if (!context.mounted) return;
+        showMonexToast(
+          context,
+          'Izin notifikasi belum diizinkan pada perangkat.',
+          isError: true,
+        );
+        return;
+      }
+
+      await scope.notificationService.scheduleDailyReminder(
+        id: LocalNotificationService.dailyReminderId,
+        title: 'Waktunya Cek Harga Komponen PC! 💻',
+        body:
+            'Cek kembali harga komponen impianmu di etalase atau wishlist hari ini.',
+        hour: 19,
+        minute: 0,
+      );
+      await scope.sessionPreferences.saveDailyReminderEnabled(true);
+      if (!context.mounted) return;
+      setState(() => _reminderEnabled = true);
+      showMonexToast(
+        context,
+        'Pengingat harian diaktifkan (19:00).',
+        isSuccess: true,
+      );
+    } else {
+      await scope.notificationService.cancelDailyReminder();
+      await scope.sessionPreferences.saveDailyReminderEnabled(false);
+      if (!context.mounted) return;
+      setState(() => _reminderEnabled = false);
+      showMonexToast(context, 'Pengingat harian dinonaktifkan.');
+    }
+  }
 
   Future<void> _logout(BuildContext context) async {
     final scope = AppScope.of(context);
@@ -187,6 +245,22 @@ class ProfileScreen extends StatelessWidget {
                           },
                         ),
                       ),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  MonexSurfaceCard(
+                    padding: EdgeInsets.zero,
+                    child: SwitchListTile.adaptive(
+                      key: const Key('profile_daily_reminder_switch'),
+                      secondary: const Icon(Icons.notifications_active_outlined),
+                      title: const Text('Pengingat Harian'),
+                      subtitle: const Text(
+                        'Notifikasi cek harga setiap pukul 19:00',
+                      ),
+                      value: _reminderEnabled,
+                      activeTrackColor: MonexColors.lime,
+                      activeThumbColor: MonexColors.textDark,
+                      onChanged: (enabled) => _toggleReminder(context, enabled),
                     ),
                   ),
                   const SizedBox(height: 18),

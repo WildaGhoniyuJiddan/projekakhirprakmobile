@@ -47,7 +47,10 @@ class MonexSurfaceCard extends StatelessWidget {
       boxShadow: boxShadow,
     );
 
-    final content = Padding(padding: padding, child: child);
+    final content = Material(
+      type: MaterialType.transparency,
+      child: Padding(padding: padding, child: child),
+    );
     final card = onTap == null
         ? DecoratedBox(decoration: decoration, child: content)
         : Material(
@@ -85,7 +88,10 @@ class MonexGradientCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final content = Padding(padding: padding, child: child);
+    final content = Material(
+      type: MaterialType.transparency,
+      child: Padding(padding: padding, child: child),
+    );
     return Material(
       color: Colors.transparent,
       borderRadius: BorderRadius.circular(radius),
@@ -904,6 +910,7 @@ void showMonexToast(
 }) {
   final messenger = ScaffoldMessenger.maybeOf(context);
   if (messenger == null) return;
+  messenger.hideCurrentSnackBar();
   final color = isError
       ? MonexColors.danger
       : isSuccess

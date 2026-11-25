@@ -1,5 +1,6 @@
 import '../services/catalog_service.dart';
 import '../services/history_repository.dart';
+import '../services/notification_service.dart';
 import '../services/price_analyzer.dart';
 import '../services/session_preferences.dart';
 import '../services/wishlist_repository.dart';
@@ -18,6 +19,7 @@ class AppDependencies {
     required this.historyRepository,
     required this.catalogService,
     required this.priceAnalyzer,
+    required this.notificationService,
   });
 
   final SessionPreferences sessionPreferences;
@@ -27,4 +29,5 @@ class AppDependencies {
   final HistoryRepository historyRepository;
   final CatalogService catalogService;
   final PriceAnalyzer priceAnalyzer;
+  final NotificationService notificationService;
 }

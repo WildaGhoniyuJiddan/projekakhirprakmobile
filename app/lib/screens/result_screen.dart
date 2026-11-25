@@ -27,8 +27,20 @@ class ResultScreen extends StatelessWidget {
     );
     if (item == null || !context.mounted) return;
 
+    final scope = AppScope.of(context);
     try {
-      await AppScope.of(context).wishlistRepository.add(item);
+      await scope.wishlistRepository.add(item);
+      try {
+        await scope.notificationService.showImmediate(
+          id: DateTime.now().millisecondsSinceEpoch % 100000,
+          title: 'Wishlist Ditambahkan 🎯',
+          body:
+              '${item.query} berhasil disimpan dengan target ${formatRupiah(item.targetPrice)}.',
+        );
+      } on Object {
+        // Notifikasi bersifat non-blocking terhadap UI.
+      }
+
       if (!context.mounted) return;
       showMonexToast(context, 'Disimpan ke wishlist.', isSuccess: true);
     } on Object {

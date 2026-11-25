@@ -11,6 +11,7 @@ import 'services/auth_service.dart';
 import 'services/catalog_service.dart';
 import 'services/history_repository.dart';
 import 'services/hive_service.dart';
+import 'services/notification_service.dart';
 import 'services/price_analyzer.dart';
 import 'services/session_preferences.dart';
 import 'services/wishlist_repository.dart';
@@ -50,6 +51,13 @@ Future<void> main() async {
 
     final catalogService = CatalogService(rootBundle);
 
+    final notificationService = LocalNotificationService();
+    try {
+      await notificationService.init();
+    } on Object {
+      // Platform tanpa plugin notifikasi (mis. desktop/test) tetap lanjut.
+    }
+
     runApp(
       WorthBangApp(
         dependencies: AppDependencies(
@@ -60,6 +68,7 @@ Future<void> main() async {
           historyRepository: HistoryRepository(HiveService.historyBox),
           catalogService: catalogService,
           priceAnalyzer: CatalogPriceAnalyzer(catalogService),
+          notificationService: notificationService,
         ),
       ),
     );

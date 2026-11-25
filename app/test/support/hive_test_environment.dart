@@ -6,6 +6,7 @@ import 'package:worthbang_lite/models/wishlist_item.dart';
 import 'package:worthbang_lite/services/auth_service.dart';
 import 'package:worthbang_lite/services/catalog_service.dart';
 import 'package:worthbang_lite/services/history_repository.dart';
+import 'package:worthbang_lite/services/notification_service.dart';
 import 'package:worthbang_lite/services/price_analyzer.dart';
 import 'package:worthbang_lite/services/session_preferences.dart';
 import 'package:worthbang_lite/services/wishlist_repository.dart';
@@ -63,6 +64,7 @@ class HiveTestEnvironment {
       historyRepository: HistoryRepository(historyBox),
       catalogService: catalogService,
       priceAnalyzer: CatalogPriceAnalyzer(catalogService),
+      notificationService: FakeNotificationService(),
     );
   }
 
@@ -73,7 +75,49 @@ class HiveTestEnvironment {
   }
 
   Future<void> dispose() async {
-    await Hive.close();
-    await _tempDir.delete(recursive: true);
+    // ignore: avoid_print
+    print('DEBUG: closing wishlistBox...');
+    try {
+      await wishlistBox.close().timeout(const Duration(seconds: 1));
+    } catch (e) {
+      // ignore: avoid_print
+      print('DEBUG: wishlistBox close error: $e');
+    }
+    // ignore: avoid_print
+    print('DEBUG: closing historyBox...');
+    try {
+      await historyBox.close().timeout(const Duration(seconds: 1));
+    } catch (e) {
+      // ignore: avoid_print
+      print('DEBUG: historyBox close error: $e');
+    }
+    // ignore: avoid_print
+    print('DEBUG: closing accountsBox...');
+    try {
+      await accountsBox.close().timeout(const Duration(seconds: 1));
+    } catch (e) {
+      // ignore: avoid_print
+      print('DEBUG: accountsBox close error: $e');
+    }
+    // ignore: avoid_print
+    print('DEBUG: closing Hive...');
+    try {
+      await Hive.close().timeout(const Duration(seconds: 1));
+    } catch (e) {
+      // ignore: avoid_print
+      print('DEBUG: Hive.close() error: $e');
+    }
+    // ignore: avoid_print
+    print('DEBUG: deleting tempDir...');
+    try {
+      if (await _tempDir.exists()) {
+        await _tempDir.delete(recursive: true);
+      }
+    } catch (e) {
+      // ignore: avoid_print
+      print('DEBUG: tempDir delete error: $e');
+    }
+    // ignore: avoid_print
+    print('DEBUG: dispose all done');
   }
 }

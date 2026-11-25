@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:worthbang_lite/app.dart';
+import 'package:worthbang_lite/services/notification_service.dart';
 import 'package:worthbang_lite/state/app_dependencies.dart';
 
 import 'support/hive_test_environment.dart';
@@ -120,7 +121,8 @@ void main() {
     expect(find.text('Preferensi'), findsOneWidget);
     expect(find.text('Rina'), findsOneWidget);
 
-    await tester.ensureVisible(find.byKey(const Key('profile_logout')));
+    await tester.drag(find.byType(ListView), const Offset(0, -300));
+    await tester.pumpAndSettle();
     await tester.tap(find.byKey(const Key('profile_logout')));
     await tester.pumpAndSettle();
     expect(find.text('Keluar dari akun?'), findsOneWidget);
@@ -352,5 +354,61 @@ void main() {
 
     expect(dependencies.wishlistRepository.length, 0);
     expect(find.text('Wishlist masih kosong.'), findsOneWidget);
+
+    // Immediate notification terbukti terekam pada operasi CRUD wishlist
+    final notifHistory =
+        (dependencies.notificationService as FakeNotificationService)
+            .immediateHistory;
+    expect(notifHistory, isNotEmpty);
+    expect(
+      notifHistory.any((n) => n['title'] == 'Wishlist Ditambahkan 🎯'),
+      isTrue,
+    );
+    expect(
+      notifHistory.any((n) => n['title'] == 'Wishlist Dihapus 🗑️'),
+      isTrue,
+    );
+
+    // Tunggu toast menghilang
+    await tester.pump(const Duration(seconds: 4));
+    await tester.pumpAndSettle();
+  });
+
+  testWidgets('toggle pengingat harian di profil menjadwalkan notifikasi', (
+    tester,
+  ) async {
+    final dependencies = await _loggedInDependencies(
+      tester,
+      env,
+      email: 'alur.reminder@worthbang.test',
+      name: 'Budi',
+    );
+
+    await _pumpApp(tester, dependencies);
+    await tester.tap(find.text('Profil').last);
+    await tester.pumpAndSettle();
+
+    expect(find.text('Pengingat Harian'), findsOneWidget);
+    final switchFinder = find.byKey(const Key('profile_daily_reminder_switch'));
+    expect(switchFinder, findsOneWidget);
+
+    final fakeNotif =
+        dependencies.notificationService as FakeNotificationService;
+    expect(fakeNotif.scheduledReminder, isNull);
+    expect(dependencies.sessionPreferences.isDailyReminderEnabled, isFalse);
+
+    await tester.tap(switchFinder);
+    await tester.pumpAndSettle();
+
+    expect(fakeNotif.scheduledReminder, isNotNull);
+    expect(fakeNotif.scheduledReminder!['hour'], 19);
+    expect(fakeNotif.scheduledReminder!['minute'], 0);
+    expect(dependencies.sessionPreferences.isDailyReminderEnabled, isTrue);
+
+    await tester.tap(switchFinder);
+    await tester.pumpAndSettle();
+
+    expect(fakeNotif.scheduledReminder, isNull);
+    expect(dependencies.sessionPreferences.isDailyReminderEnabled, isFalse);
   });
 }

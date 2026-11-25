@@ -12,6 +12,7 @@ class SessionPreferences {
   static const _kLoggedIn = 'is_logged_in';
   static const _kEmail = 'active_email';
   static const _kTheme = 'theme_mode';
+  static const _kDailyReminder = 'daily_reminder_enabled';
 
   bool get isLoggedIn => _prefs.getBool(_kLoggedIn) ?? false;
   String? get activeEmail => _prefs.getString(_kEmail);
@@ -29,4 +30,9 @@ class SessionPreferences {
   String get themeMode => _prefs.getString(_kTheme) ?? 'dark';
 
   Future<void> saveThemeMode(String mode) => _prefs.setString(_kTheme, mode);
+
+  bool get isDailyReminderEnabled => _prefs.getBool(_kDailyReminder) ?? false;
+
+  Future<void> saveDailyReminderEnabled(bool enabled) =>
+      _prefs.setBool(_kDailyReminder, enabled);
 }

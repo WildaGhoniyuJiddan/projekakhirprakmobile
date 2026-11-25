@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../core/theme/monex_theme.dart';
+import '../core/utils/formatters.dart';
 import '../core/widgets/monex_widgets.dart';
 import '../models/wishlist_item.dart';
 import '../state/app_scope.dart';
@@ -18,8 +19,20 @@ class WishlistScreen extends StatelessWidget {
     final item = await WishlistFormDialog.show(context);
     if (item == null || !context.mounted) return;
 
+    final scope = AppScope.of(context);
     try {
-      await AppScope.of(context).wishlistRepository.add(item);
+      await scope.wishlistRepository.add(item);
+      try {
+        await scope.notificationService.showImmediate(
+          id: DateTime.now().millisecondsSinceEpoch % 100000,
+          title: 'Wishlist Ditambahkan 🎯',
+          body:
+              '${item.query} berhasil disimpan dengan target ${formatRupiah(item.targetPrice)}.',
+        );
+      } on Object {
+        // Notifikasi bersifat non-blocking terhadap UI.
+      }
+
       if (!context.mounted) return;
       showMonexToast(context, 'Ditambahkan ke wishlist.', isSuccess: true);
     } on Object {
@@ -36,8 +49,20 @@ class WishlistScreen extends StatelessWidget {
     final updated = await WishlistFormDialog.show(context, initialItem: current);
     if (updated == null || !context.mounted) return;
 
+    final scope = AppScope.of(context);
     try {
-      await AppScope.of(context).wishlistRepository.updateAt(index, updated);
+      await scope.wishlistRepository.updateAt(index, updated);
+      try {
+        await scope.notificationService.showImmediate(
+          id: DateTime.now().millisecondsSinceEpoch % 100000,
+          title: 'Wishlist Diperbarui ✏️',
+          body:
+              'Target harga ${updated.query} diubah menjadi ${formatRupiah(updated.targetPrice)}.',
+        );
+      } on Object {
+        // Notifikasi bersifat non-blocking terhadap UI.
+      }
+
       if (!context.mounted) return;
       showMonexToast(context, 'Wishlist diperbarui.', isSuccess: true);
     } on Object {
@@ -74,8 +99,19 @@ class WishlistScreen extends StatelessWidget {
     );
     if (confirmed != true || !context.mounted) return;
 
+    final scope = AppScope.of(context);
     try {
-      await AppScope.of(context).wishlistRepository.deleteAt(index);
+      await scope.wishlistRepository.deleteAt(index);
+      try {
+        await scope.notificationService.showImmediate(
+          id: DateTime.now().millisecondsSinceEpoch % 100000,
+          title: 'Wishlist Dihapus 🗑️',
+          body: '${item.query} telah dihapus dari daftar impianmu.',
+        );
+      } on Object {
+        // Notifikasi bersifat non-blocking terhadap UI.
+      }
+
       if (!context.mounted) return;
       showMonexToast(context, 'Dihapus dari wishlist.');
     } on Object {

@@ -46,5 +46,16 @@ void main() {
       expect(session.themeMode, 'light');
       expect(prefs.getString('theme_mode'), 'light');
     });
+
+    test('daily reminder preference default false dan bisa disimpan', () async {
+      expect(session.isDailyReminderEnabled, isFalse);
+
+      await session.saveDailyReminderEnabled(true);
+      expect(session.isDailyReminderEnabled, isTrue);
+      expect(prefs.getBool('daily_reminder_enabled'), isTrue);
+
+      await session.saveDailyReminderEnabled(false);
+      expect(session.isDailyReminderEnabled, isFalse);
+    });
   });
 }
