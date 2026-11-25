@@ -11,9 +11,11 @@ import 'services/auth_service.dart';
 import 'services/catalog_service.dart';
 import 'services/history_repository.dart';
 import 'services/hive_service.dart';
+import 'services/location_service.dart';
 import 'services/notification_service.dart';
 import 'services/price_analyzer.dart';
 import 'services/session_preferences.dart';
+import 'services/store_service.dart';
 import 'services/wishlist_repository.dart';
 import 'state/app_dependencies.dart';
 import 'state/session_controller.dart';
@@ -69,6 +71,8 @@ Future<void> main() async {
           catalogService: catalogService,
           priceAnalyzer: CatalogPriceAnalyzer(catalogService),
           notificationService: notificationService,
+          storeService: StoreService(rootBundle),
+          locationService: const GeolocatorLocationService(),
         ),
       ),
     );

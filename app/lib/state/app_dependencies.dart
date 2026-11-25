@@ -1,8 +1,10 @@
 import '../services/catalog_service.dart';
 import '../services/history_repository.dart';
+import '../services/location_service.dart';
 import '../services/notification_service.dart';
 import '../services/price_analyzer.dart';
 import '../services/session_preferences.dart';
+import '../services/store_service.dart';
 import '../services/wishlist_repository.dart';
 import 'session_controller.dart';
 import 'theme_controller.dart';
@@ -20,6 +22,8 @@ class AppDependencies {
     required this.catalogService,
     required this.priceAnalyzer,
     required this.notificationService,
+    required this.storeService,
+    required this.locationService,
   });
 
   final SessionPreferences sessionPreferences;
@@ -30,4 +34,6 @@ class AppDependencies {
   final CatalogService catalogService;
   final PriceAnalyzer priceAnalyzer;
   final NotificationService notificationService;
+  final StoreService storeService;
+  final LocationService locationService;
 }

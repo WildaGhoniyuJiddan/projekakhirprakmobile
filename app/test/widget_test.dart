@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:worthbang_lite/app.dart';
 import 'package:worthbang_lite/services/notification_service.dart';
 import 'package:worthbang_lite/state/app_dependencies.dart';
 
+import 'support/fake_location_service.dart';
 import 'support/hive_test_environment.dart';
 
 const _password = 'rahasia123';
@@ -18,11 +20,16 @@ Future<AppDependencies> _loggedInDependencies(
   HiveTestEnvironment env, {
   required String email,
   String name = 'Budi',
+  FakeNotificationService? notifications,
+  FakeLocationService? location,
 }) async {
   late AppDependencies dependencies;
   // Hive menulis ke file nyata; beri kesempatan I/O selesai di luar fake async.
   await tester.runAsync(() async {
-    dependencies = await env.dependencies();
+    dependencies = await env.dependencies(
+      notificationService: notifications,
+      locationService: location,
+    );
     await dependencies.sessionController.register(
       name: name,
       email: email,
@@ -48,7 +55,7 @@ Future<void> _tapDialogWithIo(WidgetTester tester, Finder finder) async {
   await tester.tap(finder);
   await tester.pumpAndSettle();
   await tester.runAsync(
-    () => Future<void>.delayed(const Duration(milliseconds: 150)),
+    () => Future<void>.delayed(const Duration(milliseconds: 250)),
   );
   await tester.pumpAndSettle();
 }
@@ -231,148 +238,169 @@ void main() {
     expect(find.text('Masukkan harga yang valid.'), findsOneWidget);
   });
 
-  testWidgets('cek harga menampilkan hasil, menyimpan riwayat, dan simpan ke wishlist', (
-    tester,
-  ) async {
-    final dependencies = await _loggedInDependencies(
-      tester,
-      env,
-      email: 'alur.result@worthbang.test',
-    );
+  testWidgets(
+    'cek harga menampilkan hasil, menyimpan riwayat, dan simpan ke wishlist',
+    (tester) async {
+      final dependencies = await _loggedInDependencies(
+        tester,
+        env,
+        email: 'alur.result@worthbang.test',
+      );
 
-    await _pumpApp(tester, dependencies);
-    await tester.tap(find.text('Cek Harga').first);
-    await tester.pumpAndSettle();
+      await _pumpApp(tester, dependencies);
+      await tester.tap(find.text('Cek Harga').first);
+      await tester.pumpAndSettle();
 
-    await tester.enterText(
-      find.byKey(const Key('price_check_query')),
-      'RTX 4060',
-    );
-    await tester.enterText(
-      find.byKey(const Key('price_check_price')),
-      '3800000',
-    );
-    await _tapWithIo(tester, find.byKey(const Key('price_check_submit')));
+      await tester.enterText(
+        find.byKey(const Key('price_check_query')),
+        'RTX 4060',
+      );
+      await tester.enterText(
+        find.byKey(const Key('price_check_price')),
+        '3800000',
+      );
+      await _tapWithIo(tester, find.byKey(const Key('price_check_submit')));
 
-    expect(find.text('Hasil Analisis'), findsOneWidget);
-    expect(find.text('Worth It'), findsOneWidget);
-    expect(find.text('Ringkasan harga'), findsOneWidget);
-    expect(dependencies.historyRepository.length, 1);
+      expect(find.text('Hasil Analisis'), findsOneWidget);
+      expect(find.text('Worth It'), findsOneWidget);
+      expect(find.text('Ringkasan harga'), findsOneWidget);
+      expect(dependencies.historyRepository.length, 1);
 
-    await tester.ensureVisible(find.byKey(const Key('result_save_wishlist')));
-    await tester.tap(find.byKey(const Key('result_save_wishlist')));
-    await tester.pumpAndSettle();
-    expect(find.text('Tambah Wishlist'), findsOneWidget);
+      await _tapWithIo(tester, find.byKey(const Key('result_save_wishlist')));
+      expect(find.text('Tambah Wishlist'), findsOneWidget);
 
-    await _tapDialogWithIo(tester, find.byKey(const Key('wishlist_form_submit')));
-    expect(dependencies.wishlistRepository.length, 1);
+      await _tapDialogWithIo(
+        tester,
+        find.byKey(const Key('wishlist_form_submit')),
+      );
+      expect(dependencies.wishlistRepository.length, 1);
 
-    // Tunggu toast menghilang sebelum mengetuk tombol di bagian bawah layar.
-    await tester.pump(const Duration(seconds: 4));
-    await tester.pumpAndSettle();
+      // Pastikan tulis Hive selesai agar test berikutnya bisa clear box.
+      await tester.runAsync(
+        () => Future<void>.delayed(const Duration(milliseconds: 500)),
+      );
 
-    await tester.ensureVisible(find.byKey(const Key('result_done')));
-    await tester.tap(find.byKey(const Key('result_done')));
-    await tester.pumpAndSettle();
-    await tester.tap(find.byIcon(Icons.arrow_back_ios_new_rounded));
-    await tester.pumpAndSettle();
+      // Tunggu toast menghilang sebelum mengetuk tombol di bagian bawah layar.
+      await tester.pump(const Duration(seconds: 4));
+      await tester.pumpAndSettle();
 
-    // Riwayat tampil di Beranda dan item tampil di Wishlist.
-    await tester.scrollUntilVisible(
-      find.text('Riwayat cek terbaru'),
-      250,
-      scrollable: find.byType(Scrollable).first,
-    );
-    expect(find.text('Riwayat cek terbaru'), findsOneWidget);
-    expect(find.text('RTX 4060'), findsWidgets);
+      await tester.ensureVisible(find.byKey(const Key('result_done')));
+      await tester.tap(find.byKey(const Key('result_done')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byIcon(Icons.arrow_back_ios_new_rounded));
+      await tester.pumpAndSettle();
 
-    await tester.tap(find.text('Wishlist').last);
-    await tester.pumpAndSettle();
-    expect(find.text('1 item tersimpan'), findsOneWidget);
-    expect(find.text('RTX 4060'), findsOneWidget);
-  });
+      // Riwayat tampil di Beranda dan item tampil di Wishlist.
+      await tester.scrollUntilVisible(
+        find.text('Riwayat cek terbaru'),
+        250,
+        scrollable: find.byType(Scrollable).first,
+      );
+      expect(find.text('Riwayat cek terbaru'), findsOneWidget);
+      expect(find.text('RTX 4060'), findsWidgets);
 
-  testWidgets('wishlist mendukung create, update, cek harga, dan delete di Hive', (
-    tester,
-  ) async {
-    final dependencies = await _loggedInDependencies(
-      tester,
-      env,
-      email: 'alur.wishlist@worthbang.test',
-    );
+      await tester.tap(find.text('Wishlist').last);
+      await tester.pumpAndSettle();
+      expect(find.text('1 item tersimpan'), findsOneWidget);
+      expect(find.text('RTX 4060'), findsOneWidget);
+    },
+  );
 
-    await _pumpApp(tester, dependencies);
-    await tester.tap(find.text('Wishlist').last);
-    await tester.pumpAndSettle();
-    expect(find.text('Wishlist masih kosong.'), findsOneWidget);
+  testWidgets(
+    'wishlist mendukung create, update, cek harga, dan delete di Hive',
+    (tester) async {
+      final dependencies = await _loggedInDependencies(
+        tester,
+        env,
+        email: 'alur.wishlist@worthbang.test',
+      );
 
-    // Create
-    await tester.tap(find.byKey(const Key('wishlist_add_empty')));
-    await tester.pumpAndSettle();
-    await tester.enterText(
-      find.byKey(const Key('wishlist_form_query')),
-      'Ryzen 5 5600',
-    );
-    await tester.enterText(
-      find.byKey(const Key('wishlist_form_price')),
-      '1850000',
-    );
-    await _tapDialogWithIo(tester, find.byKey(const Key('wishlist_form_submit')));
+      await _pumpApp(tester, dependencies);
+      await tester.tap(find.text('Wishlist').last);
+      await tester.pumpAndSettle();
+      expect(find.text('Wishlist masih kosong.'), findsOneWidget);
 
-    expect(find.text('1 item tersimpan'), findsOneWidget);
-    expect(find.text('Ryzen 5 5600'), findsOneWidget);
+      // Create
+      await _tapWithIo(tester, find.byKey(const Key('wishlist_add_empty')));
+      await tester.enterText(
+        find.byKey(const Key('wishlist_form_query')),
+        'Ryzen 5 5600',
+      );
+      await tester.enterText(
+        find.byKey(const Key('wishlist_form_price')),
+        '1850000',
+      );
+      await _tapDialogWithIo(
+        tester,
+        find.byKey(const Key('wishlist_form_submit')),
+      );
 
-    // Update
-    await tester.tap(find.byIcon(Icons.edit_outlined));
-    await tester.pumpAndSettle();
-    expect(find.text('Ubah Wishlist'), findsOneWidget);
-    await tester.enterText(
-      find.byKey(const Key('wishlist_form_price')),
-      '1700000',
-    );
-    await _tapDialogWithIo(tester, find.byKey(const Key('wishlist_form_submit')));
+      expect(find.text('1 item tersimpan'), findsOneWidget);
+      expect(find.text('Ryzen 5 5600'), findsOneWidget);
 
-    expect(dependencies.wishlistRepository.getAt(0)!.targetPrice, 1700000);
+      // Update
+      await _tapWithIo(tester, find.byIcon(Icons.edit_outlined));
+      expect(find.text('Ubah Wishlist'), findsOneWidget);
+      await tester.enterText(
+        find.byKey(const Key('wishlist_form_price')),
+        '1700000',
+      );
+      await _tapDialogWithIo(
+        tester,
+        find.byKey(const Key('wishlist_form_submit')),
+      );
 
-    // Shortcut ke Cek Harga
-    await tester.tap(find.byKey(const ValueKey('wishlist_item_0')));
-    await tester.pumpAndSettle();
-    expect(find.text('Cek Harga'), findsOneWidget);
-    expect(find.text('Ryzen 5 5600'), findsWidgets);
+      expect(dependencies.wishlistRepository.getAt(0)!.targetPrice, 1700000);
 
-    await tester.tap(find.byIcon(Icons.arrow_back_ios_new_rounded));
-    await tester.pumpAndSettle();
+      // Shortcut ke Cek Harga
+      await tester.tap(find.byKey(const ValueKey('wishlist_item_0')));
+      await tester.pumpAndSettle();
+      expect(find.text('Cek Harga'), findsOneWidget);
+      expect(find.text('Ryzen 5 5600'), findsWidgets);
 
-    // Delete
-    await tester.tap(find.byIcon(Icons.delete_outline_rounded));
-    await tester.pumpAndSettle();
-    expect(find.text('Hapus dari wishlist?'), findsOneWidget);
-    await _tapDialogWithIo(
-      tester,
-      find.byKey(const Key('wishlist_delete_confirm')),
-    );
+      await tester.tap(find.byIcon(Icons.arrow_back_ios_new_rounded));
+      await tester.pumpAndSettle();
 
-    expect(dependencies.wishlistRepository.length, 0);
-    expect(find.text('Wishlist masih kosong.'), findsOneWidget);
+      // Delete
+      await _tapWithIo(tester, find.byIcon(Icons.delete_outline_rounded));
+      expect(find.text('Hapus dari wishlist?'), findsOneWidget);
+      await _tapDialogWithIo(
+        tester,
+        find.byKey(const Key('wishlist_delete_confirm')),
+      );
 
-    // Immediate notification terbukti terekam pada operasi CRUD wishlist
-    final notifHistory =
-        (dependencies.notificationService as FakeNotificationService)
-            .immediateHistory;
-    expect(notifHistory, isNotEmpty);
-    expect(
-      notifHistory.any((n) => n['title'] == 'Wishlist Ditambahkan 🎯'),
-      isTrue,
-    );
-    expect(
-      notifHistory.any((n) => n['title'] == 'Wishlist Dihapus 🗑️'),
-      isTrue,
-    );
+      expect(dependencies.wishlistRepository.length, 0);
+      expect(find.text('Wishlist masih kosong.'), findsOneWidget);
 
-    // Tunggu toast menghilang
-    await tester.pump(const Duration(seconds: 4));
-    await tester.pumpAndSettle();
-  });
+      // Immediate notification terbukti terekam pada operasi CRUD wishlist
+      final notifHistory =
+          (dependencies.notificationService as FakeNotificationService)
+              .immediateHistory;
+      expect(notifHistory, isNotEmpty);
+      expect(
+        notifHistory.any((n) => n['title'] == 'Wishlist Ditambahkan 🎯'),
+        isTrue,
+      );
+      expect(
+        notifHistory.any((n) => n['title'] == 'Wishlist Dihapus 🗑️'),
+        isTrue,
+      );
+
+      // Tunggu toast menghilang dan batalkan timer snackbar yang tersisa.
+      await tester.pump(const Duration(seconds: 4));
+      await tester.pumpAndSettle();
+      tester
+          .state<ScaffoldMessengerState>(find.byType(ScaffoldMessenger))
+          .clearSnackBars();
+      await tester.pumpAndSettle();
+      // Toast dari alur async nyata memakai Timer nyata; beri waktu agar
+      // timer selesai saat widget tree masih terpasang.
+      await tester.runAsync(
+        () => Future<void>.delayed(const Duration(milliseconds: 3500)),
+      );
+      await tester.pumpAndSettle();
+    },
+  );
 
   testWidgets('toggle pengingat harian di profil menjadwalkan notifikasi', (
     tester,
@@ -410,5 +438,61 @@ void main() {
 
     expect(fakeNotif.scheduledReminder, isNull);
     expect(dependencies.sessionPreferences.isDailyReminderEnabled, isFalse);
+  });
+
+  testWidgets('toko terdekat menampilkan peta, jarak, dan notifikasi lokasi', (
+    tester,
+  ) async {
+    final notifications = FakeNotificationService();
+    final dependencies = await _loggedInDependencies(
+      tester,
+      env,
+      email: 'alur.toko@worthbang.test',
+      notifications: notifications,
+    );
+
+    await _pumpApp(tester, dependencies);
+
+    await tester.scrollUntilVisible(
+      find.text('Toko Terdekat'),
+      250,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.ensureVisible(find.text('Toko Terdekat'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Toko Terdekat'));
+    await tester.pumpAndSettle();
+
+    expect(find.byType(FlutterMap), findsOneWidget);
+    expect(find.text('2 toko dalam radius 25 km'), findsOneWidget);
+    expect(find.text('Toko Dekat'), findsOneWidget);
+    expect(find.text('Toko Sedang'), findsOneWidget);
+    expect(find.text('Toko Jauh'), findsNothing);
+
+    await tester.tap(find.byKey(const Key('stores_notify_nearest')));
+    await tester.pumpAndSettle();
+
+    expect(notifications.immediateHistory, hasLength(1));
+    final payload = notifications.immediateHistory.single;
+    expect(payload['title'], contains('Toko Dekat'));
+    expect(payload['body'], contains('-6.20880'));
+
+    await tester.enterText(find.byKey(const Key('stores_search')), 'RTX 4060');
+    await tester.testTextInput.receiveAction(TextInputAction.search);
+    await tester.pumpAndSettle();
+
+    expect(find.text('3 toko cocok dengan "RTX 4060"'), findsOneWidget);
+    final scrollable = tester.state<ScrollableState>(
+      find
+          .descendant(
+            of: find.byType(CustomScrollView),
+            matching: find.byType(Scrollable),
+          )
+          .first,
+    );
+    scrollable.position.jumpTo(scrollable.position.maxScrollExtent);
+    await tester.pumpAndSettle();
+    expect(find.text('Toko Jauh'), findsOneWidget);
+    expect(find.text('Rp4.600.000'), findsOneWidget);
   });
 }

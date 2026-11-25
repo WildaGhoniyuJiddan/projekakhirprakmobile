@@ -7,6 +7,7 @@ import '../models/price_analysis.dart';
 import '../state/app_scope.dart';
 import '../widgets/verdict_badge.dart';
 import '../widgets/wishlist_form_dialog.dart';
+import 'nearby_stores_screen.dart';
 
 /// Halaman hasil analisis kelayakan harga dan daftar pembanding katalog.
 class ResultScreen extends StatelessWidget {
@@ -105,10 +106,7 @@ class ResultScreen extends StatelessWidget {
                       color: verdict.color,
                     ),
                     const SizedBox(height: 14),
-                    Text(
-                      verdict.advice,
-                      style: theme.textTheme.bodyMedium,
-                    ),
+                    Text(verdict.advice, style: theme.textTheme.bodyMedium),
                   ],
                 ),
               ),
@@ -267,6 +265,19 @@ class ResultScreen extends StatelessWidget {
               ),
               const SizedBox(height: MonexSpacing.gridGap),
               MonexSecondaryButton(
+                key: const Key('result_nearby_stores'),
+                label: 'Lihat Toko Terdekat',
+                icon: Icons.pin_drop_outlined,
+                onPressed: () => Navigator.of(context).push(
+                  MaterialPageRoute<void>(
+                    builder: (_) => NearbyStoresScreen(
+                      initialQuery: analysis.request.query,
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: MonexSpacing.gridGap),
+              MonexSecondaryButton(
                 key: const Key('result_done'),
                 label: 'Selesai',
                 icon: Icons.check_rounded,
@@ -299,9 +310,7 @@ class _SummaryRow extends StatelessWidget {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Expanded(
-          child: Text(label, style: theme.textTheme.bodySmall),
-        ),
+        Expanded(child: Text(label, style: theme.textTheme.bodySmall)),
         const SizedBox(width: 12),
         Flexible(
           child: Text(

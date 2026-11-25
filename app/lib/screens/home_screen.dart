@@ -9,6 +9,7 @@ import '../state/app_scope.dart';
 import '../widgets/app_logo.dart';
 import '../widgets/product_series_card.dart';
 import '../widgets/verdict_badge.dart';
+import 'nearby_stores_screen.dart';
 import 'price_check_screen.dart';
 import 'product_detail_screen.dart';
 import 'result_screen.dart';
@@ -158,10 +159,10 @@ class HomeScreen extends StatelessWidget {
                 onTap: () => _push(context, const PriceCheckScreen()),
               ),
               _HomeMenuCard(
-                icon: Icons.person_outline_rounded,
-                title: 'Profil',
-                subtitle: 'Akun, tema, dan pengaturan.',
-                onTap: () => onOpenTab(3),
+                icon: Icons.pin_drop_outlined,
+                title: 'Toko Terdekat',
+                subtitle: 'Peta toko komputer di sekitarmu.',
+                onTap: () => _push(context, const NearbyStoresScreen()),
               ),
             ],
           ),
