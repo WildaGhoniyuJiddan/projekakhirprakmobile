@@ -1,4 +1,5 @@
 import '../services/catalog_service.dart';
+import '../services/currency_api.dart';
 import '../services/history_repository.dart';
 import '../services/location_service.dart';
 import '../services/notification_service.dart';
@@ -24,6 +25,7 @@ class AppDependencies {
     required this.notificationService,
     required this.storeService,
     required this.locationService,
+    required this.currencyService,
   });
 
   final SessionPreferences sessionPreferences;
@@ -36,4 +38,5 @@ class AppDependencies {
   final NotificationService notificationService;
   final StoreService storeService;
   final LocationService locationService;
+  final CurrencyService currencyService;
 }

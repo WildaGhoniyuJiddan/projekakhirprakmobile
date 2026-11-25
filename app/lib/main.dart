@@ -9,6 +9,7 @@ import 'core/theme/monex_theme.dart';
 import 'core/widgets/monex_widgets.dart';
 import 'services/auth_service.dart';
 import 'services/catalog_service.dart';
+import 'services/currency_api.dart';
 import 'services/history_repository.dart';
 import 'services/hive_service.dart';
 import 'services/location_service.dart';
@@ -73,6 +74,7 @@ Future<void> main() async {
           notificationService: notificationService,
           storeService: StoreService(rootBundle),
           locationService: const GeolocatorLocationService(),
+          currencyService: CurrencyApi(),
         ),
       ),
     );

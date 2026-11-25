@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:worthbang_lite/app.dart';
+import 'package:worthbang_lite/services/currency_api.dart';
 import 'package:worthbang_lite/services/notification_service.dart';
 import 'package:worthbang_lite/state/app_dependencies.dart';
 
+import 'support/fake_currency_service.dart';
 import 'support/fake_location_service.dart';
 import 'support/hive_test_environment.dart';
 
@@ -22,6 +24,7 @@ Future<AppDependencies> _loggedInDependencies(
   String name = 'Budi',
   FakeNotificationService? notifications,
   FakeLocationService? location,
+  FakeCurrencyService? currency,
 }) async {
   late AppDependencies dependencies;
   // Hive menulis ke file nyata; beri kesempatan I/O selesai di luar fake async.
@@ -29,6 +32,7 @@ Future<AppDependencies> _loggedInDependencies(
     dependencies = await env.dependencies(
       notificationService: notifications,
       locationService: location,
+      currencyService: currency,
     );
     await dependencies.sessionController.register(
       name: name,
@@ -494,5 +498,63 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('Toko Jauh'), findsOneWidget);
     expect(find.text('Rp4.600.000'), findsOneWidget);
+  });
+
+  testWidgets('konverter kurs memuat daftar kurs, mengonversi, dan menangani retry', (
+    tester,
+  ) async {
+    final currency = FakeCurrencyService(
+      error: const CurrencyApiException('Koneksi terputus.'),
+    );
+    final dependencies = await _loggedInDependencies(
+      tester,
+      env,
+      email: 'alur.kurs@worthbang.test',
+      currency: currency,
+    );
+
+    await _pumpApp(tester, dependencies);
+
+    final converterCard = find.byKey(const Key('home_converter_card'));
+    await tester.scrollUntilVisible(
+      converterCard,
+      250,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.ensureVisible(converterCard);
+    await tester.pumpAndSettle();
+    await tester.tap(converterCard);
+    await tester.pumpAndSettle();
+
+    expect(find.text('Kurs belum bisa dimuat'), findsOneWidget);
+    expect(find.text('Koneksi terputus.'), findsOneWidget);
+
+    currency.error = null;
+    await tester.tap(find.text('Coba lagi'));
+    await tester.pumpAndSettle();
+
+    expect(find.byKey(const Key('currency_tile_USD')), findsOneWidget);
+    expect(find.byKey(const Key('currency_tile_SGD')), findsOneWidget);
+    expect(find.byKey(const Key('currency_tile_JPY')), findsOneWidget);
+
+    await tester.enterText(find.byKey(const Key('converter_amount')), '1600000');
+    await tester.pumpAndSettle();
+
+    expect(
+      tester
+          .widget<Text>(find.byKey(const Key('converter_highlight_value')))
+          .data,
+      contains('USD'),
+    );
+
+    await tester.tap(find.byKey(const Key('currency_tile_JPY')));
+    await tester.pumpAndSettle();
+
+    expect(
+      tester
+          .widget<Text>(find.byKey(const Key('converter_highlight_value')))
+          .data,
+      contains('JPY'),
+    );
   });
 }

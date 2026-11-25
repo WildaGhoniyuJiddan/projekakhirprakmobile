@@ -5,6 +5,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:worthbang_lite/models/wishlist_item.dart';
 import 'package:worthbang_lite/services/auth_service.dart';
 import 'package:worthbang_lite/services/catalog_service.dart';
+import 'package:worthbang_lite/services/currency_api.dart';
 import 'package:worthbang_lite/services/history_repository.dart';
 import 'package:worthbang_lite/services/location_service.dart';
 import 'package:worthbang_lite/services/notification_service.dart';
@@ -16,6 +17,7 @@ import 'package:worthbang_lite/state/app_dependencies.dart';
 import 'package:worthbang_lite/state/session_controller.dart';
 import 'package:worthbang_lite/state/theme_controller.dart';
 
+import 'fake_currency_service.dart';
 import 'fake_location_service.dart';
 import 'json_asset_bundle.dart';
 import 'sample_catalog.dart';
@@ -48,6 +50,7 @@ class HiveTestEnvironment {
   Future<AppDependencies> dependencies({
     NotificationService? notificationService,
     LocationService? locationService,
+    CurrencyService? currencyService,
   }) async {
     SharedPreferences.setMockInitialValues({});
     final prefs = await SharedPreferences.getInstance();
@@ -74,6 +77,7 @@ class HiveTestEnvironment {
       notificationService: notificationService ?? FakeNotificationService(),
       storeService: StoreService(JsonAssetBundle(sampleStoresJson)),
       locationService: locationService ?? FakeLocationService(),
+      currencyService: currencyService ?? FakeCurrencyService(),
     );
   }
 

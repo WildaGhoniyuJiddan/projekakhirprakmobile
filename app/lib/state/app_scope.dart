@@ -1,6 +1,7 @@
 import 'package:flutter/widgets.dart';
 
 import '../services/catalog_service.dart';
+import '../services/currency_api.dart';
 import '../services/history_repository.dart';
 import '../services/location_service.dart';
 import '../services/notification_service.dart';
@@ -29,6 +30,7 @@ class AppScope extends InheritedWidget {
       dependencies.notificationService;
   StoreService get storeService => dependencies.storeService;
   LocationService get locationService => dependencies.locationService;
+  CurrencyService get currencyService => dependencies.currencyService;
 
   static AppScope of(BuildContext context) {
     final scope = context.dependOnInheritedWidgetOfExactType<AppScope>();

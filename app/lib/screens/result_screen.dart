@@ -7,6 +7,7 @@ import '../models/price_analysis.dart';
 import '../state/app_scope.dart';
 import '../widgets/verdict_badge.dart';
 import '../widgets/wishlist_form_dialog.dart';
+import 'converter_screen.dart';
 import 'nearby_stores_screen.dart';
 
 /// Halaman hasil analisis kelayakan harga dan daftar pembanding katalog.
@@ -272,6 +273,19 @@ class ResultScreen extends StatelessWidget {
                   MaterialPageRoute<void>(
                     builder: (_) => NearbyStoresScreen(
                       initialQuery: analysis.request.query,
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: MonexSpacing.gridGap),
+              MonexSecondaryButton(
+                key: const Key('result_convert_currency'),
+                label: 'Konversi ke Mata Uang Asing',
+                icon: Icons.currency_exchange_rounded,
+                onPressed: () => Navigator.of(context).push(
+                  MaterialPageRoute<void>(
+                    builder: (_) => ConverterScreen(
+                      initialAmountIdr: analysis.request.price,
                     ),
                   ),
                 ),

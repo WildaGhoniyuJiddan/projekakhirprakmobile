@@ -9,6 +9,7 @@ import '../state/app_scope.dart';
 import '../widgets/app_logo.dart';
 import '../widgets/product_series_card.dart';
 import '../widgets/verdict_badge.dart';
+import 'converter_screen.dart';
 import 'nearby_stores_screen.dart';
 import 'price_check_screen.dart';
 import 'product_detail_screen.dart';
@@ -165,6 +166,48 @@ class HomeScreen extends StatelessWidget {
                 onTap: () => _push(context, const NearbyStoresScreen()),
               ),
             ],
+          ),
+          const SizedBox(height: MonexSpacing.gridGap),
+          MonexSurfaceCard(
+            key: const Key('home_converter_card'),
+            onTap: () => _push(context, const ConverterScreen()),
+            padding: const EdgeInsets.all(MonexSpacing.cardPaddingCompact),
+            radius: MonexSpacing.radiusMd,
+            child: Row(
+              children: [
+                Container(
+                  width: 40,
+                  height: 40,
+                  decoration: BoxDecoration(
+                    color: MonexColors.limeMuted,
+                    borderRadius: BorderRadius.circular(MonexSpacing.radiusSm),
+                  ),
+                  child: const Icon(
+                    Icons.currency_exchange_rounded,
+                    size: 20,
+                    color: MonexColors.lime,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('Konverter Kurs', style: theme.textTheme.titleSmall),
+                      const SizedBox(height: 2),
+                      Text(
+                        'Konversi harga komponen dari IDR ke mata uang asing.',
+                        style: theme.textTheme.bodySmall,
+                      ),
+                    ],
+                  ),
+                ),
+                const Icon(
+                  Icons.chevron_right_rounded,
+                  color: MonexColors.textMuted,
+                ),
+              ],
+            ),
           ),
           const SizedBox(height: MonexSpacing.sectionGap),
           _RecentHistorySection(
