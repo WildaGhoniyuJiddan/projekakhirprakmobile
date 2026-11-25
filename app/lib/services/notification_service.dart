@@ -3,7 +3,7 @@ import 'package:flutter_timezone/flutter_timezone.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 
-/// Kontrak service notifikasi aplikasi (Modul 7).
+/// Kontrak service notifikasi aplikasi.
 abstract class NotificationService {
   Future<void> init();
   Future<bool> requestPermission();

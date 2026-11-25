@@ -2,7 +2,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 /// Wrapper SharedPreferences untuk sesi login dan preferensi tema.
 ///
-/// Semua akses key-value Modul 6 lewat kelas ini agar tidak ada pemanggilan
+/// Semua akses key-value lokal lewat kelas ini agar tidak ada pemanggilan
 /// `SharedPreferences.getInstance()` berulang di widget.
 class SessionPreferences {
   SessionPreferences(this._prefs);

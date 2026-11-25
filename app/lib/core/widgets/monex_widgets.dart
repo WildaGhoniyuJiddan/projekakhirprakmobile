@@ -1376,7 +1376,7 @@ class MonexNavItem {
   final String label;
 }
 
-/// FAB Monex: lingkaran lime dengan glow neon (DESIGN(reset) §5.6).
+/// FAB Monex: lingkaran lime dengan glow neon.
 class MonexFab extends StatelessWidget {
   const MonexFab({
     super.key,

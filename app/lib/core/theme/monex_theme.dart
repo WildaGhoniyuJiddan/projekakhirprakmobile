@@ -2,13 +2,9 @@ import 'package:flutter/material.dart';
 
 /// Design system "Monex" — Deep Dark Fintech.
 ///
-/// Sumber acuan: `DESIGN(reset).MD` §3–4. Token di bawah disalin persis
-/// dari dokumen; Plus Jakarta Sans di-*self-host* (bundled di
-/// `assets/fonts/`) supaya tema konsisten tanpa fetch runtime.
-///
-/// Dark = implementasi literal dokumen. Light = inversi semantik dari
-/// token yang sama (surface/appBg/teks), supaya toggle tema di Profil
-/// tetap punya arti; aksen lime tetap sama di kedua mode.
+/// Plus Jakarta Sans di-*self-host* (bundled di `assets/fonts/`) supaya tema
+/// konsisten tanpa fetch runtime. Mode terang memakai inversi semantik dari
+/// token yang sama dengan aksen lime tetap konsisten di kedua mode.
 abstract final class MonexColors {
   // Backgrounds
   static const Color canvas = Color(0xFF070A10);
@@ -49,7 +45,7 @@ abstract final class MonexColors {
   static const Color verdictBad = Color(0xFFF87171);
 }
 
-/// Token spacing & radius (DESIGN(reset).MD §3.1).
+/// Token spacing & radius.
 abstract final class MonexSpacing {
   static const double screenPaddingH = 20.0;
   static const double screenPaddingV = 16.0;
@@ -128,8 +124,7 @@ abstract final class MonexDecorations {
 /// Font family yang di-*self-host* (lihat `pubspec.yaml` → flutter.fonts).
 const String kMonexFontFamily = 'PlusJakartaSans';
 
-/// Palet per-mode: dark memakai token dokumen apa adanya; light memakai
-/// inversi semantik dari token yang sama.
+/// Palet warna per-mode (gelap dan terang).
 @immutable
 class MonexPalette {
   const MonexPalette({
@@ -207,7 +202,7 @@ class MonexPalette {
   );
 }
 
-/// Theme aplikasi. Dark = implementasi literal DESIGN(reset).MD.
+/// Theme aplikasi untuk mode gelap dan terang.
 abstract final class MonexTheme {
   static ThemeData get darkTheme => _build(MonexPalette.dark);
 

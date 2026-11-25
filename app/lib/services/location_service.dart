@@ -4,7 +4,7 @@ import 'package:geolocator/geolocator.dart';
 
 import '../models/location_snapshot.dart';
 
-/// Kontrak pengambilan lokasi perangkat (Modul 7 — LBS).
+/// Kontrak pengambilan lokasi perangkat.
 abstract class LocationService {
   Future<bool> isServiceEnabled();
   Future<LocationSnapshot> getCurrentLocation();

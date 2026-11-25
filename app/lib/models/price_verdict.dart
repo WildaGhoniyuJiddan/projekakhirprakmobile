@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 /// Kontrak verdict harga.
 ///
 /// Setiap subclass menampilkan label, warna, ikon, dan saran yang berbeda.
-/// Ini adalah bukti inheritance + polymorphism yang dipakai langsung oleh UI.
 abstract class PriceVerdict {
   const PriceVerdict();
 

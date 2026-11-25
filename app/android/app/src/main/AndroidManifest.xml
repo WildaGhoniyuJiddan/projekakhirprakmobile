@@ -1,12 +1,12 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
-    <!-- Modul 5: HTTP publik + Modul 7: tile OpenStreetMap -->
+    <!-- Internet access & map tiles -->
     <uses-permission android:name="android.permission.INTERNET" />
 
-    <!-- Modul 7: LBS -->
+    <!-- Location -->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
-    <!-- Modul 7: local notification -->
+    <!-- Local notifications -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.VIBRATE" />

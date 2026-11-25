@@ -1,22 +1,3 @@
-# Dokumen perencanaan — tidak dikumpulkan
-/PLAN.md
-
-# Baseline clone repo acuan — tidak dikumpulkan
-/reference/
-
-# Tool bantu generate aset — tidak dibutuhkan untuk build tugas
-/tool/
-
-# Platform selain Android — tugas ini Android-only
-/app/ios/
-/app/linux/
-/app/macos/
-/app/web/
-/app/windows/
-
-# README bawaan Flutter — tidak dipakai
-/app/README.md
-
 # Flutter/Dart artifacts
 /app/.dart_tool/
 /app/build/
@@ -26,11 +7,6 @@
 /app/.packages
 /app/android/.gradle/
 /app/android/local.properties
-/app/ios/Flutter/.last_build_id
-
-# Python
-__pycache__/
-*.pyc
 
 # IDE / OS
 .idea/
