@@ -23,6 +23,7 @@ class WishlistTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final palette = MonexPalette.of(context);
 
     return MonexSurfaceCard(
       onTap: onCheckPrice,
@@ -35,13 +36,13 @@ class WishlistTile extends StatelessWidget {
             width: 42,
             height: 42,
             decoration: BoxDecoration(
-              color: MonexColors.limeMuted,
+              color: palette.accentSoft,
               borderRadius: BorderRadius.circular(MonexSpacing.radiusSm),
             ),
-            child: const Icon(
+            child: Icon(
               Icons.favorite_rounded,
               size: 20,
-              color: MonexColors.lime,
+              color: palette.accent,
             ),
           ),
           const SizedBox(width: 12),
@@ -64,7 +65,7 @@ class WishlistTile extends StatelessWidget {
                     Text(
                       'Target ${formatRupiah(item.targetPrice)}',
                       style: theme.textTheme.bodyMedium?.copyWith(
-                        color: MonexColors.lime,
+                        color: palette.accent,
                         fontWeight: FontWeight.w700,
                       ),
                     ),
@@ -74,7 +75,7 @@ class WishlistTile extends StatelessWidget {
                         vertical: 2,
                       ),
                       decoration: BoxDecoration(
-                        color: MonexColors.surfaceElevated,
+                        color: palette.surfaceElevated,
                         borderRadius: BorderRadius.circular(
                           MonexSpacing.radiusPill,
                         ),
@@ -83,7 +84,7 @@ class WishlistTile extends StatelessWidget {
                         formatCondition(item.condition),
                         style: theme.textTheme.labelSmall?.copyWith(
                           fontSize: 10,
-                          color: MonexColors.textSecondary,
+                          color: palette.textSecondary,
                         ),
                       ),
                     ),
@@ -99,10 +100,10 @@ class WishlistTile extends StatelessWidget {
           ),
           IconButton(
             tooltip: 'Hapus wishlist',
-            icon: const Icon(
+            icon: Icon(
               Icons.delete_outline_rounded,
               size: 20,
-              color: MonexColors.danger,
+              color: palette.danger,
             ),
             onPressed: onDelete,
           ),

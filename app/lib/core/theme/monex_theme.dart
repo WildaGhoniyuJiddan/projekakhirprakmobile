@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 /// Design system "Monex" — Deep Dark Fintech.
 ///
@@ -139,11 +140,20 @@ class MonexPalette {
     required this.textPrimary,
     required this.textSecondary,
     required this.textMuted,
+    required this.accent,
+    required this.accentSoft,
+    required this.accentBorder,
+    required this.buttonBg,
+    required this.buttonFg,
     required this.danger,
     required this.dangerMuted,
+    required this.onDanger,
     required this.chartTrack,
     required this.barInactive,
     required this.barActive,
+    required this.cardShadow,
+    required this.heroShadow,
+    required this.buttonShadow,
   });
 
   final Brightness brightness;
@@ -157,11 +167,36 @@ class MonexPalette {
   final Color textPrimary;
   final Color textSecondary;
   final Color textMuted;
+  final Color accent;
+  final Color accentSoft;
+  final Color accentBorder;
+  final Color buttonBg;
+  final Color buttonFg;
   final Color danger;
   final Color dangerMuted;
+  final Color onDanger;
   final Color chartTrack;
   final Color barInactive;
   final Color barActive;
+  final List<BoxShadow> cardShadow;
+  final List<BoxShadow> heroShadow;
+  final List<BoxShadow> buttonShadow;
+
+  bool get isDark => brightness == Brightness.dark;
+
+  static MonexPalette of(BuildContext context) {
+    return Theme.of(context).brightness == Brightness.dark ? dark : light;
+  }
+
+  /// Menyesuaikan warna verdict agar tetap kontras di latar terang maupun gelap.
+  Color readableVerdict(Color color) {
+    if (isDark) return color;
+    if (color == MonexColors.verdictGood) return const Color(0xFF15803D);
+    if (color == MonexColors.verdictFair) return const Color(0xFFB45309);
+    if (color == MonexColors.verdictBad) return const Color(0xFFDC2626);
+    if (color == MonexColors.textSecondary) return textSecondary;
+    return Color.lerp(color, Colors.black, 0.30)!;
+  }
 
   static const MonexPalette dark = MonexPalette(
     brightness: Brightness.dark,
@@ -175,30 +210,83 @@ class MonexPalette {
     textPrimary: MonexColors.textPrimary,
     textSecondary: MonexColors.textSecondary,
     textMuted: MonexColors.textMuted,
+    accent: MonexColors.lime,
+    accentSoft: MonexColors.limeMuted,
+    accentBorder: Color.fromRGBO(172, 239, 52, 0.45),
+    buttonBg: MonexColors.lime,
+    buttonFg: MonexColors.textDark,
     danger: MonexColors.danger,
     dangerMuted: MonexColors.dangerMuted,
+    onDanger: MonexColors.textDark,
     chartTrack: MonexColors.chartTrack,
     barInactive: MonexColors.barInactive,
     barActive: MonexColors.barActive,
+    cardShadow: [],
+    heroShadow: [
+      BoxShadow(
+        color: Color.fromRGBO(0, 0, 0, 0.50),
+        blurRadius: 30,
+        spreadRadius: -10,
+        offset: Offset(0, 10),
+      ),
+    ],
+    buttonShadow: [
+      BoxShadow(
+        color: Color.fromRGBO(172, 239, 52, 0.45),
+        blurRadius: 24,
+        spreadRadius: -4,
+        offset: Offset(0, 8),
+      ),
+    ],
   );
 
   static const MonexPalette light = MonexPalette(
     brightness: Brightness.light,
-    appBg: Color(0xFFF4F6FA),
+    appBg: Color(0xFFF3F6FA),
     canvas: Color(0xFFFFFFFF),
     surface: Color(0xFFFFFFFF),
     surfaceHover: Color(0xFFF1F5F9),
-    surfaceElevated: Color(0xFFE2E8F0),
-    borderSubtle: Color.fromRGBO(15, 23, 42, 0.08),
-    borderLight: Color.fromRGBO(15, 23, 42, 0.12),
+    surfaceElevated: Color(0xFFE9EEF5),
+    borderSubtle: Color(0xFFE2E8F0),
+    borderLight: Color(0xFFCBD5E1),
     textPrimary: Color(0xFF0F172A),
     textSecondary: Color(0xFF475569),
-    textMuted: Color(0xFF94A3B8),
-    danger: Color(0xFFE11D48),
-    dangerMuted: Color.fromRGBO(225, 29, 72, 0.12),
+    textMuted: Color(0xFF64748B),
+    accent: Color(0xFF4D7C0F),
+    accentSoft: Color(0xFFECFCCB),
+    accentBorder: Color(0xFF84CC16),
+    buttonBg: Color(0xFFA3E635),
+    buttonFg: Color(0xFF0F172A),
+    danger: Color(0xFFDC2626),
+    dangerMuted: Color(0xFFFEE2E2),
+    onDanger: Color(0xFFFFFFFF),
     chartTrack: Color(0xFFE2E8F0),
     barInactive: Color(0xFFCBD5E1),
-    barActive: Color(0xFF94A3B8),
+    barActive: Color(0xFF64748B),
+    cardShadow: [
+      BoxShadow(
+        color: Color.fromRGBO(15, 23, 42, 0.05),
+        blurRadius: 14,
+        spreadRadius: -2,
+        offset: Offset(0, 4),
+      ),
+    ],
+    heroShadow: [
+      BoxShadow(
+        color: Color.fromRGBO(101, 163, 13, 0.22),
+        blurRadius: 20,
+        spreadRadius: -6,
+        offset: Offset(0, 8),
+      ),
+    ],
+    buttonShadow: [
+      BoxShadow(
+        color: Color.fromRGBO(101, 163, 13, 0.28),
+        blurRadius: 16,
+        spreadRadius: -4,
+        offset: Offset(0, 6),
+      ),
+    ],
   );
 }
 
@@ -215,21 +303,22 @@ abstract final class MonexTheme {
       bodyColor: p.textPrimary,
       displayColor: p.textPrimary,
     );
+    final dialogBg = p.isDark ? p.surfaceElevated : p.surface;
 
     return base.copyWith(
       scaffoldBackgroundColor: p.appBg,
       canvasColor: p.canvas,
-      primaryColor: MonexColors.lime,
+      primaryColor: p.accent,
       dividerColor: p.borderSubtle,
       colorScheme: ColorScheme(
         brightness: p.brightness,
-        primary: MonexColors.lime,
-        onPrimary: MonexColors.textDark,
+        primary: p.accent,
+        onPrimary: p.isDark ? MonexColors.textDark : Colors.white,
         primaryContainer: p.surfaceElevated,
         onPrimaryContainer: p.textPrimary,
-        secondary: MonexColors.limeBright,
-        onSecondary: MonexColors.textDark,
-        secondaryContainer: MonexColors.limeMuted,
+        secondary: p.buttonBg,
+        onSecondary: p.buttonFg,
+        secondaryContainer: p.accentSoft,
         onSecondaryContainer: p.textPrimary,
         surface: p.surface,
         onSurface: p.textPrimary,
@@ -239,7 +328,7 @@ abstract final class MonexTheme {
         surfaceContainer: p.surface,
         surfaceContainerHigh: p.surfaceElevated,
         error: p.danger,
-        onError: MonexColors.textDark,
+        onError: p.onDanger,
         errorContainer: p.dangerMuted,
         onErrorContainer: p.textPrimary,
         outline: p.borderLight,
@@ -248,7 +337,7 @@ abstract final class MonexTheme {
         scrim: Colors.black,
         inverseSurface: p.surface,
         onInverseSurface: p.textPrimary,
-        inversePrimary: MonexColors.lime,
+        inversePrimary: p.accent,
       ),
       textTheme: baseTextTheme.copyWith(
         // Angka nominal besar & display.
@@ -312,6 +401,17 @@ abstract final class MonexTheme {
         elevation: 0,
         scrolledUnderElevation: 0,
         centerTitle: false,
+        systemOverlayStyle: p.isDark
+            ? SystemUiOverlayStyle.light.copyWith(
+                statusBarColor: Colors.transparent,
+                systemNavigationBarColor: p.surface,
+                systemNavigationBarIconBrightness: Brightness.light,
+              )
+            : SystemUiOverlayStyle.dark.copyWith(
+                statusBarColor: Colors.transparent,
+                systemNavigationBarColor: p.surface,
+                systemNavigationBarIconBrightness: Brightness.dark,
+              ),
         titleTextStyle: TextStyle(
           fontFamily: kMonexFontFamily,
           fontSize: 18,
@@ -320,10 +420,27 @@ abstract final class MonexTheme {
           color: p.textPrimary,
         ),
       ),
+      bottomNavigationBarTheme: BottomNavigationBarThemeData(
+        backgroundColor: p.surface,
+        selectedItemColor: p.accent,
+        unselectedItemColor: p.textSecondary,
+        elevation: 0,
+        type: BottomNavigationBarType.fixed,
+        selectedLabelStyle: const TextStyle(
+          fontFamily: kMonexFontFamily,
+          fontSize: 11,
+          fontWeight: FontWeight.w600,
+        ),
+        unselectedLabelStyle: const TextStyle(
+          fontFamily: kMonexFontFamily,
+          fontSize: 11,
+          fontWeight: FontWeight.w500,
+        ),
+      ),
       navigationBarTheme: NavigationBarThemeData(
         backgroundColor: p.surface,
         surfaceTintColor: Colors.transparent,
-        indicatorColor: MonexColors.limeMuted,
+        indicatorColor: p.accentSoft,
         elevation: 0,
         height: 68,
         labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
@@ -331,7 +448,7 @@ abstract final class MonexTheme {
           final selected = states.contains(WidgetState.selected);
           return IconThemeData(
             size: 22,
-            color: selected ? MonexColors.lime : p.textSecondary,
+            color: selected ? p.accent : p.textSecondary,
           );
         }),
         labelTextStyle: WidgetStateProperty.resolveWith((states) {
@@ -352,8 +469,6 @@ abstract final class MonexTheme {
           horizontal: 12,
           vertical: 14,
         ),
-        // Prefix icon default Flutter 48px + prefixText + padding = Row
-        // melebihi 320px di layar sempit. Ketatkan constraint agar aman.
         prefixIconConstraints: const BoxConstraints(
           minWidth: 40,
           minHeight: 40,
@@ -364,7 +479,7 @@ abstract final class MonexTheme {
         ),
         hintStyle: TextStyle(color: p.textMuted, fontSize: 12),
         labelStyle: TextStyle(color: p.textSecondary, fontSize: 12),
-        floatingLabelStyle: TextStyle(color: MonexColors.lime, fontSize: 12),
+        floatingLabelStyle: TextStyle(color: p.accent, fontSize: 12),
         prefixIconColor: p.textSecondary,
         suffixIconColor: p.textSecondary,
         enabledBorder: OutlineInputBorder(
@@ -373,7 +488,7 @@ abstract final class MonexTheme {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(MonexSpacing.radiusMd),
-          borderSide: const BorderSide(color: MonexColors.lime, width: 1.4),
+          borderSide: BorderSide(color: p.accent, width: 1.4),
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(MonexSpacing.radiusMd),
@@ -386,8 +501,8 @@ abstract final class MonexTheme {
       ),
       filledButtonTheme: FilledButtonThemeData(
         style: FilledButton.styleFrom(
-          backgroundColor: MonexColors.lime,
-          foregroundColor: MonexColors.textDark,
+          backgroundColor: p.buttonBg,
+          foregroundColor: p.buttonFg,
           disabledBackgroundColor: p.surfaceElevated,
           disabledForegroundColor: p.textMuted,
           elevation: 0,
@@ -429,7 +544,7 @@ abstract final class MonexTheme {
       ),
       textButtonTheme: TextButtonThemeData(
         style: TextButton.styleFrom(
-          foregroundColor: MonexColors.lime,
+          foregroundColor: p.accent,
           textStyle: const TextStyle(
             fontFamily: kMonexFontFamily,
             fontSize: 13,
@@ -453,17 +568,24 @@ abstract final class MonexTheme {
       ),
       chipTheme: ChipThemeData(
         backgroundColor: p.surface,
-        selectedColor: MonexColors.limeMuted,
+        selectedColor: p.accentSoft,
         side: BorderSide(color: p.borderSubtle),
+        checkmarkColor: p.accent,
         labelStyle: TextStyle(
           fontFamily: kMonexFontFamily,
           fontSize: 12,
           color: p.textSecondary,
         ),
+        secondaryLabelStyle: TextStyle(
+          fontFamily: kMonexFontFamily,
+          fontSize: 12,
+          fontWeight: FontWeight.w600,
+          color: p.accent,
+        ),
         shape: const StadiumBorder(),
       ),
       dialogTheme: DialogThemeData(
-        backgroundColor: p.surfaceElevated,
+        backgroundColor: dialogBg,
         surfaceTintColor: Colors.transparent,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(MonexSpacing.radiusSheet),
@@ -500,12 +622,12 @@ abstract final class MonexTheme {
       switchTheme: SwitchThemeData(
         thumbColor: WidgetStateProperty.resolveWith((states) {
           return states.contains(WidgetState.selected)
-              ? MonexColors.textDark
+              ? p.buttonFg
               : p.textSecondary;
         }),
         trackColor: WidgetStateProperty.resolveWith((states) {
           return states.contains(WidgetState.selected)
-              ? MonexColors.lime
+              ? p.buttonBg
               : p.surfaceElevated;
         }),
         trackOutlineColor: WidgetStatePropertyAll(p.borderLight),
@@ -514,20 +636,20 @@ abstract final class MonexTheme {
         iconColor: p.textSecondary,
         textColor: p.textPrimary,
       ),
-      sliderTheme: const SliderThemeData(
-        activeTrackColor: MonexColors.lime,
-        inactiveTrackColor: MonexColors.chartTrack,
-        thumbColor: MonexColors.lime,
-        overlayColor: MonexColors.limeMuted,
+      sliderTheme: SliderThemeData(
+        activeTrackColor: p.accent,
+        inactiveTrackColor: p.chartTrack,
+        thumbColor: p.accent,
+        overlayColor: p.accentSoft,
       ),
       progressIndicatorTheme: ProgressIndicatorThemeData(
-        color: MonexColors.lime,
+        color: p.accent,
         linearTrackColor: p.chartTrack,
         circularTrackColor: p.chartTrack,
       ),
       tooltipTheme: TooltipThemeData(
         decoration: BoxDecoration(
-          color: p.surfaceElevated,
+          color: dialogBg,
           borderRadius: BorderRadius.circular(MonexSpacing.radiusSm),
           border: Border.all(color: p.borderSubtle),
         ),

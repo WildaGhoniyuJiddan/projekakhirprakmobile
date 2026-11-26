@@ -226,6 +226,7 @@ class _SeriesHeader extends StatelessWidget {
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
                   style: theme.textTheme.titleLarge?.copyWith(
+                    color: MonexColors.textPrimary,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
@@ -259,6 +260,7 @@ class _VariantCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final palette = MonexPalette.of(context);
 
     return MonexSurfaceCard(
       onTap: onTap,
@@ -271,13 +273,13 @@ class _VariantCard extends StatelessWidget {
             width: 36,
             height: 36,
             decoration: BoxDecoration(
-              color: MonexColors.limeMuted,
+              color: palette.accentSoft,
               borderRadius: BorderRadius.circular(MonexSpacing.radiusSm),
             ),
-            child: const Icon(
+            child: Icon(
               Icons.inventory_2_outlined,
               size: 18,
-              color: MonexColors.lime,
+              color: palette.accent,
             ),
           ),
           const SizedBox(width: 12),
@@ -297,7 +299,7 @@ class _VariantCard extends StatelessWidget {
                     Text(
                       formatRupiah(variant.price),
                       style: theme.textTheme.titleSmall?.copyWith(
-                        color: MonexColors.lime,
+                        color: palette.accent,
                       ),
                     ),
                     if (cheapest) ...[
@@ -308,7 +310,7 @@ class _VariantCard extends StatelessWidget {
                           vertical: 2,
                         ),
                         decoration: BoxDecoration(
-                          color: MonexColors.limeMuted,
+                          color: palette.accentSoft,
                           borderRadius: BorderRadius.circular(
                             MonexSpacing.radiusPill,
                           ),
@@ -317,7 +319,7 @@ class _VariantCard extends StatelessWidget {
                           'Termurah',
                           style: theme.textTheme.labelSmall?.copyWith(
                             fontSize: 9,
-                            color: MonexColors.lime,
+                            color: palette.accent,
                             fontWeight: FontWeight.w700,
                           ),
                         ),
@@ -329,10 +331,10 @@ class _VariantCard extends StatelessWidget {
             ),
           ),
           const SizedBox(width: 8),
-          const Icon(
+          Icon(
             Icons.chevron_right_rounded,
             size: 18,
-            color: MonexColors.textMuted,
+            color: palette.textMuted,
           ),
         ],
       ),

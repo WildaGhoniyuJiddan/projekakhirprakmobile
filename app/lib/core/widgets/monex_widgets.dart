@@ -36,15 +36,16 @@ class MonexSurfaceCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = MonexPalette.of(context);
     final decoration = BoxDecoration(
-      color: gradient == null ? (color ?? MonexColors.surface) : null,
+      color: gradient == null ? (color ?? palette.surface) : null,
       gradient: gradient,
       borderRadius: BorderRadius.circular(radius),
       border: Border.all(
-        color: borderColor ?? MonexColors.borderSubtle,
+        color: borderColor ?? palette.borderSubtle,
         width: 1,
       ),
-      boxShadow: boxShadow,
+      boxShadow: boxShadow ?? palette.cardShadow,
     );
 
     final content = Material(
@@ -88,6 +89,7 @@ class MonexGradientCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = MonexPalette.of(context);
     final content = Material(
       type: MaterialType.transparency,
       child: Padding(padding: padding, child: child),
@@ -97,7 +99,11 @@ class MonexGradientCard extends StatelessWidget {
       borderRadius: BorderRadius.circular(radius),
       clipBehavior: Clip.antiAlias,
       child: Ink(
-        decoration: MonexDecorations.visaCard(radius: radius),
+        decoration: BoxDecoration(
+          gradient: MonexDecorations.visaCardGradient,
+          borderRadius: BorderRadius.circular(radius),
+          boxShadow: palette.heroShadow,
+        ),
         child: onTap == null ? content : InkWell(onTap: onTap, child: content),
       ),
     );
@@ -283,13 +289,14 @@ class MonexPrimaryButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = MonexPalette.of(context);
     final button = ElevatedButton(
       onPressed: loading ? null : onPressed,
       style: ElevatedButton.styleFrom(
-        backgroundColor: MonexColors.lime,
-        foregroundColor: MonexColors.textDark,
-        disabledBackgroundColor: MonexColors.lime.withValues(alpha: 0.35),
-        disabledForegroundColor: MonexColors.textDark.withValues(alpha: 0.6),
+        backgroundColor: palette.buttonBg,
+        foregroundColor: palette.buttonFg,
+        disabledBackgroundColor: palette.buttonBg.withValues(alpha: 0.35),
+        disabledForegroundColor: palette.buttonFg.withValues(alpha: 0.6),
         elevation: 0,
         padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
         shape: const StadiumBorder(),
@@ -300,12 +307,12 @@ class MonexPrimaryButton extends StatelessWidget {
         ),
       ),
       child: loading
-          ? const SizedBox(
+          ? SizedBox(
               height: 18,
               width: 18,
               child: CircularProgressIndicator(
                 strokeWidth: 2,
-                color: MonexColors.textDark,
+                color: palette.buttonFg,
               ),
             )
           : Row(
@@ -331,9 +338,7 @@ class MonexPrimaryButton extends StatelessWidget {
     return DecoratedBox(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(MonexSpacing.radiusPill),
-        boxShadow: onPressed != null && !loading
-            ? MonexDecorations.limeGlowShadow
-            : null,
+        boxShadow: onPressed != null && !loading ? palette.buttonShadow : null,
       ),
       child: button,
     );
@@ -357,11 +362,13 @@ class MonexSecondaryButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = MonexPalette.of(context);
     final button = OutlinedButton(
       onPressed: onPressed,
       style: OutlinedButton.styleFrom(
-        foregroundColor: Theme.of(context).colorScheme.onSurface,
-        side: const BorderSide(color: MonexColors.borderLight),
+        backgroundColor: palette.isDark ? null : palette.surface,
+        foregroundColor: palette.textPrimary,
+        side: BorderSide(color: palette.borderLight),
         padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
         shape: const StadiumBorder(),
         textStyle: const TextStyle(
@@ -404,13 +411,13 @@ class MonexSegmentedControl<T> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+    final palette = MonexPalette.of(context);
     return Container(
       padding: const EdgeInsets.all(4),
       decoration: BoxDecoration(
-        color: theme.colorScheme.surface,
+        color: palette.isDark ? palette.surface : palette.surfaceHover,
         borderRadius: BorderRadius.circular(MonexSpacing.radiusMd),
-        border: Border.all(color: MonexColors.borderSubtle),
+        border: Border.all(color: palette.borderSubtle),
       ),
       child: Row(
         children: [
@@ -453,7 +460,7 @@ class _SegmentButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+    final palette = MonexPalette.of(context);
     return GestureDetector(
       onTap: onTap,
       behavior: HitTestBehavior.opaque,
@@ -462,10 +469,10 @@ class _SegmentButton extends StatelessWidget {
         curve: Curves.easeOutCubic,
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 9),
         decoration: BoxDecoration(
-          color: selected ? MonexColors.limeMuted : Colors.transparent,
+          color: selected ? palette.accentSoft : Colors.transparent,
           borderRadius: BorderRadius.circular(MonexSpacing.radiusSm),
           border: Border.all(
-            color: selected ? MonexColors.lime : Colors.transparent,
+            color: selected ? palette.accentBorder : Colors.transparent,
             width: 1,
           ),
         ),
@@ -477,27 +484,24 @@ class _SegmentButton extends StatelessWidget {
               Icon(
                 icon,
                 size: 15,
-                color: selected
-                    ? MonexColors.lime
-                    : theme.textTheme.bodySmall!.color,
+                color: selected ? palette.accent : palette.textSecondary,
               ),
-              const SizedBox(width: 6),
+              if (label.isNotEmpty) const SizedBox(width: 6),
             ],
-            Flexible(
-              child: Text(
-                label,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                  fontFamily: kMonexFontFamily,
-                  fontSize: 12,
-                  fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
-                  color: selected
-                      ? MonexColors.lime
-                      : theme.textTheme.bodySmall!.color,
+            if (label.isNotEmpty)
+              Flexible(
+                child: Text(
+                  label,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontFamily: kMonexFontFamily,
+                    fontSize: 12,
+                    fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
+                    color: selected ? palette.accent : palette.textSecondary,
+                  ),
                 ),
               ),
-            ),
           ],
         ),
       ),
@@ -542,6 +546,7 @@ class MonexTransactionTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final palette = MonexPalette.of(context);
     return Material(
       color: Colors.transparent,
       child: InkWell(
@@ -555,13 +560,13 @@ class MonexTransactionTile extends StatelessWidget {
                   width: 38,
                   height: 38,
                   decoration: BoxDecoration(
-                    color: leadingBackground ?? MonexColors.limeMuted,
+                    color: leadingBackground ?? palette.accentSoft,
                     borderRadius: BorderRadius.circular(MonexSpacing.radiusSm),
                   ),
                   child: Icon(
                     leadingIcon,
                     size: 18,
-                    color: leadingColor ?? MonexColors.lime,
+                    color: leadingColor ?? palette.accent,
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -602,26 +607,29 @@ class MonexTransactionTile extends StatelessWidget {
 // 5.6. PROGRESS
 // ============================================================================
 
-/// Progress bar Monex: track gelap, fill lime.
+/// Progress bar Monex yang adaptif terhadap mode gelap dan terang.
 class MonexProgressBar extends StatelessWidget {
   const MonexProgressBar({
     super.key,
     required this.value,
     this.height = 8,
-    this.color = MonexColors.lime,
-    this.trackColor = MonexColors.chartTrack,
+    this.color,
+    this.trackColor,
     this.animate = true,
   });
 
   /// 0.0 – 1.0. Nilai di luar rentang dijepit (edge-case safe).
   final double value;
   final double height;
-  final Color color;
-  final Color trackColor;
+  final Color? color;
+  final Color? trackColor;
   final bool animate;
 
   @override
   Widget build(BuildContext context) {
+    final palette = MonexPalette.of(context);
+    final resolvedColor = color ?? palette.accent;
+    final resolvedTrack = trackColor ?? palette.chartTrack;
     final clamped = value.isNaN ? 0.0 : value.clamp(0.0, 1.0);
     return ClipRRect(
       borderRadius: BorderRadius.circular(height),
@@ -632,8 +640,8 @@ class MonexProgressBar extends StatelessWidget {
         builder: (context, v, _) => LinearProgressIndicator(
           value: v,
           minHeight: height,
-          backgroundColor: trackColor,
-          valueColor: AlwaysStoppedAnimation<Color>(color),
+          backgroundColor: resolvedTrack,
+          valueColor: AlwaysStoppedAnimation<Color>(resolvedColor),
         ),
       ),
     );
@@ -650,21 +658,23 @@ class MonexMiniVerticalBars extends StatelessWidget {
     super.key,
     required this.values,
     this.height = 72,
-    this.barColor = MonexColors.lime,
-    this.trackColor = MonexColors.chartTrack,
+    this.barColor,
+    this.trackColor,
     this.highlightIndex,
   });
 
   final List<double> values;
   final double height;
-  final Color barColor;
-  final Color trackColor;
+  final Color? barColor;
+  final Color? trackColor;
 
   /// Indeks bar yang disorot (mis. nilai tertinggi).
   final int? highlightIndex;
 
   @override
   Widget build(BuildContext context) {
+    final palette = MonexPalette.of(context);
+    final resolvedBar = barColor ?? palette.accent;
     if (values.isEmpty) {
       return SizedBox(
         height: height,
@@ -695,8 +705,8 @@ class MonexMiniVerticalBars extends StatelessWidget {
                     height: height * (0.06 + 0.94 * v.clamp(0.0, 1.0)),
                     decoration: BoxDecoration(
                       color: i == highlightIndex
-                          ? barColor
-                          : barColor.withValues(alpha: 0.28),
+                          ? resolvedBar
+                          : resolvedBar.withValues(alpha: 0.28),
                       borderRadius: BorderRadius.circular(3),
                     ),
                   ),
@@ -718,9 +728,9 @@ class MonexSplineChart extends StatelessWidget {
     super.key,
     required this.points,
     this.height = 160,
-    this.color = MonexColors.lime,
-    this.fillColor = MonexColors.limeMuted,
-    this.gridColor = MonexColors.chartTrack,
+    this.color,
+    this.fillColor,
+    this.gridColor,
     this.strokeWidth = 2.5,
     this.showDots = true,
   });
@@ -728,14 +738,18 @@ class MonexSplineChart extends StatelessWidget {
   /// Urutan nilai (bukan koordinat). Sumbu Y dinormalisasi sendiri.
   final List<double> points;
   final double height;
-  final Color color;
-  final Color fillColor;
-  final Color gridColor;
+  final Color? color;
+  final Color? fillColor;
+  final Color? gridColor;
   final double strokeWidth;
   final bool showDots;
 
   @override
   Widget build(BuildContext context) {
+    final palette = MonexPalette.of(context);
+    final resolvedColor = color ?? palette.accent;
+    final resolvedFill = fillColor ?? palette.accentSoft;
+    final resolvedGrid = gridColor ?? palette.chartTrack;
     if (points.length < 2) {
       return SizedBox(
         height: height,
@@ -765,9 +779,9 @@ class MonexSplineChart extends StatelessWidget {
           painter: _SplinePainter(
             points: points,
             progress: t,
-            color: color,
-            fillColor: fillColor,
-            gridColor: gridColor,
+            color: resolvedColor,
+            fillColor: resolvedFill,
+            gridColor: resolvedGrid,
             strokeWidth: strokeWidth,
             showDots: showDots,
             minV: minV,
@@ -911,14 +925,17 @@ void showMonexToast(
   final messenger = ScaffoldMessenger.maybeOf(context);
   if (messenger == null) return;
   messenger.hideCurrentSnackBar();
+  final palette = MonexPalette.of(context);
   final color = isError
-      ? MonexColors.danger
+      ? palette.danger
       : isSuccess
-      ? MonexColors.lime
-      : MonexColors.surfaceElevated;
-  final fg = (isError || isSuccess)
-      ? MonexColors.textDark
-      : Theme.of(context).colorScheme.onSurface;
+      ? palette.buttonBg
+      : palette.surfaceElevated;
+  final fg = isError
+      ? palette.onDanger
+      : isSuccess
+      ? palette.buttonFg
+      : palette.textPrimary;
 
   messenger.showSnackBar(
     SnackBar(
@@ -992,7 +1009,11 @@ class _MonexShimmerState extends State<MonexShimmer>
 
   @override
   Widget build(BuildContext context) {
-    final base = Theme.of(context).colorScheme.surfaceContainerHighest;
+    final palette = MonexPalette.of(context);
+    final base = palette.surfaceElevated;
+    final highlight = palette.isDark
+        ? Color.lerp(base, MonexColors.lime, 0.18)!
+        : Color.lerp(base, Colors.white, 0.72)!;
     return ClipRRect(
       borderRadius: BorderRadius.circular(widget.radius),
       child: AnimatedBuilder(
@@ -1005,7 +1026,7 @@ class _MonexShimmerState extends State<MonexShimmer>
               gradient: LinearGradient(
                 begin: Alignment(-1 - 2 * _c.value, 0),
                 end: Alignment(1 - 2 * _c.value, 0),
-                colors: [base, Color.lerp(base, MonexColors.lime, 0.18)!, base],
+                colors: [base, highlight, base],
                 stops: const [0.0, 0.5, 1.0],
               ),
             ),
@@ -1097,6 +1118,7 @@ class _MonexOrbitLoaderState extends State<MonexOrbitLoader>
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final palette = MonexPalette.of(context);
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -1111,8 +1133,8 @@ class _MonexOrbitLoaderState extends State<MonexOrbitLoader>
                 child: CustomPaint(
                   size: Size.square(widget.size),
                   painter: _OrbitPainter(
-                    color: MonexColors.lime,
-                    trackColor: theme.colorScheme.surfaceContainerHighest,
+                    color: palette.accent,
+                    trackColor: palette.surfaceElevated,
                   ),
                 ),
               ),
@@ -1125,8 +1147,8 @@ class _MonexOrbitLoaderState extends State<MonexOrbitLoader>
                   height: widget.size * 0.32,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: MonexColors.lime,
-                    boxShadow: MonexDecorations.limeGlowShadow,
+                    color: palette.buttonBg,
+                    boxShadow: palette.buttonShadow,
                   ),
                 ),
               ),
@@ -1222,7 +1244,7 @@ class _MonexWaveLoaderState extends State<MonexWaveLoader>
 
   @override
   Widget build(BuildContext context) {
-    final color = widget.color ?? MonexColors.lime;
+    final color = widget.color ?? MonexPalette.of(context).accent;
     return SizedBox(
       height: widget.size,
       // 3 titik × (size + padding horizontal 6) = 3*size + 18.
@@ -1282,12 +1304,13 @@ class MonexLoadingOverlay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = MonexPalette.of(context);
     return Stack(
       children: [
         ?child,
         Positioned.fill(
           child: ColoredBox(
-            color: MonexColors.canvas.withValues(alpha: 0.82),
+            color: palette.canvas.withValues(alpha: 0.86),
             child: Center(
               child: Column(
                 mainAxisSize: MainAxisSize.min,
@@ -1341,11 +1364,11 @@ class MonexBottomNavBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+    final palette = MonexPalette.of(context);
     return DecoratedBox(
       decoration: BoxDecoration(
-        color: theme.colorScheme.surface,
-        border: Border(top: BorderSide(color: MonexColors.borderSubtle)),
+        color: palette.surface,
+        border: Border(top: BorderSide(color: palette.borderSubtle)),
       ),
       child: NavigationBar(
         selectedIndex: selectedIndex,
@@ -1393,10 +1416,11 @@ class MonexFab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = MonexPalette.of(context);
     final fab = FloatingActionButton(
       onPressed: onPressed,
-      backgroundColor: MonexColors.lime,
-      foregroundColor: MonexColors.textDark,
+      backgroundColor: palette.buttonBg,
+      foregroundColor: palette.buttonFg,
       elevation: 0,
       highlightElevation: 0,
       tooltip: tooltip,
@@ -1406,7 +1430,7 @@ class MonexFab extends StatelessWidget {
         height: size,
         decoration: BoxDecoration(
           shape: BoxShape.circle,
-          boxShadow: MonexDecorations.limeGlowShadow,
+          boxShadow: palette.buttonShadow,
         ),
         child: Icon(icon, size: size * 0.5),
       ),
@@ -1439,6 +1463,7 @@ class MonexEmptyState extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final palette = MonexPalette.of(context);
     return Center(
       child: SingleChildScrollView(
         padding: const EdgeInsets.all(MonexSpacing.screenPaddingH),
@@ -1449,10 +1474,10 @@ class MonexEmptyState extends StatelessWidget {
               width: 72,
               height: 72,
               decoration: BoxDecoration(
-                color: MonexColors.limeMuted,
+                color: palette.accentSoft,
                 borderRadius: BorderRadius.circular(MonexSpacing.radiusCard),
               ),
-              child: Icon(icon, size: 32, color: MonexColors.lime),
+              child: Icon(icon, size: 32, color: palette.accent),
             ),
             const SizedBox(height: 16),
             Text(

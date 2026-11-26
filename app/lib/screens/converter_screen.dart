@@ -299,6 +299,7 @@ class _ConverterScreenState extends State<ConverterScreen> {
       );
     }
 
+    final palette = MonexPalette.of(context);
     return ListView.builder(
       padding: const EdgeInsets.fromLTRB(
         MonexSpacing.screenPaddingH,
@@ -315,9 +316,7 @@ class _ConverterScreenState extends State<ConverterScreen> {
           child: MonexSurfaceCard(
             key: Key('currency_tile_${rate.code}'),
             onTap: () => setState(() => _selectedCode = rate.code),
-            borderColor: isSelected
-                ? MonexColors.lime.withValues(alpha: 0.6)
-                : null,
+            borderColor: isSelected ? palette.accentBorder : null,
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
             radius: MonexSpacing.radiusMd,
             child: Row(
@@ -327,17 +326,13 @@ class _ConverterScreenState extends State<ConverterScreen> {
                   height: 40,
                   alignment: Alignment.center,
                   decoration: BoxDecoration(
-                    color: isSelected
-                        ? MonexColors.lime
-                        : MonexColors.limeMuted,
+                    color: isSelected ? palette.buttonBg : palette.accentSoft,
                     borderRadius: BorderRadius.circular(MonexSpacing.radiusSm),
                   ),
                   child: Text(
                     rate.code,
                     style: theme.textTheme.labelMedium?.copyWith(
-                      color: isSelected
-                          ? MonexColors.textDark
-                          : MonexColors.lime,
+                      color: isSelected ? palette.buttonFg : palette.accent,
                       fontWeight: FontWeight.w800,
                     ),
                   ),
@@ -365,7 +360,7 @@ class _ConverterScreenState extends State<ConverterScreen> {
                 Text(
                   _formatForeign(rate, amountIdr),
                   style: theme.textTheme.titleSmall?.copyWith(
-                    color: MonexColors.lime,
+                    color: palette.accent,
                     fontWeight: FontWeight.w700,
                   ),
                 ),

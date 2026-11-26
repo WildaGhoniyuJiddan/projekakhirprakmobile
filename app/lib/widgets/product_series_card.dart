@@ -19,6 +19,7 @@ class ProductSeriesCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final palette = MonexPalette.of(context);
 
     return MonexSurfaceCard(
       onTap: onTap,
@@ -91,7 +92,7 @@ class ProductSeriesCard extends StatelessWidget {
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: theme.textTheme.titleSmall?.copyWith(
-                    color: MonexColors.lime,
+                    color: palette.accent,
                     fontWeight: FontWeight.w700,
                   ),
                 ),

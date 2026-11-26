@@ -15,8 +15,11 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
+  static const _testNotificationId = 1002;
+
   bool _initialized = false;
   late bool _reminderEnabled = false;
+  bool _sendingTest = false;
 
   @override
   void didChangeDependencies() {
@@ -67,6 +70,48 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
   }
 
+  Future<void> _sendTestNotification(BuildContext context) async {
+    if (_sendingTest) return;
+    setState(() => _sendingTest = true);
+
+    final notifications = AppScope.of(context).notificationService;
+    try {
+      var granted = await notifications.areNotificationsEnabled();
+      if (!granted) {
+        granted = await notifications.requestPermission();
+      }
+      if (!granted) {
+        if (!context.mounted) return;
+        showMonexToast(
+          context,
+          'Izin notifikasi belum diizinkan pada perangkat.',
+          isError: true,
+        );
+        return;
+      }
+
+      await notifications.showImmediate(
+        id: _testNotificationId,
+        title: 'Waktunya Cek Harga Komponen PC! 💻',
+        body:
+            'Tes notifikasi berhasil! Pengingat harian pukul 19:00 siap berjalan di perangkat ini.',
+      );
+      if (!context.mounted) return;
+      showMonexToast(context, 'Notifikasi uji coba dikirim.', isSuccess: true);
+    } on Object {
+      if (!context.mounted) return;
+      showMonexToast(
+        context,
+        'Gagal mengirim notifikasi uji coba.',
+        isError: true,
+      );
+    } finally {
+      if (mounted) {
+        setState(() => _sendingTest = false);
+      }
+    }
+  }
+
   Future<void> _logout(BuildContext context) async {
     final scope = AppScope.of(context);
     final confirmed = await showDialog<bool>(
@@ -108,6 +153,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final palette = MonexPalette.of(context);
     final scope = AppScope.of(context);
     final user = scope.sessionController.user;
 
@@ -168,11 +214,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     Container(
                                       width: 88,
                                       height: 88,
-                                      color: MonexColors.surfaceElevated,
-                                      child: const Icon(
+                                      color: palette.surfaceElevated,
+                                      child: Icon(
                                         Icons.person_rounded,
                                         size: 44,
-                                        color: MonexColors.lime,
+                                        color: palette.accent,
                                       ),
                                     ),
                               ),
@@ -184,17 +230,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 width: 24,
                                 height: 24,
                                 decoration: BoxDecoration(
-                                  color: MonexColors.lime,
+                                  color: palette.buttonBg,
                                   shape: BoxShape.circle,
                                   border: Border.all(
                                     color: theme.scaffoldBackgroundColor,
                                     width: 3,
                                   ),
                                 ),
-                                child: const Icon(
+                                child: Icon(
                                   Icons.check_rounded,
                                   size: 13,
-                                  color: MonexColors.textDark,
+                                  color: palette.buttonFg,
                                 ),
                               ),
                             ),
@@ -250,17 +296,41 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   const SizedBox(height: 12),
                   MonexSurfaceCard(
                     padding: EdgeInsets.zero,
-                    child: SwitchListTile.adaptive(
-                      key: const Key('profile_daily_reminder_switch'),
-                      secondary: const Icon(Icons.notifications_active_outlined),
-                      title: const Text('Pengingat Harian'),
-                      subtitle: const Text(
-                        'Notifikasi cek harga setiap pukul 19:00',
-                      ),
-                      value: _reminderEnabled,
-                      activeTrackColor: MonexColors.lime,
-                      activeThumbColor: MonexColors.textDark,
-                      onChanged: (enabled) => _toggleReminder(context, enabled),
+                    child: Column(
+                      children: [
+                        SwitchListTile.adaptive(
+                          key: const Key('profile_daily_reminder_switch'),
+                          secondary: const Icon(
+                            Icons.notifications_active_outlined,
+                          ),
+                          title: const Text('Pengingat Harian'),
+                          subtitle: const Text(
+                            'Notifikasi cek harga setiap pukul 19:00',
+                          ),
+                          value: _reminderEnabled,
+                          activeTrackColor: palette.buttonBg,
+                          activeThumbColor: palette.buttonFg,
+                          onChanged: (enabled) =>
+                              _toggleReminder(context, enabled),
+                        ),
+                        const Divider(height: 1),
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(16, 12, 16, 14),
+                          child: SizedBox(
+                            width: double.infinity,
+                            child: MonexSecondaryButton(
+                              key: const Key('profile_test_notification'),
+                              label: _sendingTest
+                                  ? 'Mengirim...'
+                                  : 'Uji Notifikasi Sekarang',
+                              icon: Icons.send_rounded,
+                              onPressed: _sendingTest
+                                  ? null
+                                  : () => _sendTestNotification(context),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                   const SizedBox(height: 18),
@@ -269,10 +339,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Icon(
+                        Icon(
                           Icons.offline_bolt_outlined,
                           size: 18,
-                          color: MonexColors.lime,
+                          color: palette.accent,
                         ),
                         const SizedBox(width: 10),
                         Expanded(

@@ -319,6 +319,7 @@ class _NearbyStoresScreenState extends State<NearbyStoresScreen> {
   }
 
   Widget _buildLocationNote(ThemeData theme) {
+    final palette = MonexPalette.of(context);
     return Padding(
       padding: const EdgeInsets.symmetric(
         horizontal: MonexSpacing.screenPaddingH,
@@ -333,9 +334,7 @@ class _NearbyStoresScreenState extends State<NearbyStoresScreen> {
                   ? Icons.info_outline_rounded
                   : Icons.my_location_rounded,
               size: 18,
-              color: _usingDemoLocation
-                  ? MonexColors.textMuted
-                  : MonexColors.lime,
+              color: _usingDemoLocation ? palette.textMuted : palette.accent,
             ),
             const SizedBox(width: 8),
             Expanded(
@@ -447,6 +446,7 @@ class _NearbyStoresScreenState extends State<NearbyStoresScreen> {
                         fontFamily: kMonexFontFamily,
                         fontSize: 10,
                         fontWeight: FontWeight.w600,
+                        color: MonexColors.textPrimary,
                       ),
                     ),
                   ),
@@ -509,6 +509,7 @@ class _StoreTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final palette = MonexPalette.of(context);
     final price = query.isEmpty ? null : store.priceFor(query);
 
     return MonexSurfaceCard(
@@ -523,13 +524,13 @@ class _StoreTile extends StatelessWidget {
             width: 38,
             height: 38,
             decoration: BoxDecoration(
-              color: MonexColors.limeMuted,
+              color: palette.accentSoft,
               borderRadius: BorderRadius.circular(MonexSpacing.radiusSm),
             ),
-            child: const Icon(
+            child: Icon(
               Icons.storefront_outlined,
               size: 19,
-              color: MonexColors.lime,
+              color: palette.accent,
             ),
           ),
           const SizedBox(width: 12),
@@ -556,7 +557,7 @@ class _StoreTile extends StatelessWidget {
                     Icon(
                       Icons.near_me_rounded,
                       size: 13,
-                      color: MonexColors.textMuted,
+                      color: palette.textMuted,
                     ),
                     const SizedBox(width: 4),
                     Text(
@@ -570,7 +571,7 @@ class _StoreTile extends StatelessWidget {
                       Text(
                         formatRupiah(price),
                         style: theme.textTheme.bodySmall?.copyWith(
-                          color: MonexColors.lime,
+                          color: palette.accent,
                           fontWeight: FontWeight.w700,
                         ),
                       ),
@@ -581,10 +582,10 @@ class _StoreTile extends StatelessWidget {
             ),
           ),
           const SizedBox(width: 6),
-          const Icon(
+          Icon(
             Icons.chevron_right_rounded,
             size: 18,
-            color: MonexColors.textMuted,
+            color: palette.textMuted,
           ),
         ],
       ),

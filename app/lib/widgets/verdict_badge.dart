@@ -18,7 +18,8 @@ class VerdictBadge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final color = verdict.color;
+    final palette = MonexPalette.of(context);
+    final color = palette.readableVerdict(verdict.color);
     final horizontalPadding = compact ? 10.0 : 12.0 * verdict.emphasis;
     final verticalPadding = compact ? 5.0 : 7.0 * verdict.emphasis;
 
@@ -28,10 +29,10 @@ class VerdictBadge extends StatelessWidget {
         vertical: verticalPadding,
       ),
       decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.14),
+        color: color.withValues(alpha: palette.isDark ? 0.14 : 0.12),
         borderRadius: BorderRadius.circular(MonexSpacing.radiusPill),
         border: Border.all(
-          color: color.withValues(alpha: 0.45),
+          color: color.withValues(alpha: palette.isDark ? 0.45 : 0.35),
           width: verdict.emphasis > 1.0 ? 1.4 : 1.0,
         ),
       ),

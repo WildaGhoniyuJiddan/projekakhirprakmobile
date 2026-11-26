@@ -12,12 +12,13 @@ class SpecChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final palette = MonexPalette.of(context);
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
       decoration: BoxDecoration(
-        color: MonexColors.surfaceElevated,
+        color: palette.surfaceElevated,
         borderRadius: BorderRadius.circular(MonexSpacing.radiusSm),
-        border: Border.all(color: MonexColors.borderSubtle),
+        border: Border.all(color: palette.borderSubtle),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,

@@ -33,47 +33,55 @@ class _RootScreenState extends State<RootScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final palette = MonexPalette.of(context);
     return Scaffold(
       body: _pages[_selectedIndex],
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _selectedIndex,
-        onTap: _selectTab,
-        type: BottomNavigationBarType.fixed,
-        backgroundColor: MonexColors.surface,
-        selectedItemColor: MonexColors.lime,
-        unselectedItemColor: MonexColors.textSecondary,
-        selectedLabelStyle: const TextStyle(
-          fontFamily: kMonexFontFamily,
-          fontSize: 11,
-          fontWeight: FontWeight.w600,
+      bottomNavigationBar: DecoratedBox(
+        decoration: BoxDecoration(
+          color: palette.surface,
+          border: Border(top: BorderSide(color: palette.borderSubtle)),
         ),
-        unselectedLabelStyle: const TextStyle(
-          fontFamily: kMonexFontFamily,
-          fontSize: 11,
-          fontWeight: FontWeight.w500,
+        child: BottomNavigationBar(
+          currentIndex: _selectedIndex,
+          onTap: _selectTab,
+          type: BottomNavigationBarType.fixed,
+          backgroundColor: palette.surface,
+          elevation: 0,
+          selectedItemColor: palette.accent,
+          unselectedItemColor: palette.textSecondary,
+          selectedLabelStyle: const TextStyle(
+            fontFamily: kMonexFontFamily,
+            fontSize: 11,
+            fontWeight: FontWeight.w600,
+          ),
+          unselectedLabelStyle: const TextStyle(
+            fontFamily: kMonexFontFamily,
+            fontSize: 11,
+            fontWeight: FontWeight.w500,
+          ),
+          items: const [
+            BottomNavigationBarItem(
+              icon: Icon(Icons.home_outlined),
+              activeIcon: Icon(Icons.home),
+              label: 'Beranda',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.storefront_outlined),
+              activeIcon: Icon(Icons.storefront),
+              label: 'Cari',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.favorite_border),
+              activeIcon: Icon(Icons.favorite),
+              label: 'Wishlist',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.person_outline),
+              activeIcon: Icon(Icons.person),
+              label: 'Profil',
+            ),
+          ],
         ),
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home_outlined),
-            activeIcon: Icon(Icons.home),
-            label: 'Beranda',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.storefront_outlined),
-            activeIcon: Icon(Icons.storefront),
-            label: 'Cari',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.favorite_border),
-            activeIcon: Icon(Icons.favorite),
-            label: 'Wishlist',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person_outline),
-            activeIcon: Icon(Icons.person),
-            label: 'Profil',
-          ),
-        ],
       ),
     );
   }

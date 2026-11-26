@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:worthbang_lite/app.dart';
+import 'package:worthbang_lite/core/theme/monex_theme.dart';
 import 'package:worthbang_lite/services/currency_api.dart';
 import 'package:worthbang_lite/services/notification_service.dart';
 import 'package:worthbang_lite/state/app_dependencies.dart';
@@ -442,6 +443,18 @@ void main() {
 
     expect(fakeNotif.scheduledReminder, isNull);
     expect(dependencies.sessionPreferences.isDailyReminderEnabled, isFalse);
+
+    final testButton = find.byKey(const Key('profile_test_notification'));
+    expect(testButton, findsOneWidget);
+    await tester.ensureVisible(testButton);
+    await tester.tap(testButton);
+    await tester.pumpAndSettle();
+
+    expect(fakeNotif.immediateHistory, hasLength(1));
+    expect(
+      fakeNotif.immediateHistory.single['body'],
+      contains('Tes notifikasi berhasil'),
+    );
   });
 
   testWidgets('toko terdekat menampilkan peta, jarak, dan notifikasi lokasi', (
@@ -556,5 +569,38 @@ void main() {
           .data,
       contains('JPY'),
     );
+  });
+
+  testWidgets('tema terang mengubah warna kartu dan bottom nav menjadi terang', (
+    tester,
+  ) async {
+    final dependencies = await _loggedInDependencies(
+      tester,
+      env,
+      email: 'tema.terang@worthbang.test',
+    );
+    await dependencies.themeController.setMode(ThemeMode.light);
+
+    await _pumpApp(tester, dependencies);
+
+    final bottomNav = tester.widget<BottomNavigationBar>(
+      find.byType(BottomNavigationBar),
+    );
+    expect(bottomNav.backgroundColor, MonexPalette.light.surface);
+    expect(bottomNav.selectedItemColor, MonexPalette.light.accent);
+
+    final cardFinder = find.byKey(const Key('home_converter_card'));
+    await tester.scrollUntilVisible(
+      cardFinder,
+      250,
+      scrollable: find.byType(Scrollable).first,
+    );
+    await tester.pumpAndSettle();
+    final ink = tester.widget<Ink>(
+      find.descendant(of: cardFinder, matching: find.byType(Ink)).first,
+    );
+    final decoration = ink.decoration as BoxDecoration;
+    expect(decoration.color, MonexPalette.light.surface);
+    expect(decoration.color, isNot(MonexColors.surface));
   });
 }

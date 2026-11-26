@@ -10,27 +10,29 @@ class AuthErrorBanner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final palette = MonexPalette.of(context);
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: MonexColors.dangerMuted,
+        color: palette.dangerMuted,
         borderRadius: BorderRadius.circular(MonexSpacing.radiusMd),
-        border: Border.all(color: MonexColors.danger.withValues(alpha: 0.4)),
+        border: Border.all(color: palette.danger.withValues(alpha: 0.4)),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Icon(
+          Icon(
             Icons.error_outline_rounded,
             size: 18,
-            color: MonexColors.danger,
+            color: palette.danger,
           ),
           const SizedBox(width: 10),
           Expanded(
             child: Text(
               message,
-              style: Theme.of(context).textTheme.bodyMedium
-                  ?.copyWith(color: Theme.of(context).colorScheme.onSurface),
+              style: Theme.of(
+                context,
+              ).textTheme.bodyMedium?.copyWith(color: palette.textPrimary),
             ),
           ),
         ],

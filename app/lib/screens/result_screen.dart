@@ -62,7 +62,9 @@ class ResultScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final palette = MonexPalette.of(context);
     final verdict = analysis.verdict;
+    final verdictColor = palette.readableVerdict(verdict.color);
     final hasReference = analysis.referencePrice > 0;
 
     return Scaffold(
@@ -83,7 +85,7 @@ class ResultScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               MonexSurfaceCard(
-                borderColor: verdict.color.withValues(alpha: 0.4),
+                borderColor: verdictColor.withValues(alpha: 0.4),
                 padding: const EdgeInsets.all(20),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -95,7 +97,7 @@ class ResultScreen extends StatelessWidget {
                         Text(
                           '${analysis.score.round()}/100',
                           style: theme.textTheme.headlineSmall?.copyWith(
-                            color: verdict.color,
+                            color: verdictColor,
                             fontWeight: FontWeight.w800,
                           ),
                         ),
@@ -104,7 +106,7 @@ class ResultScreen extends StatelessWidget {
                     const SizedBox(height: 14),
                     MonexProgressBar(
                       value: analysis.score / 100,
-                      color: verdict.color,
+                      color: verdictColor,
                     ),
                     const SizedBox(height: 14),
                     Text(verdict.advice, style: theme.textTheme.bodyMedium),
@@ -142,7 +144,7 @@ class ResultScreen extends StatelessWidget {
                       _SummaryRow(
                         label: 'Selisih median',
                         value: _diffLabel(),
-                        valueColor: verdict.color,
+                        valueColor: verdictColor,
                       ),
                     ],
                     const SizedBox(height: 8),
@@ -169,9 +171,9 @@ class ResultScreen extends StatelessWidget {
                   padding: const EdgeInsets.all(MonexSpacing.cardPadding),
                   child: Row(
                     children: [
-                      const Icon(
+                      Icon(
                         Icons.search_off_rounded,
-                        color: MonexColors.textMuted,
+                        color: palette.textMuted,
                       ),
                       const SizedBox(width: 12),
                       Expanded(
@@ -247,7 +249,7 @@ class ResultScreen extends StatelessWidget {
                           Text(
                             formatRupiah(item.price),
                             style: theme.textTheme.titleSmall?.copyWith(
-                              color: MonexColors.lime,
+                              color: palette.accent,
                               fontWeight: FontWeight.w700,
                             ),
                           ),
@@ -321,6 +323,7 @@ class _SummaryRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final palette = MonexPalette.of(context);
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -332,7 +335,7 @@ class _SummaryRow extends StatelessWidget {
             textAlign: TextAlign.end,
             style: theme.textTheme.bodyMedium?.copyWith(
               fontWeight: highlight ? FontWeight.w700 : FontWeight.w600,
-              color: valueColor ?? (highlight ? MonexColors.lime : null),
+              color: valueColor ?? (highlight ? palette.accent : null),
             ),
           ),
         ),

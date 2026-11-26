@@ -89,9 +89,9 @@ class WishlistScreen extends StatelessWidget {
           TextButton(
             key: const Key('wishlist_delete_confirm'),
             onPressed: () => Navigator.of(dialogContext).pop(true),
-            child: const Text(
+            child: Text(
               'Hapus',
-              style: TextStyle(color: MonexColors.danger),
+              style: TextStyle(color: MonexPalette.of(dialogContext).danger),
             ),
           ),
         ],

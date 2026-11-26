@@ -28,6 +28,7 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final palette = MonexPalette.of(context);
     final scope = AppScope.of(context);
     final user = scope.sessionController.user;
     final firstName = (user?.name ?? 'Tamu').split(' ').first;
@@ -179,13 +180,13 @@ class HomeScreen extends StatelessWidget {
                   width: 40,
                   height: 40,
                   decoration: BoxDecoration(
-                    color: MonexColors.limeMuted,
+                    color: palette.accentSoft,
                     borderRadius: BorderRadius.circular(MonexSpacing.radiusSm),
                   ),
-                  child: const Icon(
+                  child: Icon(
                     Icons.currency_exchange_rounded,
                     size: 20,
-                    color: MonexColors.lime,
+                    color: palette.accent,
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -202,9 +203,9 @@ class HomeScreen extends StatelessWidget {
                     ],
                   ),
                 ),
-                const Icon(
+                Icon(
                   Icons.chevron_right_rounded,
-                  color: MonexColors.textMuted,
+                  color: palette.textMuted,
                 ),
               ],
             ),
@@ -324,11 +325,12 @@ class _FeaturedSeriesState extends State<_FeaturedSeries> {
 
     final series = _series;
     if (series == null) {
+      final palette = MonexPalette.of(context);
       return MonexSurfaceCard(
         padding: const EdgeInsets.all(MonexSpacing.cardPadding),
         child: Row(
           children: [
-            const Icon(Icons.cloud_off_rounded, color: MonexColors.textMuted),
+            Icon(Icons.cloud_off_rounded, color: palette.textMuted),
             const SizedBox(width: 10),
             Expanded(
               child: Text(
@@ -376,6 +378,7 @@ class _HomeMenuCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final palette = MonexPalette.of(context);
     return MonexSurfaceCard(
       onTap: onTap,
       padding: const EdgeInsets.all(MonexSpacing.cardPaddingCompact),
@@ -388,10 +391,10 @@ class _HomeMenuCard extends StatelessWidget {
             width: 40,
             height: 40,
             decoration: BoxDecoration(
-              color: MonexColors.limeMuted,
+              color: palette.accentSoft,
               borderRadius: BorderRadius.circular(MonexSpacing.radiusSm),
             ),
-            child: Icon(icon, size: 20, color: MonexColors.lime),
+            child: Icon(icon, size: 20, color: palette.accent),
           ),
           const SizedBox(height: 10),
           Text(
@@ -423,6 +426,7 @@ class _RecentHistorySection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final palette = MonexPalette.of(context);
     final historyRepo = AppScope.of(context).historyRepository;
 
     return ListenableBuilder(
@@ -439,9 +443,9 @@ class _RecentHistorySection extends StatelessWidget {
                 padding: const EdgeInsets.all(MonexSpacing.cardPadding),
                 child: Row(
                   children: [
-                    const Icon(
+                    Icon(
                       Icons.history_rounded,
-                      color: MonexColors.textMuted,
+                      color: palette.textMuted,
                     ),
                     const SizedBox(width: 12),
                     Expanded(
@@ -483,7 +487,7 @@ class _RecentHistorySection extends StatelessWidget {
                                     records[i].analysis.request.price,
                                   ),
                                   style: theme.textTheme.bodySmall?.copyWith(
-                                    color: MonexColors.lime,
+                                    color: palette.accent,
                                     fontWeight: FontWeight.w700,
                                   ),
                                 ),
@@ -497,10 +501,10 @@ class _RecentHistorySection extends StatelessWidget {
                           ),
                           IconButton(
                             tooltip: 'Hapus riwayat',
-                            icon: const Icon(
+                            icon: Icon(
                               Icons.close_rounded,
                               size: 18,
-                              color: MonexColors.textMuted,
+                              color: palette.textMuted,
                             ),
                             onPressed: () =>
                                 historyRepo.deleteByKey(records[i].key),
