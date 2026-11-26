@@ -25,7 +25,18 @@ class ProductSeries {
            : variants.map((item) => item.price).reduce(max),
        _specs = variants.isEmpty
            ? const {}
-           : Map.unmodifiable(SpecParser.parse(category, variants.first.model));
+           : Map.unmodifiable(SpecParser.parse(category, variants.first.model)),
+       _searchIndex = _buildSearchIndex(name, variants);
+
+  static String _buildSearchIndex(String name, List<CatalogItem> variants) {
+    final buffer = StringBuffer(name.toLowerCase());
+    for (final variant in variants) {
+      buffer
+        ..write('\n')
+        ..write(variant.model.toLowerCase());
+    }
+    return buffer.toString();
+  }
 
   /// Redirecting constructor: template saat data etalase belum siap.
   ProductSeries.empty()
@@ -65,12 +76,19 @@ class ProductSeries {
   final int _minPrice;
   final int _maxPrice;
   final Map<String, String> _specs;
+  final String _searchIndex;
 
   List<CatalogItem> get variants => _variants;
   int get minPrice => _minPrice;
   int get maxPrice => _maxPrice;
   int get variantCount => _variants.length;
   Map<String, String> get specs => _specs;
+
+  /// Pencocokan cepat terhadap nama seri dan semua varian tanpa alokasi ulang.
+  bool matchesQuery(String normalizedQuery) {
+    if (normalizedQuery.isEmpty) return true;
+    return _searchIndex.contains(normalizedQuery);
+  }
 
   String get categoryLabel =>
       _variants.isEmpty ? 'Komponen' : _variants.first.sectionLabel;

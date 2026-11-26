@@ -21,27 +21,30 @@ class ProductSeriesCard extends StatelessWidget {
     final theme = Theme.of(context);
     final palette = MonexPalette.of(context);
 
-    return MonexSurfaceCard(
-      onTap: onTap,
-      padding: EdgeInsets.zero,
-      radius: MonexSpacing.radiusMd,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Expanded(
-            child: Stack(
-              fit: StackFit.expand,
-              children: [
-                ClipRRect(
-                  borderRadius: const BorderRadius.vertical(
-                    top: Radius.circular(MonexSpacing.radiusMd),
+    return RepaintBoundary(
+      child: MonexSurfaceCard(
+        onTap: onTap,
+        padding: EdgeInsets.zero,
+        radius: MonexSpacing.radiusMd,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  ClipRRect(
+                    borderRadius: const BorderRadius.vertical(
+                      top: Radius.circular(MonexSpacing.radiusMd),
+                    ),
+                    child: Image.asset(
+                      series.imageAsset,
+                      fit: BoxFit.cover,
+                      cacheWidth: 400,
+                      filterQuality: FilterQuality.medium,
+                      semanticLabel: 'Ilustrasi ${series.categoryLabel}',
+                    ),
                   ),
-                  child: Image.asset(
-                    series.imageAsset,
-                    fit: BoxFit.cover,
-                    semanticLabel: 'Ilustrasi ${series.categoryLabel}',
-                  ),
-                ),
                 Positioned(
                   top: 10,
                   left: 10,
@@ -98,8 +101,9 @@ class ProductSeriesCard extends StatelessWidget {
                 ),
               ],
             ),
-          ),
-        ],
+            ),
+          ],
+        ),
       ),
     );
   }

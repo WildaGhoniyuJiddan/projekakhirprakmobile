@@ -7,7 +7,7 @@ import '../state/app_scope.dart';
 import '../widgets/product_series_card.dart';
 import 'product_detail_screen.dart';
 
-/// Tab Cari/Etalase: satu kartu untuk satu seri produk.
+/// Tab Cari/Etalase: satu kartu untuk satu seri produk dengan lazy SliverGrid.
 class CatalogScreen extends StatefulWidget {
   const CatalogScreen({super.key});
 
@@ -18,7 +18,8 @@ class CatalogScreen extends StatefulWidget {
 class _CatalogScreenState extends State<CatalogScreen> {
   final TextEditingController _search = TextEditingController();
 
-  List<ProductSeries>? _series;
+  List<ProductSeries> _allSeries = const [];
+  List<ProductSeries> _filteredSeries = const [];
   Object? _error;
   bool _loading = true;
   bool _started = false;
@@ -38,6 +39,15 @@ class _CatalogScreenState extends State<CatalogScreen> {
     super.didChangeDependencies();
     if (_started) return;
     _started = true;
+
+    final cached = AppScope.of(context).catalogService.cachedSeries;
+    if (cached != null) {
+      _allSeries = cached;
+      _filteredSeries = _computeFiltered(cached, _category, _search.text);
+      _loading = false;
+      _error = null;
+      return;
+    }
     _load();
   }
 
@@ -53,7 +63,8 @@ class _CatalogScreenState extends State<CatalogScreen> {
       final series = await catalog.loadSeries();
       if (!mounted) return;
       setState(() {
-        _series = series;
+        _allSeries = series;
+        _filteredSeries = _computeFiltered(series, _category, _search.text);
         _loading = false;
         _error = null;
       });
@@ -76,22 +87,41 @@ class _CatalogScreenState extends State<CatalogScreen> {
 
   void _resetFilters() {
     _search.clear();
-    setState(() => _category = 'Semua');
+    setState(() {
+      _category = 'Semua';
+      _filteredSeries = _computeFiltered(_allSeries, _category, '');
+    });
   }
 
-  List<ProductSeries> get _filtered {
-    final all = _series ?? const <ProductSeries>[];
-    final query = _search.text.trim().toLowerCase();
-    return all.where((series) {
-      if (_category != 'Semua' && series.categoryLabel != _category) {
-        return false;
-      }
-      if (query.isEmpty) return true;
-      if (series.name.toLowerCase().contains(query)) return true;
-      return series.variants.any(
-        (variant) => variant.model.toLowerCase().contains(query),
-      );
-    }).toList();
+  void _onQueryChanged(String value) {
+    setState(() {
+      _filteredSeries = _computeFiltered(_allSeries, _category, value);
+    });
+  }
+
+  void _onCategorySelected(String category) {
+    if (_category == category) return;
+    setState(() {
+      _category = category;
+      _filteredSeries = _computeFiltered(_allSeries, _category, _search.text);
+    });
+  }
+
+  static List<ProductSeries> _computeFiltered(
+    List<ProductSeries> source,
+    String category,
+    String rawQuery,
+  ) {
+    final query = rawQuery.trim().toLowerCase();
+    if (category == 'Semua' && query.isEmpty) {
+      return source;
+    }
+    return [
+      for (final series in source)
+        if ((category == 'Semua' || series.categoryLabel == category) &&
+            series.matchesQuery(query))
+          series,
+    ];
   }
 
   void _openDetail(ProductSeries series) {
@@ -144,72 +174,86 @@ class _CatalogScreenState extends State<CatalogScreen> {
       );
     }
 
-    final items = _filtered;
+    final items = _filteredSeries;
 
-    return ListView(
-      padding: const EdgeInsets.fromLTRB(
-        MonexSpacing.screenPaddingH,
-        MonexSpacing.screenPaddingV,
-        MonexSpacing.screenPaddingH,
-        24,
-      ),
-      children: [
-        TextField(
-          key: const Key('catalog_search'),
-          controller: _search,
-          decoration: InputDecoration(
-            labelText: 'Cari seri produk',
-            hintText: 'cth: RTX 4060, Ryzen 5, B550',
-            prefixIcon: const Icon(Icons.search_rounded),
-            suffixIcon: _search.text.isEmpty
-                ? null
-                : IconButton(
-                    tooltip: 'Hapus pencarian',
-                    icon: const Icon(Icons.close_rounded),
-                    onPressed: () {
-                      _search.clear();
-                      setState(() {});
-                    },
-                  ),
+    return CustomScrollView(
+      slivers: [
+        SliverPadding(
+          padding: const EdgeInsets.fromLTRB(
+            MonexSpacing.screenPaddingH,
+            MonexSpacing.screenPaddingV,
+            MonexSpacing.screenPaddingH,
+            MonexSpacing.gridGap,
           ),
-          onChanged: (_) => setState(() {}),
-        ),
-        const SizedBox(height: MonexSpacing.gridGap),
-        SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          child: Row(
-            children: [
-              for (final category in _categories)
-                Padding(
-                  padding: const EdgeInsets.only(right: 8),
-                  child: ChoiceChip(
-                    label: Text(category),
-                    selected: _category == category,
-                    onSelected: (_) => setState(() => _category = category),
+          sliver: SliverToBoxAdapter(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                TextField(
+                  key: const Key('catalog_search'),
+                  controller: _search,
+                  decoration: InputDecoration(
+                    labelText: 'Cari seri produk',
+                    hintText: 'cth: RTX 4060, Ryzen 5, B550',
+                    prefixIcon: const Icon(Icons.search_rounded),
+                    suffixIcon: _search.text.isEmpty
+                        ? null
+                        : IconButton(
+                            tooltip: 'Hapus pencarian',
+                            icon: const Icon(Icons.close_rounded),
+                            onPressed: () {
+                              _search.clear();
+                              _onQueryChanged('');
+                            },
+                          ),
+                  ),
+                  onChanged: _onQueryChanged,
+                ),
+                const SizedBox(height: MonexSpacing.gridGap),
+                SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    children: [
+                      for (final category in _categories)
+                        Padding(
+                          padding: const EdgeInsets.only(right: 8),
+                          child: ChoiceChip(
+                            label: Text(category),
+                            selected: _category == category,
+                            onSelected: (_) => _onCategorySelected(category),
+                          ),
+                        ),
+                    ],
                   ),
                 ),
-            ],
+                const SizedBox(height: MonexSpacing.sectionGap),
+                Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        'Etalase seri',
+                        style: theme.textTheme.titleLarge,
+                      ),
+                    ),
+                    Text(
+                      '${items.length} seri',
+                      style: theme.textTheme.bodySmall,
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  'Satu kartu mewakili satu seri. Buka detail untuk spesifikasi dan '
+                  'semua varian.',
+                  style: theme.textTheme.bodyMedium,
+                ),
+              ],
+            ),
           ),
         ),
-        const SizedBox(height: MonexSpacing.sectionGap),
-        Row(
-          children: [
-            Expanded(
-              child: Text('Etalase seri', style: theme.textTheme.titleLarge),
-            ),
-            Text('${items.length} seri', style: theme.textTheme.bodySmall),
-          ],
-        ),
-        const SizedBox(height: 4),
-        Text(
-          'Satu kartu mewakili satu seri. Buka detail untuk spesifikasi dan '
-          'semua varian.',
-          style: theme.textTheme.bodyMedium,
-        ),
-        const SizedBox(height: MonexSpacing.gridGap),
         if (items.isEmpty)
-          SizedBox(
-            height: 320,
+          SliverFillRemaining(
+            hasScrollBody: false,
             child: MonexEmptyState(
               icon: Icons.search_off_rounded,
               title: 'Seri tidak ditemukan.',
@@ -219,25 +263,31 @@ class _CatalogScreenState extends State<CatalogScreen> {
             ),
           )
         else
-          GridView.builder(
-            key: const Key('catalog_grid'),
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: items.length,
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              crossAxisSpacing: MonexSpacing.gridGap,
-              mainAxisSpacing: MonexSpacing.gridGap,
-              childAspectRatio: 0.78,
+          SliverPadding(
+            padding: const EdgeInsets.fromLTRB(
+              MonexSpacing.screenPaddingH,
+              0,
+              MonexSpacing.screenPaddingH,
+              24,
             ),
-            itemBuilder: (context, index) {
-              final series = items[index];
-              return ProductSeriesCard(
-                key: ValueKey('series_${series.id}'),
-                series: series,
-                onTap: () => _openDetail(series),
-              );
-            },
+            sliver: SliverGrid.builder(
+              key: const Key('catalog_grid'),
+              itemCount: items.length,
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                crossAxisSpacing: MonexSpacing.gridGap,
+                mainAxisSpacing: MonexSpacing.gridGap,
+                childAspectRatio: 0.78,
+              ),
+              itemBuilder: (context, index) {
+                final series = items[index];
+                return ProductSeriesCard(
+                  key: ValueKey('series_${series.id}'),
+                  series: series,
+                  onTap: () => _openDetail(series),
+                );
+              },
+            ),
           ),
       ],
     );

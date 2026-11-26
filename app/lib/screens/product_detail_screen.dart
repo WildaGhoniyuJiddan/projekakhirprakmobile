@@ -83,52 +83,63 @@ class ProductDetailScreen extends StatelessWidget {
         ],
       ),
       body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.fromLTRB(
-            MonexSpacing.screenPaddingH,
-            MonexSpacing.screenPaddingV,
-            MonexSpacing.screenPaddingH,
-            32,
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _SeriesHeader(series: series),
-              const SizedBox(height: MonexSpacing.sectionGap),
-              Text('Spesifikasi', style: theme.textTheme.titleMedium),
-              const SizedBox(height: 10),
-              Wrap(
-                spacing: 8,
-                runSpacing: 8,
-                children: [
-                  for (final entry in series.specs.entries)
-                    SpecChip(label: entry.key, value: entry.value),
-                ],
+        child: CustomScrollView(
+          slivers: [
+            SliverPadding(
+              padding: const EdgeInsets.fromLTRB(
+                MonexSpacing.screenPaddingH,
+                MonexSpacing.screenPaddingV,
+                MonexSpacing.screenPaddingH,
+                MonexSpacing.gridGap,
               ),
-              const SizedBox(height: MonexSpacing.sectionGap),
-              Row(
-                children: [
-                  Expanded(
-                    child: Text(
-                      'Varian & harga',
-                      style: theme.textTheme.titleMedium,
+              sliver: SliverToBoxAdapter(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _SeriesHeader(series: series),
+                    const SizedBox(height: MonexSpacing.sectionGap),
+                    Text('Spesifikasi', style: theme.textTheme.titleMedium),
+                    const SizedBox(height: 10),
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      children: [
+                        for (final entry in series.specs.entries)
+                          SpecChip(label: entry.key, value: entry.value),
+                      ],
                     ),
-                  ),
-                  Text(
-                    '${series.variantCount} produk',
-                    style: theme.textTheme.bodySmall,
-                  ),
-                ],
+                    const SizedBox(height: MonexSpacing.sectionGap),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            'Varian & harga',
+                            style: theme.textTheme.titleMedium,
+                          ),
+                        ),
+                        Text(
+                          '${series.variantCount} produk',
+                          style: theme.textTheme.bodySmall,
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      'Ketuk varian untuk cek harga model tersebut.',
+                      style: theme.textTheme.bodySmall,
+                    ),
+                  ],
+                ),
               ),
-              const SizedBox(height: 4),
-              Text(
-                'Ketuk varian untuk cek harga model tersebut.',
-                style: theme.textTheme.bodySmall,
+            ),
+            SliverPadding(
+              padding: const EdgeInsets.fromLTRB(
+                MonexSpacing.screenPaddingH,
+                0,
+                MonexSpacing.screenPaddingH,
+                20,
               ),
-              const SizedBox(height: MonexSpacing.gridGap),
-              ListView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
+              sliver: SliverList.builder(
                 itemCount: series.variants.length,
                 itemBuilder: (context, index) {
                   final variant = series.variants[index];
@@ -145,14 +156,32 @@ class ProductDetailScreen extends StatelessWidget {
                   );
                 },
               ),
-              const SizedBox(height: 4),
-              MonexPrimaryButton(
-                key: const Key('detail_price_check'),
-                label: 'Cek Harga ${series.name}',
-                icon: Icons.analytics_outlined,
-                onPressed: () => _openPriceCheck(context),
-              ),
-            ],
+            ),
+          ],
+        ),
+      ),
+      bottomNavigationBar: DecoratedBox(
+        decoration: BoxDecoration(
+          color: MonexPalette.of(context).surface,
+          border: Border(
+            top: BorderSide(color: MonexPalette.of(context).borderSubtle),
+          ),
+        ),
+        child: SafeArea(
+          top: false,
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(
+              MonexSpacing.screenPaddingH,
+              12,
+              MonexSpacing.screenPaddingH,
+              12,
+            ),
+            child: MonexPrimaryButton(
+              key: const Key('detail_price_check'),
+              label: 'Cek Harga ${series.name}',
+              icon: Icons.analytics_outlined,
+              onPressed: () => _openPriceCheck(context),
+            ),
           ),
         ),
       ),
@@ -179,6 +208,8 @@ class _SeriesHeader extends StatelessWidget {
             child: Image.asset(
               series.imageAsset,
               fit: BoxFit.cover,
+              cacheWidth: 800,
+              filterQuality: FilterQuality.medium,
               semanticLabel: 'Ilustrasi ${series.categoryLabel}',
             ),
           ),

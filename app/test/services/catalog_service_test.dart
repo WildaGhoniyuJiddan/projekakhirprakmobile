@@ -118,10 +118,13 @@ void main() {
     test('meng-cache hasil grouping', () async {
       final service = CatalogService(JsonAssetBundle(sampleCatalog()));
 
-      final first = await service.loadSeries();
-      final second = await service.loadSeries();
+      final results = await Future.wait([
+        service.loadSeries(),
+        service.loadSeries(),
+      ]);
 
-      expect(identical(first, second), isTrue);
+      expect(identical(results[0], results[1]), isTrue);
+      expect(identical(service.cachedSeries, results[0]), isTrue);
     });
 
     test('aset katalog nyata dapat dimuat dan dikelompokkan', () async {

@@ -243,6 +243,12 @@ class _FeaturedSeriesState extends State<_FeaturedSeries> {
     super.didChangeDependencies();
     if (_started) return;
     _started = true;
+    final cached = AppScope.of(context).catalogService.cachedSeries;
+    if (cached != null) {
+      _series = cached.take(8).toList();
+      _loading = false;
+      return;
+    }
     _load();
   }
 
