@@ -119,7 +119,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       builder: (dialogContext) => AlertDialog(
         title: const Text('Keluar dari akun?'),
         content: const Text(
-          'Wishlist dan riwayat tetap tersimpan di perangkat ini.',
+          'Wishlist tetap tersimpan di perangkat ini.',
         ),
         actions: [
           TextButton(
@@ -356,7 +356,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         const SizedBox(width: 10),
                         Expanded(
                           child: Text(
-                            'Akun, wishlist, dan riwayat disimpan lokal di '
+                            'Akun dan wishlist disimpan lokal di '
                             'perangkat ini. Katalog retail dapat dibuka tanpa '
                             'internet.',
                             style: theme.textTheme.bodySmall,

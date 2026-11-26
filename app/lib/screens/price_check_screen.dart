@@ -9,7 +9,7 @@ import '../state/app_scope.dart';
 import '../widgets/auth_error_banner.dart';
 import 'result_screen.dart';
 
-/// Form Cek Harga yang terhubung ke [PriceAnalyzer] dan [HistoryRepository].
+/// Form Cek Harga yang terhubung ke [PriceAnalyzer].
 class PriceCheckScreen extends StatefulWidget {
   const PriceCheckScreen({
     super.key,
@@ -69,12 +69,6 @@ class _PriceCheckScreenState extends State<PriceCheckScreen> {
         condition: _condition,
       );
       final analysis = await scope.priceAnalyzer.analyze(request);
-
-      try {
-        await scope.historyRepository.add(analysis);
-      } on Object {
-        // Kegagalan simpan riwayat tidak memblokir tampilan hasil.
-      }
 
       if (!mounted) return;
       setState(() => _loading = false);

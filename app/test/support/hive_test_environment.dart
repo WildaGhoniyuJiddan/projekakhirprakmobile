@@ -6,7 +6,6 @@ import 'package:worthbang_lite/models/wishlist_item.dart';
 import 'package:worthbang_lite/services/auth_service.dart';
 import 'package:worthbang_lite/services/catalog_service.dart';
 import 'package:worthbang_lite/services/currency_api.dart';
-import 'package:worthbang_lite/services/history_repository.dart';
 import 'package:worthbang_lite/services/location_service.dart';
 import 'package:worthbang_lite/services/notification_service.dart';
 import 'package:worthbang_lite/services/price_analyzer.dart';
@@ -30,7 +29,6 @@ class HiveTestEnvironment {
   final Directory _tempDir;
 
   late final Box<WishlistItem> wishlistBox;
-  late final Box<dynamic> historyBox;
   late final Box<dynamic> accountsBox;
 
   static Future<HiveTestEnvironment> create() async {
@@ -42,7 +40,6 @@ class HiveTestEnvironment {
 
     final env = HiveTestEnvironment._(dir);
     env.wishlistBox = await Hive.openBox<WishlistItem>('wishlist');
-    env.historyBox = await Hive.openBox<dynamic>('history');
     env.accountsBox = await Hive.openBox<dynamic>('accounts');
     return env;
   }
@@ -71,7 +68,6 @@ class HiveTestEnvironment {
       sessionController: sessionController,
       themeController: themeController,
       wishlistRepository: WishlistRepository(wishlistBox),
-      historyRepository: HistoryRepository(historyBox),
       catalogService: catalogService,
       priceAnalyzer: CatalogPriceAnalyzer(catalogService),
       notificationService: notificationService ?? FakeNotificationService(),
@@ -83,12 +79,11 @@ class HiveTestEnvironment {
 
   Future<void> clearBoxes() async {
     await wishlistBox.clear();
-    await historyBox.clear();
     await accountsBox.clear();
   }
 
   Future<void> dispose() async {
-    for (final box in [wishlistBox, historyBox, accountsBox]) {
+    for (final box in [wishlistBox, accountsBox]) {
       try {
         await box.close().timeout(const Duration(seconds: 1));
       } on Object {

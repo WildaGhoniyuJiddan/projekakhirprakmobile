@@ -7,7 +7,6 @@ class AppUiColors {
     required this.berandaCekHargaBg,
     required this.berandaCekHargaText,
     required this.berandaMenuCardBg,
-    required this.berandaRiwayatCardBg,
     required this.detailKonversiCardBg,
     required this.detailVarianCardBg,
     required this.detailCekHargaBg,
@@ -40,7 +39,6 @@ class AppUiColors {
   final Color berandaCekHargaBg;
   final Color berandaCekHargaText;
   final Color berandaMenuCardBg;
-  final Color berandaRiwayatCardBg;
 
   final Color detailKonversiCardBg;
   final Color detailVarianCardBg;
@@ -85,7 +83,6 @@ class AppUiColors {
     berandaCekHargaBg: Color(0xFFACEF34), // Tombol besar "Cek Harga"
     berandaCekHargaText: Color(0xFF0F140A), // Teks & ikon tombol besar
     berandaMenuCardBg: Color(0xFF1B202C), // 4 kartu menu fitur
-    berandaRiwayatCardBg: Color(0xFF1B202C), // Kartu riwayat cek terbaru
     // 2. Halaman Detail Produk
     detailKonversiCardBg: Color(0xFF1B202C), // Kartu konversi mata uang
     detailVarianCardBg: Color(0xFF1B202C), // Kartu daftar varian
@@ -110,8 +107,13 @@ class AppUiColors {
     profilTemaCardBg: Color(0xFF1B202C), // Kartu ubah tema
     profilPengingatCardBg: Color(0xFF1B202C), // Kartu pengingat harian
     profilInfoCardBg: Color(0xFF1B202C), // Kartu info penyimpanan lokal
-    profilUjiNotifBg: Colors.transparent, // Tombol "Uji Notifikasi Sekarang"
-    profilUjiNotifText: Color(0xFFF4F6FA),
+    profilUjiNotifBg: Color.fromARGB(
+      0,
+      255,
+      0,
+      0,
+    ), // Tombol "Uji Notifikasi Sekarang"
+    profilUjiNotifText: Color.fromARGB(255, 255, 255, 255),
     profilKeluarBg: Colors.transparent, // Tombol "Keluar dari akun"
     profilKeluarText: Color(0xFFF4F6FA),
     // 7. Halaman Login & Register
@@ -127,7 +129,6 @@ class AppUiColors {
     berandaCekHargaBg: Color(0xFFACEF34), // Tombol besar "Cek Harga"
     berandaCekHargaText: Color(0xFF0F172A), // Teks & ikon tombol besar
     berandaMenuCardBg: Color(0xFFFFFFFF), // 4 kartu menu fitur
-    berandaRiwayatCardBg: Color(0xFFFFFFFF), // Kartu riwayat cek terbaru
     // 2. Halaman Detail Produk
     detailKonversiCardBg: Color(0xFFFFFFFF), // Kartu konversi mata uang
     detailVarianCardBg: Color(0xFFFFFFFF), // Kartu daftar varian

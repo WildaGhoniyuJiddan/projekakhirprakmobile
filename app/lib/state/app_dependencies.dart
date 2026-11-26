@@ -1,6 +1,5 @@
 import '../services/catalog_service.dart';
 import '../services/currency_api.dart';
-import '../services/history_repository.dart';
 import '../services/location_service.dart';
 import '../services/notification_service.dart';
 import '../services/price_analyzer.dart';
@@ -19,7 +18,6 @@ class AppDependencies {
     required this.sessionController,
     required this.themeController,
     required this.wishlistRepository,
-    required this.historyRepository,
     required this.catalogService,
     required this.priceAnalyzer,
     required this.notificationService,
@@ -32,7 +30,6 @@ class AppDependencies {
   final SessionController sessionController;
   final ThemeController themeController;
   final WishlistRepository wishlistRepository;
-  final HistoryRepository historyRepository;
   final CatalogService catalogService;
   final PriceAnalyzer priceAnalyzer;
   final NotificationService notificationService;

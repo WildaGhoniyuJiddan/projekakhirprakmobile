@@ -103,7 +103,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 Text(
-                  'Satu akun untuk menyimpan wishlist dan riwayat di perangkat ini.',
+                  'Satu akun untuk menyimpan wishlist di perangkat ini.',
                   style: theme.textTheme.bodyMedium,
                 ),
                 const SizedBox(height: MonexSpacing.sectionGap),

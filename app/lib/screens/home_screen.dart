@@ -2,18 +2,14 @@ import 'package:flutter/material.dart';
 
 import '../core/theme/app_ui_colors.dart';
 import '../core/theme/monex_theme.dart';
-import '../core/utils/formatters.dart';
 import '../core/widgets/monex_widgets.dart';
-import '../models/price_analysis.dart';
 import '../models/product_series.dart';
 import '../state/app_scope.dart';
 import '../widgets/app_logo.dart';
 import '../widgets/product_series_card.dart';
-import '../widgets/verdict_badge.dart';
 import 'nearby_stores_screen.dart';
 import 'price_check_screen.dart';
 import 'product_detail_screen.dart';
-import 'result_screen.dart';
 
 /// Beranda: ringkasan akun, pintu masuk fitur, dan seri etalase populer.
 class HomeScreen extends StatelessWidget {
@@ -170,11 +166,6 @@ class HomeScreen extends StatelessWidget {
                 onTap: () => _push(context, const NearbyStoresScreen()),
               ),
             ],
-          ),
-          const SizedBox(height: MonexSpacing.sectionGap),
-          _RecentHistorySection(
-            onOpenResult: (analysis) =>
-                _push(context, ResultScreen(analysis: analysis)),
           ),
         ],
       ),
@@ -389,110 +380,6 @@ class _HomeMenuCard extends StatelessWidget {
           ),
         ],
       ),
-    );
-  }
-}
-
-class _RecentHistorySection extends StatelessWidget {
-  const _RecentHistorySection({required this.onOpenResult});
-
-  final ValueChanged<PriceAnalysis> onOpenResult;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final palette = MonexPalette.of(context);
-    final uiColors = AppUiColors.of(context);
-    final historyRepo = AppScope.of(context).historyRepository;
-
-    return ListenableBuilder(
-      listenable: historyRepo,
-      builder: (context, _) {
-        final records = historyRepo.recent(limit: 3);
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('Riwayat cek terbaru', style: theme.textTheme.titleLarge),
-            const SizedBox(height: 10),
-            if (records.isEmpty)
-              MonexSurfaceCard(
-                color: uiColors.berandaRiwayatCardBg,
-                padding: const EdgeInsets.all(MonexSpacing.cardPadding),
-                child: Row(
-                  children: [
-                    Icon(Icons.history_rounded, color: palette.textMuted),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Text(
-                        'Belum ada riwayat cek harga. Hasil pengecekanmu akan tampil di sini.',
-                        style: theme.textTheme.bodySmall,
-                      ),
-                    ),
-                  ],
-                ),
-              )
-            else
-              Column(
-                children: [
-                  for (var i = 0; i < records.length; i++) ...[
-                    if (i > 0) const SizedBox(height: MonexSpacing.gridGap),
-                    MonexSurfaceCard(
-                      color: uiColors.berandaRiwayatCardBg,
-                      onTap: () => onOpenResult(records[i].analysis),
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 14,
-                        vertical: 12,
-                      ),
-                      radius: MonexSpacing.radiusMd,
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  records[i].analysis.request.query,
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: theme.textTheme.titleSmall,
-                                ),
-                                const SizedBox(height: 4),
-                                Text(
-                                  formatRupiah(
-                                    records[i].analysis.request.price,
-                                  ),
-                                  style: theme.textTheme.bodySmall?.copyWith(
-                                    color: palette.accent,
-                                    fontWeight: FontWeight.w700,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          const SizedBox(width: 8),
-                          VerdictBadge(
-                            verdict: records[i].analysis.verdict,
-                            compact: true,
-                          ),
-                          IconButton(
-                            tooltip: 'Hapus riwayat',
-                            icon: Icon(
-                              Icons.close_rounded,
-                              size: 18,
-                              color: palette.textMuted,
-                            ),
-                            onPressed: () =>
-                                historyRepo.deleteByKey(records[i].key),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ],
-              ),
-          ],
-        );
-      },
     );
   }
 }

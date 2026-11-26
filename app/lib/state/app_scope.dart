@@ -2,7 +2,6 @@ import 'package:flutter/widgets.dart';
 
 import '../services/catalog_service.dart';
 import '../services/currency_api.dart';
-import '../services/history_repository.dart';
 import '../services/location_service.dart';
 import '../services/notification_service.dart';
 import '../services/price_analyzer.dart';
@@ -23,7 +22,6 @@ class AppScope extends InheritedWidget {
   SessionController get sessionController => dependencies.sessionController;
   SessionPreferences get sessionPreferences => dependencies.sessionPreferences;
   WishlistRepository get wishlistRepository => dependencies.wishlistRepository;
-  HistoryRepository get historyRepository => dependencies.historyRepository;
   CatalogService get catalogService => dependencies.catalogService;
   PriceAnalyzer get priceAnalyzer => dependencies.priceAnalyzer;
   NotificationService get notificationService =>

@@ -10,7 +10,7 @@ import '../models/location_snapshot.dart';
 import '../models/store.dart';
 import '../state/app_scope.dart';
 
-/// Toko Terdekat: peta OpenStreetMap, jarak toko, dan notifikasi lokasi.
+/// Toko Terdekat: peta OpenStreetMap, lokasi pengguna, dan jarak toko.
 class NearbyStoresScreen extends StatefulWidget {
   const NearbyStoresScreen({super.key, this.initialQuery = ''});
 
@@ -22,13 +22,11 @@ class NearbyStoresScreen extends StatefulWidget {
 
 class _NearbyStoresScreenState extends State<NearbyStoresScreen> {
   static const _demoCenter = LatLng(-6.2088, 106.8456);
-  static const _nearestNotificationId = 2002;
 
   final _query = TextEditingController();
   final _mapController = MapController();
 
   LatLng _center = _demoCenter;
-  LocationSnapshot? _snapshot;
   List<Store>? _stores;
   String? _locationNote;
   bool _loading = true;
@@ -67,7 +65,6 @@ class _NearbyStoresScreenState extends State<NearbyStoresScreen> {
           .getCurrentLocation();
       if (!mounted) return;
       setState(() {
-        _snapshot = snapshot;
         _center = LatLng(snapshot.latitude, snapshot.longitude);
         _usingDemoLocation = false;
         _locationNote =
@@ -123,51 +120,19 @@ class _NearbyStoresScreenState extends State<NearbyStoresScreen> {
     }
   }
 
-  Future<void> _notifyNearest() async {
-    final stores = _stores;
-    if (stores == null || stores.isEmpty) return;
-    final nearest = stores.first;
-    final notifications = AppScope.of(context).notificationService;
-
-    try {
-      var granted = await notifications.areNotificationsEnabled();
-      if (!granted) granted = await notifications.requestPermission();
-      if (!granted) {
-        if (!mounted) return;
-        showMonexToast(
-          context,
-          'Izin notifikasi belum aktif. Aktifkan lewat pengaturan aplikasi.',
-          isError: true,
-        );
-        return;
-      }
-
-      final origin = _snapshot?.coordinateLabel ?? 'lokasi demo Jakarta';
-      await notifications.showImmediate(
-        id: _nearestNotificationId,
-        title: 'Toko terdekat: ${nearest.name}',
-        body:
-            '${_distanceLabel(nearest.distanceKm)} dari $origin. '
-            '${nearest.address}',
-      );
-      if (!mounted) return;
-      showMonexToast(
-        context,
-        'Notifikasi toko terdekat dikirim.',
-        isSuccess: true,
-      );
-    } on Object {
-      if (!mounted) return;
-      showMonexToast(context, 'Gagal mengirim notifikasi.', isError: true);
-    }
-  }
-
   void _focusStore(Store store) {
     _mapController.move(LatLng(store.lat, store.lng), 15);
     showMonexToast(
       context,
       '${store.name} · ${_distanceLabel(store.distanceKm)}',
     );
+  }
+
+  Future<void> _centerOnMyLocation() async {
+    if (_mapReady) {
+      _mapController.move(_center, 15);
+    }
+    await _refreshLocation();
   }
 
   void _clearSearch() {
@@ -391,10 +356,29 @@ class _NearbyStoresScreenState extends State<NearbyStoresScreen> {
                         point: _center,
                         width: 34,
                         height: 34,
-                        child: const Icon(
-                          Icons.my_location_rounded,
-                          color: Colors.blueAccent,
-                          size: 28,
+                        child: Center(
+                          child: Container(
+                            width: 24,
+                            height: 24,
+                            decoration: BoxDecoration(
+                              color: Colors.blueAccent.withValues(alpha: 0.25),
+                              shape: BoxShape.circle,
+                            ),
+                            child: Center(
+                              child: Container(
+                                width: 13,
+                                height: 13,
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFF2563EB),
+                                  shape: BoxShape.circle,
+                                  border: Border.all(
+                                    color: Colors.white,
+                                    width: 2.2,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
                         ),
                       ),
                       for (final store in stores)
@@ -452,6 +436,45 @@ class _NearbyStoresScreenState extends State<NearbyStoresScreen> {
                     ),
                   ),
                 ),
+              // Tombol biru "Lokasi Saya" di pojok kanan bawah peta
+              Positioned(
+                right: 12,
+                bottom: 28,
+                child: Tooltip(
+                  message: 'Lokasi saya',
+                  child: Material(
+                    key: const Key('stores_my_location_button'),
+                    color: const Color(0xFF2563EB),
+                    shape: const CircleBorder(),
+                    elevation: 4,
+                    shadowColor: Colors.black.withValues(alpha: 0.35),
+                    child: InkWell(
+                      customBorder: const CircleBorder(),
+                      onTap: _locating ? null : _centerOnMyLocation,
+                      child: SizedBox(
+                        width: 42,
+                        height: 42,
+                        child: Center(
+                          child: _locating
+                              ? const SizedBox(
+                                  width: 18,
+                                  height: 18,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                    color: Colors.white,
+                                  ),
+                                )
+                              : const Icon(
+                                  Icons.my_location_rounded,
+                                  color: Colors.white,
+                                  size: 20,
+                                ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
             ],
           ),
         ),
@@ -469,28 +492,11 @@ class _NearbyStoresScreenState extends State<NearbyStoresScreen> {
         MonexSpacing.screenPaddingH,
         10,
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Expanded(
-                child: Text(
-                  keyword.isEmpty
-                      ? '${stores.length} toko dalam radius 25 km'
-                      : '${stores.length} toko cocok dengan "$keyword"',
-                  style: theme.textTheme.bodySmall,
-                ),
-              ),
-              TextButton.icon(
-                key: const Key('stores_notify_nearest'),
-                onPressed: stores.isEmpty ? null : _notifyNearest,
-                icon: const Icon(Icons.notifications_active_outlined, size: 18),
-                label: const Text('Notifikasi'),
-              ),
-            ],
-          ),
-        ],
+      child: Text(
+        keyword.isEmpty
+            ? '${stores.length} toko dalam radius 25 km'
+            : '${stores.length} toko cocok dengan "$keyword"',
+        style: theme.textTheme.bodySmall,
       ),
     );
   }

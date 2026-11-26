@@ -244,7 +244,7 @@ void main() {
   });
 
   testWidgets(
-    'cek harga menampilkan hasil, menyimpan riwayat, dan simpan ke wishlist',
+    'cek harga menampilkan hasil dan simpan ke wishlist',
     (tester) async {
       final dependencies = await _loggedInDependencies(
         tester,
@@ -269,7 +269,6 @@ void main() {
       expect(find.text('Hasil Analisis'), findsOneWidget);
       expect(find.text('Worth It'), findsOneWidget);
       expect(find.text('Ringkasan harga'), findsOneWidget);
-      expect(dependencies.historyRepository.length, 1);
 
       await _tapWithIo(tester, find.byKey(const Key('result_save_wishlist')));
       expect(find.text('Tambah Wishlist'), findsOneWidget);
@@ -294,15 +293,6 @@ void main() {
       await tester.pumpAndSettle();
       await tester.tap(find.byIcon(Icons.arrow_back_ios_new_rounded));
       await tester.pumpAndSettle();
-
-      // Riwayat tampil di Beranda dan item tampil di Wishlist.
-      await tester.scrollUntilVisible(
-        find.text('Riwayat cek terbaru'),
-        250,
-        scrollable: find.byType(Scrollable).first,
-      );
-      expect(find.text('Riwayat cek terbaru'), findsOneWidget);
-      expect(find.text('RTX 4060'), findsWidgets);
 
       await tester.tap(find.text('Wishlist').last);
       await tester.pumpAndSettle();
@@ -457,15 +447,13 @@ void main() {
     );
   });
 
-  testWidgets('toko terdekat menampilkan peta, jarak, dan notifikasi lokasi', (
+  testWidgets('toko terdekat menampilkan peta, tombol lokasi, dan jarak', (
     tester,
   ) async {
-    final notifications = FakeNotificationService();
     final dependencies = await _loggedInDependencies(
       tester,
       env,
       email: 'alur.toko@worthbang.test',
-      notifications: notifications,
     );
 
     await _pumpApp(tester, dependencies);
@@ -481,18 +469,13 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.byType(FlutterMap), findsOneWidget);
+    expect(find.byKey(const Key('stores_my_location_button')), findsOneWidget);
+    await tester.tap(find.byKey(const Key('stores_my_location_button')));
+    await tester.pumpAndSettle();
     expect(find.text('2 toko dalam radius 25 km'), findsOneWidget);
     expect(find.text('Toko Dekat'), findsOneWidget);
     expect(find.text('Toko Sedang'), findsOneWidget);
     expect(find.text('Toko Jauh'), findsNothing);
-
-    await tester.tap(find.byKey(const Key('stores_notify_nearest')));
-    await tester.pumpAndSettle();
-
-    expect(notifications.immediateHistory, hasLength(1));
-    final payload = notifications.immediateHistory.single;
-    expect(payload['title'], contains('Toko Dekat'));
-    expect(payload['body'], contains('-6.20880'));
 
     await tester.enterText(find.byKey(const Key('stores_search')), 'RTX 4060');
     await tester.testTextInput.receiveAction(TextInputAction.search);

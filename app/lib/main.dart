@@ -10,7 +10,6 @@ import 'core/widgets/monex_widgets.dart';
 import 'services/auth_service.dart';
 import 'services/catalog_service.dart';
 import 'services/currency_api.dart';
-import 'services/history_repository.dart';
 import 'services/hive_service.dart';
 import 'services/location_service.dart';
 import 'services/notification_service.dart';
@@ -68,7 +67,6 @@ Future<void> main() async {
           sessionController: sessionController,
           themeController: themeController,
           wishlistRepository: WishlistRepository(HiveService.wishlistBox),
-          historyRepository: HistoryRepository(HiveService.historyBox),
           catalogService: catalogService,
           priceAnalyzer: CatalogPriceAnalyzer(catalogService),
           notificationService: notificationService,
