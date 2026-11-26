@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_timezone/flutter_timezone.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
@@ -51,7 +53,7 @@ class LocalNotificationService implements NotificationService {
       }
     }
 
-    const androidSettings = AndroidInitializationSettings('@mipmap/ic_launcher');
+    const androidSettings = AndroidInitializationSettings('ic_notification');
     const initSettings = InitializationSettings(android: androidSettings);
 
     await _plugin.initialize(settings: initSettings);
@@ -139,7 +141,9 @@ class LocalNotificationService implements NotificationService {
         channelDescription: _channelDesc,
         importance: Importance.high,
         priority: Priority.high,
-        icon: '@mipmap/ic_launcher',
+        icon: 'ic_notification',
+        largeIcon: DrawableResourceAndroidBitmap('ic_notification_large'),
+        color: Color(0xFF161B22),
       ),
     );
   }
