@@ -105,8 +105,6 @@ class PriceAnalysis {
   final int fairPriceHigh;
   final DateTime createdAt;
 
-  int get listingCount => comparisons.length;
-
   Map<String, dynamic> toJson() => {
     'query': request.query,
     'price': request.price,

@@ -93,9 +93,6 @@ class CatalogService {
   /// Akses sinkron cache seri jika sudah selesai dimuat sebelumnya.
   List<ProductSeries>? get cachedSeries => _series;
 
-  /// Akses sinkron cache item jika sudah selesai dimuat sebelumnya.
-  List<CatalogItem>? get cachedItems => _items;
-
   Future<_ParsedCatalog> _ensureLoaded() {
     final items = _items;
     final series = _series;

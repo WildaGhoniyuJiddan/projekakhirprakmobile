@@ -124,7 +124,7 @@ class _StoreMapScreenState extends State<StoreMapScreen> {
     _mapController.move(LatLng(store.lat, store.lng), 15);
     showMonexToast(
       context,
-      '${store.name} · ${_distanceLabel(store.distanceKm)}',
+      '${store.name} · ${formatDistance(store.distanceKm)}',
     );
   }
 
@@ -569,7 +569,7 @@ class _StoreTile extends StatelessWidget {
                     ),
                     const SizedBox(width: 4),
                     Text(
-                      _distanceLabel(store.distanceKm),
+                      formatDistance(store.distanceKm),
                       style: theme.textTheme.bodySmall?.copyWith(
                         fontWeight: FontWeight.w600,
                       ),
@@ -595,11 +595,4 @@ class _StoreTile extends StatelessWidget {
       ),
     );
   }
-}
-
-String _distanceLabel(double distanceKm) {
-  if (distanceKm < 1) {
-    return '${(distanceKm * 1000).round()} m';
-  }
-  return '${distanceKm.toStringAsFixed(1)} km';
 }

@@ -18,17 +18,12 @@ abstract final class MonexColors {
 
   // Primary Brand Accent (Neon Lime)
   static const Color lime = Color(0xFFACEF34);
-  static const Color limeBright = Color(0xFFB8FF3B);
   static const Color limeMuted = Color.fromRGBO(172, 239, 52, 0.14);
 
   // Semantic & Secondary Accents
   static const Color danger = Color(0xFFF43F5E);
   static const Color dangerMuted = Color.fromRGBO(244, 63, 94, 0.15);
-  static const Color chartPurple = Color(0xFFA855F7);
-  static const Color chartSky = Color(0xFF38BDF8);
   static const Color chartTrack = Color(0xFF1E293B);
-  static const Color barInactive = Color(0xFF475569);
-  static const Color barActive = Color(0xFF64748B);
 
   // Typography
   static const Color textPrimary = Color(0xFFF8FAFC);
@@ -60,7 +55,7 @@ abstract final class MonexSpacing {
   static const double radiusPill = 999.0;
 }
 
-/// Dekorasi: gradient, glow, dan standard surface card.
+/// Dekorasi kartu gradien utama.
 abstract final class MonexDecorations {
   /// Radial Gradient Kartu Utama (circle at 18% 20%).
   static const RadialGradient visaCardGradient = RadialGradient(
@@ -73,51 +68,6 @@ abstract final class MonexDecorations {
     ],
     stops: [0.0, 0.45, 1.0],
   );
-
-  /// Glow Hijau Neon untuk Tombol Utama & FAB.
-  static List<BoxShadow> get limeGlowShadow => const [
-    BoxShadow(
-      color: Color.fromRGBO(172, 239, 52, 0.45),
-      blurRadius: 24,
-      spreadRadius: -4,
-      offset: Offset(0, 8),
-    ),
-  ];
-
-  /// Soft Shadow untuk Kartu Highlight.
-  static List<BoxShadow> get cardSoftShadow => const [
-    BoxShadow(
-      color: Color.fromRGBO(0, 0, 0, 0.50),
-      blurRadius: 30,
-      spreadRadius: -10,
-      offset: Offset(0, 10),
-    ),
-  ];
-
-  /// Dekorasi Standar Surface Card.
-  static BoxDecoration surfaceCard({
-    double radius = MonexSpacing.radiusCard,
-    Color? color,
-    Color? borderColor,
-  }) {
-    return BoxDecoration(
-      color: color ?? MonexColors.surface,
-      borderRadius: BorderRadius.circular(radius),
-      border: Border.all(
-        color: borderColor ?? MonexColors.borderSubtle,
-        width: 1,
-      ),
-    );
-  }
-
-  /// Dekorasi Kartu Gradien Neon.
-  static BoxDecoration visaCard({double radius = MonexSpacing.radiusCard}) {
-    return BoxDecoration(
-      gradient: visaCardGradient,
-      borderRadius: BorderRadius.circular(radius),
-      boxShadow: cardSoftShadow,
-    );
-  }
 }
 
 /// Font family yang di-*self-host* (lihat `pubspec.yaml` → flutter.fonts).
@@ -147,8 +97,6 @@ class MonexPalette {
     required this.dangerMuted,
     required this.onDanger,
     required this.chartTrack,
-    required this.barInactive,
-    required this.barActive,
     required this.cardShadow,
     required this.heroShadow,
     required this.buttonShadow,
@@ -174,8 +122,6 @@ class MonexPalette {
   final Color dangerMuted;
   final Color onDanger;
   final Color chartTrack;
-  final Color barInactive;
-  final Color barActive;
   final List<BoxShadow> cardShadow;
   final List<BoxShadow> heroShadow;
   final List<BoxShadow> buttonShadow;
@@ -218,8 +164,6 @@ class MonexPalette {
     dangerMuted: MonexColors.dangerMuted,
     onDanger: MonexColors.textDark,
     chartTrack: MonexColors.chartTrack,
-    barInactive: MonexColors.barInactive,
-    barActive: MonexColors.barActive,
     cardShadow: [],
     heroShadow: [
       BoxShadow(
@@ -261,8 +205,6 @@ class MonexPalette {
     dangerMuted: Color(0xFFFEE2E2),
     onDanger: Color(0xFFFFFFFF),
     chartTrack: Color(0xFFE2E8F0),
-    barInactive: Color(0xFFCBD5E1),
-    barActive: Color(0xFF64748B),
     cardShadow: [
       BoxShadow(
         color: Color.fromRGBO(15, 23, 42, 0.05),
