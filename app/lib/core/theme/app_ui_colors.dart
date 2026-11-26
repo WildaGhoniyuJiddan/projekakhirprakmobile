@@ -100,9 +100,9 @@ class AppUiColors {
     hasilTokoTerdekatText: Color(0xFFF4F6FA),
     hasilSelesaiBg: Colors.transparent, // Tombol "Selesai"
     hasilSelesaiText: Color(0xFFF4F6FA),
-    // 5. Halaman Wishlist & Toko Terdekat
+    // 5. Halaman Wishlist & Peta Toko
     wishlistCardBg: Color(0xFF1B202C), // Kartu item wishlist
-    tokoCardBg: Color(0xFF1B202C), // Kartu daftar toko
+    tokoCardBg: Color(0xFF1B202C), // Kartu daftar toko di peta
     // 6. Halaman Profil
     profilTemaCardBg: Color(0xFF1B202C), // Kartu ubah tema
     profilPengingatCardBg: Color(0xFF1B202C), // Kartu pengingat harian
@@ -146,9 +146,9 @@ class AppUiColors {
     hasilTokoTerdekatText: Color(0xFF0F172A),
     hasilSelesaiBg: Color(0xFFFFFFFF), // Tombol "Selesai"
     hasilSelesaiText: Color(0xFF0F172A),
-    // 5. Halaman Wishlist & Toko Terdekat
+    // 5. Halaman Wishlist & Peta Toko
     wishlistCardBg: Color(0xFFFFFFFF), // Kartu item wishlist
-    tokoCardBg: Color(0xFFFFFFFF), // Kartu daftar toko
+    tokoCardBg: Color(0xFFFFFFFF), // Kartu daftar toko di peta
     // 6. Halaman Profil
     profilTemaCardBg: Color(0xFFFFFFFF), // Kartu ubah tema
     profilPengingatCardBg: Color(0xFFFFFFFF), // Kartu pengingat harian

@@ -10,17 +10,17 @@ import '../models/location_snapshot.dart';
 import '../models/store.dart';
 import '../state/app_scope.dart';
 
-/// Toko Terdekat: peta OpenStreetMap, lokasi pengguna, dan jarak toko.
-class NearbyStoresScreen extends StatefulWidget {
-  const NearbyStoresScreen({super.key, this.initialQuery = ''});
+/// Peta Toko Terdekat: peta OpenStreetMap, lokasi pengguna, dan jarak toko.
+class StoreMapScreen extends StatefulWidget {
+  const StoreMapScreen({super.key, this.initialQuery = ''});
 
   final String initialQuery;
 
   @override
-  State<NearbyStoresScreen> createState() => _NearbyStoresScreenState();
+  State<StoreMapScreen> createState() => _StoreMapScreenState();
 }
 
-class _NearbyStoresScreenState extends State<NearbyStoresScreen> {
+class _StoreMapScreenState extends State<StoreMapScreen> {
   static const _demoCenter = LatLng(-6.2088, 106.8456);
 
   final _query = TextEditingController();

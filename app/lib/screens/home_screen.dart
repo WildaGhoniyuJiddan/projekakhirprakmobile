@@ -7,9 +7,9 @@ import '../models/product_series.dart';
 import '../state/app_scope.dart';
 import '../widgets/app_logo.dart';
 import '../widgets/product_series_card.dart';
-import 'nearby_stores_screen.dart';
 import 'price_check_screen.dart';
 import 'product_detail_screen.dart';
+import 'store_map_screen.dart';
 
 /// Beranda: ringkasan akun, pintu masuk fitur, dan seri etalase populer.
 class HomeScreen extends StatelessWidget {
@@ -163,7 +163,7 @@ class HomeScreen extends StatelessWidget {
                 icon: Icons.pin_drop_outlined,
                 title: 'Toko Terdekat',
                 subtitle: 'Peta toko komputer di sekitarmu.',
-                onTap: () => _push(context, const NearbyStoresScreen()),
+                onTap: () => _push(context, const StoreMapScreen()),
               ),
             ],
           ),

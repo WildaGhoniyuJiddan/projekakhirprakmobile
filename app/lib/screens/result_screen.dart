@@ -8,7 +8,7 @@ import '../models/price_analysis.dart';
 import '../state/app_scope.dart';
 import '../widgets/verdict_badge.dart';
 import '../widgets/wishlist_form_dialog.dart';
-import 'nearby_stores_screen.dart';
+import 'store_map_screen.dart';
 
 /// Halaman hasil analisis kelayakan harga dan daftar pembanding katalog.
 class ResultScreen extends StatelessWidget {
@@ -278,7 +278,7 @@ class ResultScreen extends StatelessWidget {
                 foregroundColor: uiColors.hasilTokoTerdekatText,
                 onPressed: () => Navigator.of(context).push(
                   MaterialPageRoute<void>(
-                    builder: (_) => NearbyStoresScreen(
+                    builder: (_) => StoreMapScreen(
                       initialQuery: analysis.request.query,
                     ),
                   ),
