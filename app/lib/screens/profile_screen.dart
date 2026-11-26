@@ -204,24 +204,25 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         Stack(
                           clipBehavior: Clip.none,
                           children: [
-                            ClipOval(
-                              child: Image.network(
-                                user.avatarUrl,
-                                width: 88,
-                                height: 88,
-                                fit: BoxFit.cover,
-                                semanticLabel: 'Avatar ${user.name}',
-                                errorBuilder: (context, error, stackTrace) =>
-                                    Container(
-                                      width: 88,
-                                      height: 88,
-                                      color: palette.surfaceElevated,
-                                      child: Icon(
-                                        Icons.person_rounded,
-                                        size: 44,
-                                        color: palette.accent,
-                                      ),
-                                    ),
+                            Container(
+                              width: 88,
+                              height: 88,
+                              alignment: Alignment.center,
+                              decoration: BoxDecoration(
+                                color: palette.accentSoft,
+                                shape: BoxShape.circle,
+                                border: Border.all(
+                                  color: palette.accentBorder,
+                                  width: 1.5,
+                                ),
+                              ),
+                              child: Text(
+                                user.initials,
+                                semanticsLabel: 'Avatar ${user.name}',
+                                style: theme.textTheme.displaySmall?.copyWith(
+                                  color: palette.accent,
+                                  fontWeight: FontWeight.w800,
+                                ),
                               ),
                             ),
                             Positioned(

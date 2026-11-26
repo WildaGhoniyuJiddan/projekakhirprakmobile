@@ -4,12 +4,10 @@ class UserAccount {
     required int id,
     required String name,
     required String email,
-    String? avatarUrl,
+    this.avatarUrl,
   }) : _id = id < 0 ? 0 : id,
        _name = _validateName(name),
-       _email = _validateEmail(email),
-       // ignore: prefer_initializing_formals — parameter publik, field privat.
-       _avatarUrl = avatarUrl;
+       _email = _validateEmail(email);
 
   /// Redirecting constructor: tampilan tamu sebelum login.
   UserAccount.empty()
@@ -28,7 +26,7 @@ class UserAccount {
   final int _id;
   String _name;
   String _email;
-  String? _avatarUrl;
+  String? avatarUrl;
 
   int get id => _id;
   String get name => _name;
@@ -36,17 +34,23 @@ class UserAccount {
 
   set name(String value) => _name = _validateName(value);
   set email(String value) => _email = _validateEmail(value);
-  set avatarUrl(String? value) => _avatarUrl = value;
 
-  String get avatarUrl =>
-      _avatarUrl ??
-      'https://i.pravatar.cc/160?u=${Uri.encodeComponent(_email)}';
+  /// Inisial nama pengguna untuk avatar lokal (mis. "Budi Santoso" -> "BS").
+  String get initials {
+    final parts = _name
+        .split(RegExp(r'\s+'))
+        .where((part) => part.isNotEmpty)
+        .toList();
+    if (parts.isEmpty) return '?';
+    if (parts.length == 1) return parts.first[0].toUpperCase();
+    return '${parts.first[0]}${parts.last[0]}'.toUpperCase();
+  }
 
   Map<String, dynamic> toMap() => {
     'id': _id,
     'name': _name,
     'email': _email,
-    'avatar_url': _avatarUrl,
+    'avatar_url': avatarUrl,
   };
 
   static String _validateName(String value) {

@@ -18,7 +18,8 @@ void main() {
       expect(guest.id, 0);
       expect(guest.name, 'Tamu');
       expect(guest.email, 'tamu@worthbang.local');
-      expect(guest.avatarUrl, contains('tamu%40worthbang.local'));
+      expect(guest.avatarUrl, isNull);
+      expect(guest.initials, 'T');
     });
 
     test('fromMap/toMap round-trip', () {
