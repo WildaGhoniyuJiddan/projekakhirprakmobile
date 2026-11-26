@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../core/theme/app_ui_colors.dart';
 import '../core/theme/monex_theme.dart';
 import '../core/widgets/monex_widgets.dart';
 import '../services/notification_service.dart';
@@ -26,8 +27,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
     super.didChangeDependencies();
     if (!_initialized) {
       _initialized = true;
-      _reminderEnabled =
-          AppScope.of(context).sessionPreferences.isDailyReminderEnabled;
+      _reminderEnabled = AppScope.of(context)
+          .sessionPreferences
+          .isDailyReminderEnabled;
     }
   }
 
@@ -48,8 +50,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       await scope.notificationService.scheduleDailyReminder(
         id: LocalNotificationService.dailyReminderId,
         title: 'Waktunya Cek Harga Komponen PC! 💻',
-        body:
-            'Cek kembali harga komponen impianmu di etalase atau wishlist hari ini.',
+        body: 'Cek kembali harga komponen impianmu di etalase atau wishlist hari ini.',
         hour: 19,
         minute: 0,
       );
@@ -93,8 +94,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       await notifications.showImmediate(
         id: _testNotificationId,
         title: 'Waktunya Cek Harga Komponen PC! 💻',
-        body:
-            'Tes notifikasi berhasil! Pengingat harian pukul 19:00 siap berjalan di perangkat ini.',
+        body: 'Tes notifikasi berhasil! Pengingat harian pukul 19:00 siap berjalan di perangkat ini.',
       );
       if (!context.mounted) return;
       showMonexToast(context, 'Notifikasi uji coba dikirim.', isSuccess: true);
@@ -154,6 +154,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final palette = MonexPalette.of(context);
+    final uiColors = AppUiColors.of(context);
     final scope = AppScope.of(context);
     final user = scope.sessionController.user;
 
@@ -256,7 +257,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   const SizedBox(height: 24),
                   Text('Preferensi', style: theme.textTheme.titleMedium),
                   const SizedBox(height: 8),
+                  // Kartu ubah tema
                   MonexSurfaceCard(
+                    color: uiColors.profilTemaCardBg,
                     padding: EdgeInsets.zero,
                     child: ListTile(
                       leading: const Icon(Icons.palette_outlined),
@@ -294,7 +297,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                   ),
                   const SizedBox(height: 12),
+                  // Kartu pengingat harian & tombol uji notifikasi
                   MonexSurfaceCard(
+                    color: uiColors.profilPengingatCardBg,
                     padding: EdgeInsets.zero,
                     child: Column(
                       children: [
@@ -324,6 +329,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   ? 'Mengirim...'
                                   : 'Uji Notifikasi Sekarang',
                               icon: Icons.send_rounded,
+                              backgroundColor: uiColors.profilUjiNotifBg,
+                              foregroundColor: uiColors.profilUjiNotifText,
                               onPressed: _sendingTest
                                   ? null
                                   : () => _sendTestNotification(context),
@@ -334,7 +341,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                   ),
                   const SizedBox(height: 18),
+                  // Kartu info penyimpanan lokal
                   MonexSurfaceCard(
+                    color: uiColors.profilInfoCardBg,
                     padding: const EdgeInsets.all(MonexSpacing.cardPadding),
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -357,10 +366,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                   ),
                   const SizedBox(height: 24),
+                  // Tombol Keluar dari akun
                   MonexSecondaryButton(
                     key: const Key('profile_logout'),
                     label: 'Keluar dari akun',
                     icon: Icons.logout_rounded,
+                    backgroundColor: uiColors.profilKeluarBg,
+                    foregroundColor: uiColors.profilKeluarText,
                     onPressed: () => _logout(context),
                   ),
                 ],

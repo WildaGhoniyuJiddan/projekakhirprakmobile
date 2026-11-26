@@ -513,7 +513,7 @@ void main() {
     expect(find.text('Rp4.600.000'), findsOneWidget);
   });
 
-  testWidgets('konverter kurs memuat daftar kurs, mengonversi, dan menangani retry', (
+  testWidgets('konversi kurs di detail produk memuat kurs, mengganti mata uang, dan retry', (
     tester,
   ) async {
     final currency = FakeCurrencyService(
@@ -528,44 +528,35 @@ void main() {
 
     await _pumpApp(tester, dependencies);
 
-    final converterCard = find.byKey(const Key('home_converter_card'));
-    await tester.scrollUntilVisible(
-      converterCard,
-      250,
-      scrollable: find.byType(Scrollable).first,
-    );
-    await tester.ensureVisible(converterCard);
+    await tester.tap(find.text('Cari').last);
     await tester.pumpAndSettle();
-    await tester.tap(converterCard);
+    await tester.tap(find.byKey(const ValueKey('series_gpu:RTX 4060')));
     await tester.pumpAndSettle();
 
-    expect(find.text('Kurs belum bisa dimuat'), findsOneWidget);
+    expect(find.byKey(const Key('detail_currency_card')), findsOneWidget);
     expect(find.text('Koneksi terputus.'), findsOneWidget);
 
     currency.error = null;
-    await tester.tap(find.text('Coba lagi'));
+    await tester.tap(find.byKey(const Key('detail_currency_retry')));
     await tester.pumpAndSettle();
 
-    expect(find.byKey(const Key('currency_tile_USD')), findsOneWidget);
-    expect(find.byKey(const Key('currency_tile_SGD')), findsOneWidget);
-    expect(find.byKey(const Key('currency_tile_JPY')), findsOneWidget);
-
-    await tester.enterText(find.byKey(const Key('converter_amount')), '1600000');
-    await tester.pumpAndSettle();
+    expect(find.byKey(const Key('detail_currency_chip_USD')), findsOneWidget);
+    expect(find.byKey(const Key('detail_currency_chip_SGD')), findsOneWidget);
+    expect(find.byKey(const Key('detail_currency_chip_JPY')), findsOneWidget);
 
     expect(
       tester
-          .widget<Text>(find.byKey(const Key('converter_highlight_value')))
+          .widget<Text>(find.byKey(const Key('detail_currency_value')))
           .data,
       contains('USD'),
     );
 
-    await tester.tap(find.byKey(const Key('currency_tile_JPY')));
+    await tester.tap(find.byKey(const Key('detail_currency_chip_JPY')));
     await tester.pumpAndSettle();
 
     expect(
       tester
-          .widget<Text>(find.byKey(const Key('converter_highlight_value')))
+          .widget<Text>(find.byKey(const Key('detail_currency_value')))
           .data,
       contains('JPY'),
     );
@@ -589,7 +580,7 @@ void main() {
     expect(bottomNav.backgroundColor, MonexPalette.light.surface);
     expect(bottomNav.selectedItemColor, MonexPalette.light.accent);
 
-    final cardFinder = find.byKey(const Key('home_converter_card'));
+    final cardFinder = find.byKey(const Key('home_menu_stores'));
     await tester.scrollUntilVisible(
       cardFinder,
       250,

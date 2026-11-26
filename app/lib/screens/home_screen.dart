@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../core/theme/app_ui_colors.dart';
 import '../core/theme/monex_theme.dart';
 import '../core/utils/formatters.dart';
 import '../core/widgets/monex_widgets.dart';
@@ -9,7 +10,6 @@ import '../state/app_scope.dart';
 import '../widgets/app_logo.dart';
 import '../widgets/product_series_card.dart';
 import '../widgets/verdict_badge.dart';
-import 'converter_screen.dart';
 import 'nearby_stores_screen.dart';
 import 'price_check_screen.dart';
 import 'product_detail_screen.dart';
@@ -28,10 +28,11 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final palette = MonexPalette.of(context);
+    final uiColors = AppUiColors.of(context);
     final scope = AppScope.of(context);
     final user = scope.sessionController.user;
     final firstName = (user?.name ?? 'Tamu').split(' ').first;
+    final heroTextColor = uiColors.berandaCekHargaText;
 
     return Scaffold(
       appBar: AppBar(
@@ -77,7 +78,9 @@ class HomeScreen extends StatelessWidget {
             style: theme.textTheme.bodyMedium,
           ),
           const SizedBox(height: MonexSpacing.sectionGap),
+          // Section Hero: tombol kartu utama "Cek Harga" (ubah warna di app_ui_colors.dart)
           MonexGradientCard(
+            color: uiColors.berandaCekHargaBg,
             onTap: () => _push(context, const PriceCheckScreen()),
             padding: const EdgeInsets.all(20),
             child: Row(
@@ -86,13 +89,13 @@ class HomeScreen extends StatelessWidget {
                   width: 46,
                   height: 46,
                   decoration: BoxDecoration(
-                    color: MonexColors.textDark.withValues(alpha: 0.10),
+                    color: heroTextColor.withValues(alpha: 0.12),
                     borderRadius: BorderRadius.circular(MonexSpacing.radiusMd),
                   ),
-                  child: const Icon(
+                  child: Icon(
                     Icons.price_check_rounded,
                     size: 26,
-                    color: MonexColors.textDark,
+                    color: heroTextColor,
                   ),
                 ),
                 const SizedBox(width: 14),
@@ -103,27 +106,25 @@ class HomeScreen extends StatelessWidget {
                       Text(
                         'Cek Harga',
                         style: theme.textTheme.titleMedium?.copyWith(
-                          color: MonexColors.textDark,
+                          color: heroTextColor,
                         ),
                       ),
                       const SizedBox(height: 4),
                       Text(
                         'Bandingkan harga dengan median pasar.',
                         style: theme.textTheme.bodyMedium?.copyWith(
-                          color: MonexColors.textDark.withValues(alpha: 0.72),
+                          color: heroTextColor.withValues(alpha: 0.78),
                         ),
                       ),
                     ],
                   ),
                 ),
-                const Icon(
-                  Icons.arrow_forward_rounded,
-                  color: MonexColors.textDark,
-                ),
+                Icon(Icons.arrow_forward_rounded, color: heroTextColor),
               ],
             ),
           ),
           const SizedBox(height: MonexSpacing.sectionGap),
+          // Section Etalase Populer
           _FeaturedSeries(
             onSeeAll: () => onOpenTab(1),
             onOpenSeries: (series) => _push(
@@ -132,6 +133,7 @@ class HomeScreen extends StatelessWidget {
             ),
           ),
           const SizedBox(height: MonexSpacing.sectionGap),
+          // Section Menu Fitur (grid 2x2: Cari Produk, Wishlist, Cek Harga, Toko Terdekat)
           Text('Jelajahi fitur', style: theme.textTheme.titleLarge),
           const SizedBox(height: MonexSpacing.gridGap),
           GridView.count(
@@ -161,54 +163,13 @@ class HomeScreen extends StatelessWidget {
                 onTap: () => _push(context, const PriceCheckScreen()),
               ),
               _HomeMenuCard(
+                key: const Key('home_menu_stores'),
                 icon: Icons.pin_drop_outlined,
                 title: 'Toko Terdekat',
                 subtitle: 'Peta toko komputer di sekitarmu.',
                 onTap: () => _push(context, const NearbyStoresScreen()),
               ),
             ],
-          ),
-          const SizedBox(height: MonexSpacing.gridGap),
-          MonexSurfaceCard(
-            key: const Key('home_converter_card'),
-            onTap: () => _push(context, const ConverterScreen()),
-            padding: const EdgeInsets.all(MonexSpacing.cardPaddingCompact),
-            radius: MonexSpacing.radiusMd,
-            child: Row(
-              children: [
-                Container(
-                  width: 40,
-                  height: 40,
-                  decoration: BoxDecoration(
-                    color: palette.accentSoft,
-                    borderRadius: BorderRadius.circular(MonexSpacing.radiusSm),
-                  ),
-                  child: Icon(
-                    Icons.currency_exchange_rounded,
-                    size: 20,
-                    color: palette.accent,
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text('Konverter Kurs', style: theme.textTheme.titleSmall),
-                      const SizedBox(height: 2),
-                      Text(
-                        'Konversi harga komponen dari IDR ke mata uang asing.',
-                        style: theme.textTheme.bodySmall,
-                      ),
-                    ],
-                  ),
-                ),
-                Icon(
-                  Icons.chevron_right_rounded,
-                  color: palette.textMuted,
-                ),
-              ],
-            ),
           ),
           const SizedBox(height: MonexSpacing.sectionGap),
           _RecentHistorySection(
@@ -370,6 +331,7 @@ class _FeaturedSeriesState extends State<_FeaturedSeries> {
 
 class _HomeMenuCard extends StatelessWidget {
   const _HomeMenuCard({
+    super.key,
     required this.icon,
     required this.title,
     required this.subtitle,
@@ -385,7 +347,9 @@ class _HomeMenuCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final palette = MonexPalette.of(context);
+    final uiColors = AppUiColors.of(context);
     return MonexSurfaceCard(
+      color: uiColors.berandaMenuCardBg,
       onTap: onTap,
       padding: const EdgeInsets.all(MonexSpacing.cardPaddingCompact),
       radius: MonexSpacing.radiusMd,
@@ -393,14 +357,19 @@ class _HomeMenuCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
+          // Ikon & warna kartu menu di Beranda
           Container(
             width: 40,
             height: 40,
             decoration: BoxDecoration(
-              color: palette.accentSoft,
+              color: palette.accentSoft, // Warna background ikon menu
               borderRadius: BorderRadius.circular(MonexSpacing.radiusSm),
             ),
-            child: Icon(icon, size: 20, color: palette.accent),
+            child: Icon(
+              icon,
+              size: 20,
+              color: palette.accent,
+            ), // Warna ikon menu
           ),
           const SizedBox(height: 10),
           Text(
@@ -433,6 +402,7 @@ class _RecentHistorySection extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final palette = MonexPalette.of(context);
+    final uiColors = AppUiColors.of(context);
     final historyRepo = AppScope.of(context).historyRepository;
 
     return ListenableBuilder(
@@ -446,13 +416,11 @@ class _RecentHistorySection extends StatelessWidget {
             const SizedBox(height: 10),
             if (records.isEmpty)
               MonexSurfaceCard(
+                color: uiColors.berandaRiwayatCardBg,
                 padding: const EdgeInsets.all(MonexSpacing.cardPadding),
                 child: Row(
                   children: [
-                    Icon(
-                      Icons.history_rounded,
-                      color: palette.textMuted,
-                    ),
+                    Icon(Icons.history_rounded, color: palette.textMuted),
                     const SizedBox(width: 12),
                     Expanded(
                       child: Text(
@@ -469,6 +437,7 @@ class _RecentHistorySection extends StatelessWidget {
                   for (var i = 0; i < records.length; i++) ...[
                     if (i > 0) const SizedBox(height: MonexSpacing.gridGap),
                     MonexSurfaceCard(
+                      color: uiColors.berandaRiwayatCardBg,
                       onTap: () => onOpenResult(records[i].analysis),
                       padding: const EdgeInsets.symmetric(
                         horizontal: 14,

@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-/// Design system "Monex" — Deep Dark Fintech.
-///
 /// Plus Jakarta Sans di-*self-host* (bundled di `assets/fonts/`) supaya tema
 /// konsisten tanpa fetch runtime. Mode terang memakai inversi semantik dari
 /// token yang sama dengan aksen lime tetap konsisten di kedua mode.
@@ -198,23 +196,24 @@ class MonexPalette {
     return Color.lerp(color, Colors.black, 0.30)!;
   }
 
+  // Palet warna utama mode GELAP
   static const MonexPalette dark = MonexPalette(
     brightness: Brightness.dark,
-    appBg: MonexColors.appBg,
+    appBg: MonexColors.appBg, // Warna background halaman (gelap)
     canvas: MonexColors.canvas,
-    surface: MonexColors.surface,
+    surface: MonexColors.surface, // Warna kartu / card (gelap)
     surfaceHover: MonexColors.surfaceHover,
     surfaceElevated: MonexColors.surfaceElevated,
     borderSubtle: MonexColors.borderSubtle,
     borderLight: MonexColors.borderLight,
-    textPrimary: MonexColors.textPrimary,
+    textPrimary: MonexColors.textPrimary, // Warna teks utama (gelap)
     textSecondary: MonexColors.textSecondary,
     textMuted: MonexColors.textMuted,
-    accent: MonexColors.lime,
-    accentSoft: MonexColors.limeMuted,
+    accent: MonexColors.lime, // Warna aksen & teks harga (gelap)
+    accentSoft: MonexColors.limeMuted, // Warna latar ikon (gelap)
     accentBorder: Color.fromRGBO(172, 239, 52, 0.45),
-    buttonBg: MonexColors.lime,
-    buttonFg: MonexColors.textDark,
+    buttonBg: MonexColors.lime, // Warna tombol utama (gelap)
+    buttonFg: MonexColors.textDark, // Warna teks tombol utama (gelap)
     danger: MonexColors.danger,
     dangerMuted: MonexColors.dangerMuted,
     onDanger: MonexColors.textDark,
@@ -240,23 +239,24 @@ class MonexPalette {
     ],
   );
 
+  // Palet warna utama mode TERANG
   static const MonexPalette light = MonexPalette(
     brightness: Brightness.light,
-    appBg: Color(0xFFF3F6FA),
+    appBg: Color(0xFFF3F6FA), // Warna background halaman (terang)
     canvas: Color(0xFFFFFFFF),
-    surface: Color(0xFFFFFFFF),
+    surface: Color(0xFFFFFFFF), // Warna kartu / card (terang)
     surfaceHover: Color(0xFFF1F5F9),
     surfaceElevated: Color(0xFFE9EEF5),
     borderSubtle: Color(0xFFE2E8F0),
     borderLight: Color(0xFFCBD5E1),
-    textPrimary: Color(0xFF0F172A),
+    textPrimary: Color(0xFF0F172A), // Warna teks utama (terang)
     textSecondary: Color(0xFF475569),
     textMuted: Color(0xFF64748B),
-    accent: Color(0xFF4D7C0F),
-    accentSoft: Color(0xFFECFCCB),
+    accent: Color(0xFF4D7C0F), // Warna aksen & teks harga (terang)
+    accentSoft: Color(0xFFECFCCB), // Warna latar ikon (terang)
     accentBorder: Color(0xFF84CC16),
-    buttonBg: Color(0xFFA3E635),
-    buttonFg: Color(0xFF0F172A),
+    buttonBg: Color(0xFFA3E635), // Warna tombol utama (terang)
+    buttonFg: Color(0xFF0F172A), // Warna teks tombol utama (terang)
     danger: Color(0xFFDC2626),
     dangerMuted: Color(0xFFFEE2E2),
     onDanger: Color(0xFFFFFFFF),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../core/theme/app_ui_colors.dart';
 import '../core/theme/monex_theme.dart';
 import '../core/utils/formatters.dart';
 import '../core/widgets/monex_widgets.dart';
@@ -7,7 +8,6 @@ import '../models/price_analysis.dart';
 import '../state/app_scope.dart';
 import '../widgets/verdict_badge.dart';
 import '../widgets/wishlist_form_dialog.dart';
-import 'converter_screen.dart';
 import 'nearby_stores_screen.dart';
 
 /// Halaman hasil analisis kelayakan harga dan daftar pembanding katalog.
@@ -63,6 +63,7 @@ class ResultScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final palette = MonexPalette.of(context);
+    final uiColors = AppUiColors.of(context);
     final verdict = analysis.verdict;
     final verdictColor = palette.readableVerdict(verdict.color);
     final hasReference = analysis.referencePrice > 0;
@@ -85,6 +86,7 @@ class ResultScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               MonexSurfaceCard(
+                color: uiColors.hasilVerdictCardBg,
                 borderColor: verdictColor.withValues(alpha: 0.4),
                 padding: const EdgeInsets.all(20),
                 child: Column(
@@ -115,6 +117,7 @@ class ResultScreen extends StatelessWidget {
               ),
               const SizedBox(height: MonexSpacing.sectionGap),
               MonexSurfaceCard(
+                color: uiColors.hasilRingkasanCardBg,
                 padding: const EdgeInsets.all(MonexSpacing.cardPadding),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -171,10 +174,7 @@ class ResultScreen extends StatelessWidget {
                   padding: const EdgeInsets.all(MonexSpacing.cardPadding),
                   child: Row(
                     children: [
-                      Icon(
-                        Icons.search_off_rounded,
-                        color: palette.textMuted,
-                      ),
+                      Icon(Icons.search_off_rounded, color: palette.textMuted),
                       const SizedBox(width: 12),
                       Expanded(
                         child: Text(
@@ -260,10 +260,13 @@ class ResultScreen extends StatelessWidget {
                 ),
               ],
               const SizedBox(height: MonexSpacing.sectionGap + 6),
+              // Section tombol aksi halaman Hasil Analisis
               MonexPrimaryButton(
                 key: const Key('result_save_wishlist'),
                 label: 'Simpan ke Wishlist',
                 icon: Icons.favorite_border_rounded,
+                backgroundColor: uiColors.hasilSimpanWishlistBg,
+                foregroundColor: uiColors.hasilSimpanWishlistText,
                 onPressed: () => _saveToWishlist(context),
               ),
               const SizedBox(height: MonexSpacing.gridGap),
@@ -271,6 +274,8 @@ class ResultScreen extends StatelessWidget {
                 key: const Key('result_nearby_stores'),
                 label: 'Lihat Toko Terdekat',
                 icon: Icons.pin_drop_outlined,
+                backgroundColor: uiColors.hasilTokoTerdekatBg,
+                foregroundColor: uiColors.hasilTokoTerdekatText,
                 onPressed: () => Navigator.of(context).push(
                   MaterialPageRoute<void>(
                     builder: (_) => NearbyStoresScreen(
@@ -281,22 +286,11 @@ class ResultScreen extends StatelessWidget {
               ),
               const SizedBox(height: MonexSpacing.gridGap),
               MonexSecondaryButton(
-                key: const Key('result_convert_currency'),
-                label: 'Konversi ke Mata Uang Asing',
-                icon: Icons.currency_exchange_rounded,
-                onPressed: () => Navigator.of(context).push(
-                  MaterialPageRoute<void>(
-                    builder: (_) => ConverterScreen(
-                      initialAmountIdr: analysis.request.price,
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(height: MonexSpacing.gridGap),
-              MonexSecondaryButton(
                 key: const Key('result_done'),
                 label: 'Selesai',
                 icon: Icons.check_rounded,
+                backgroundColor: uiColors.hasilSelesaiBg,
+                foregroundColor: uiColors.hasilSelesaiText,
                 onPressed: () => Navigator.of(context).pop(),
               ),
             ],

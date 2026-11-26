@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../core/theme/app_ui_colors.dart';
 import '../core/theme/monex_theme.dart';
 import '../core/utils/validators.dart';
 import '../core/widgets/monex_widgets.dart';
@@ -182,10 +183,13 @@ class _PriceCheckScreenState extends State<PriceCheckScreen> {
                   AuthErrorBanner(message: _error!),
                   const SizedBox(height: MonexSpacing.gridGap),
                 ],
+                // Tombol utama Cek Kelayakan (ubah warna di app_ui_colors.dart)
                 MonexPrimaryButton(
                   key: const Key('price_check_submit'),
                   label: 'Cek Kelayakan',
                   icon: Icons.analytics_outlined,
+                  backgroundColor: AppUiColors.of(context).cekHargaSubmitBg,
+                  foregroundColor: AppUiColors.of(context).cekHargaSubmitText,
                   loading: _loading,
                   onPressed: _submit,
                 ),

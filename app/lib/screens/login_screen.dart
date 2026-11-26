@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../core/theme/app_ui_colors.dart';
 import '../core/theme/monex_theme.dart';
 import '../core/utils/validators.dart';
 import '../core/widgets/monex_widgets.dart';
@@ -159,10 +160,13 @@ class _LoginScreenState extends State<LoginScreen> {
                         AuthErrorBanner(message: _error!),
                       ],
                       const SizedBox(height: MonexSpacing.sectionGap + 6),
+                      // Tombol utama Masuk (ubah warna di app_ui_colors.dart)
                       MonexPrimaryButton(
                         key: const Key('login_submit'),
                         label: 'Masuk',
                         icon: Icons.login_rounded,
+                        backgroundColor: AppUiColors.of(context).loginMasukBg,
+                        foregroundColor: AppUiColors.of(context).loginMasukText,
                         loading: _loading,
                         onPressed: _submit,
                       ),

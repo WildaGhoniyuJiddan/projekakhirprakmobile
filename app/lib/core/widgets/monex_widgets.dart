@@ -4,9 +4,7 @@ import 'package:flutter/material.dart';
 
 import '../theme/monex_theme.dart';
 
-// ============================================================================
 // 5.1. SURFACE CARD — kartu dasar dengan border halus
-// ============================================================================
 
 /// Kartu permukaan standar Monex: radius 20, border 1px `borderSubtle`,
 /// fill `surface`. [onTap] membuat kartu bisa ditekan (ink ripple).
@@ -41,10 +39,7 @@ class MonexSurfaceCard extends StatelessWidget {
       color: gradient == null ? (color ?? palette.surface) : null,
       gradient: gradient,
       borderRadius: BorderRadius.circular(radius),
-      border: Border.all(
-        color: borderColor ?? palette.borderSubtle,
-        width: 1,
-      ),
+      border: Border.all(color: borderColor ?? palette.borderSubtle, width: 1),
       boxShadow: boxShadow ?? palette.cardShadow,
     );
 
@@ -79,17 +74,21 @@ class MonexGradientCard extends StatelessWidget {
     required this.child,
     this.padding = const EdgeInsets.all(MonexSpacing.cardPadding),
     this.radius = MonexSpacing.radiusCard,
+    this.color,
     this.onTap,
   });
 
   final Widget child;
   final EdgeInsetsGeometry padding;
   final double radius;
+  // Opsional: isi `color` untuk mengganti warna kartu gradien jadi warna solid.
+  final Color? color;
   final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
     final palette = MonexPalette.of(context);
+    final useDefaultGradient = color == null || color == MonexColors.lime;
     final content = Material(
       type: MaterialType.transparency,
       child: Padding(padding: padding, child: child),
@@ -100,7 +99,10 @@ class MonexGradientCard extends StatelessWidget {
       clipBehavior: Clip.antiAlias,
       child: Ink(
         decoration: BoxDecoration(
-          gradient: MonexDecorations.visaCardGradient,
+          color: useDefaultGradient ? null : color,
+          gradient: useDefaultGradient
+              ? MonexDecorations.visaCardGradient
+              : null,
           borderRadius: BorderRadius.circular(radius),
           boxShadow: palette.heroShadow,
         ),
@@ -110,9 +112,7 @@ class MonexGradientCard extends StatelessWidget {
   }
 }
 
-// ============================================================================
 // 5.2. APP BAR — judul + tombol aksi lingkaran
-// ============================================================================
 
 /// App bar Monex: judul rata-kiri, aksi melingkar (surfaceElevated).
 ///
@@ -266,9 +266,7 @@ class MonexCircleIconButton extends StatelessWidget {
   );
 }
 
-// ============================================================================
 // 5.3. TOMBOL
-// ============================================================================
 
 /// Tombol utama Monex: lime solid, teks gelap, glow neon.
 class MonexPrimaryButton extends StatelessWidget {
@@ -279,6 +277,8 @@ class MonexPrimaryButton extends StatelessWidget {
     this.icon,
     this.expanded = true,
     this.loading = false,
+    this.backgroundColor,
+    this.foregroundColor,
   });
 
   final String label;
@@ -286,17 +286,22 @@ class MonexPrimaryButton extends StatelessWidget {
   final IconData? icon;
   final bool expanded;
   final bool loading;
+  // Opsional: ubah warna background/teks tombol utama per halaman.
+  final Color? backgroundColor;
+  final Color? foregroundColor;
 
   @override
   Widget build(BuildContext context) {
     final palette = MonexPalette.of(context);
+    final bg = backgroundColor ?? palette.buttonBg;
+    final fg = foregroundColor ?? palette.buttonFg;
     final button = ElevatedButton(
       onPressed: loading ? null : onPressed,
       style: ElevatedButton.styleFrom(
-        backgroundColor: palette.buttonBg,
-        foregroundColor: palette.buttonFg,
-        disabledBackgroundColor: palette.buttonBg.withValues(alpha: 0.35),
-        disabledForegroundColor: palette.buttonFg.withValues(alpha: 0.6),
+        backgroundColor: bg,
+        foregroundColor: fg,
+        disabledBackgroundColor: bg.withValues(alpha: 0.35),
+        disabledForegroundColor: fg.withValues(alpha: 0.6),
         elevation: 0,
         padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
         shape: const StadiumBorder(),
@@ -310,10 +315,7 @@ class MonexPrimaryButton extends StatelessWidget {
           ? SizedBox(
               height: 18,
               width: 18,
-              child: CircularProgressIndicator(
-                strokeWidth: 2,
-                color: palette.buttonFg,
-              ),
+              child: CircularProgressIndicator(strokeWidth: 2, color: fg),
             )
           : Row(
               mainAxisSize: MainAxisSize.min,
@@ -353,12 +355,19 @@ class MonexSecondaryButton extends StatelessWidget {
     this.onPressed,
     this.icon,
     this.expanded = true,
+    this.backgroundColor,
+    this.foregroundColor,
+    this.borderColor,
   });
 
   final String label;
   final VoidCallback? onPressed;
   final IconData? icon;
   final bool expanded;
+  // Opsional: ubah warna background/teks/border tombol sekunder per halaman.
+  final Color? backgroundColor;
+  final Color? foregroundColor;
+  final Color? borderColor;
 
   @override
   Widget build(BuildContext context) {
@@ -366,9 +375,10 @@ class MonexSecondaryButton extends StatelessWidget {
     final button = OutlinedButton(
       onPressed: onPressed,
       style: OutlinedButton.styleFrom(
-        backgroundColor: palette.isDark ? null : palette.surface,
-        foregroundColor: palette.textPrimary,
-        side: BorderSide(color: palette.borderLight),
+        backgroundColor:
+            backgroundColor ?? (palette.isDark ? null : palette.surface),
+        foregroundColor: foregroundColor ?? palette.textPrimary,
+        side: BorderSide(color: borderColor ?? palette.borderLight),
         padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 14),
         shape: const StadiumBorder(),
         textStyle: const TextStyle(
@@ -392,9 +402,7 @@ class MonexSecondaryButton extends StatelessWidget {
   }
 }
 
-// ============================================================================
 // 5.4. SEGMENTED CONTROL
-// ============================================================================
 
 /// Segmented control Monex (pill, satu segmen aktif).
 class MonexSegmentedControl<T> extends StatelessWidget {
@@ -509,9 +517,7 @@ class _SegmentButton extends StatelessWidget {
   }
 }
 
-// ============================================================================
 // 5.5. LIST TILE
-// ============================================================================
 
 /// Baris list Monex: ikon bulat + judul + subtitle + trailing.
 class MonexTransactionTile extends StatelessWidget {
@@ -603,9 +609,7 @@ class MonexTransactionTile extends StatelessWidget {
   }
 }
 
-// ============================================================================
 // 5.6. PROGRESS
-// ============================================================================
 
 /// Progress bar Monex yang adaptif terhadap mode gelap dan terang.
 class MonexProgressBar extends StatelessWidget {
@@ -648,9 +652,7 @@ class MonexProgressBar extends StatelessWidget {
   }
 }
 
-// ============================================================================
 // 5.7. CHART — mini vertical bars + spline
-// ============================================================================
 
 /// Bar chart vertikal mini (dipakai untuk tren & perbandingan).
 class MonexMiniVerticalBars extends StatelessWidget {
@@ -908,9 +910,7 @@ class _SplinePainter extends CustomPainter {
       old.progress != progress || old.points != points || old.color != color;
 }
 
-// ============================================================================
 // 5.8. TOAST
-// ============================================================================
 
 /// Toast kustom Monex (pengganti SnackBar berat).
 ///
@@ -970,12 +970,9 @@ void showMonexToast(
   );
 }
 
-// ============================================================================
 // 5.9. LOADING — animasi memukau (shimmer, pulse, orbit)
-// ============================================================================
 
 /// Placeholder shimmer: kotak yang "menyala" berulang.
-///
 /// Dibuat stateless (tanpa `AnimationController`) supaya aman dipakai di
 /// dalam `ListView.builder` tanpa menambah controller per item.
 class MonexShimmer extends StatefulWidget {
@@ -1082,7 +1079,6 @@ class MonexSkeletonList extends StatelessWidget {
 }
 
 /// Loader "orbit" — cincin lime berputar dengan inti berdenyut.
-///
 /// Dipakai sebagai loading state penuh layar yang tetap interaktif
 /// (user bisa tetap scroll/keluar) dan bisa diberi [label].
 class MonexOrbitLoader extends StatefulWidget {

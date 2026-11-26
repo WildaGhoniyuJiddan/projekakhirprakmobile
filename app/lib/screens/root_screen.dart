@@ -41,14 +41,15 @@ class _RootScreenState extends State<RootScreen> {
           color: palette.surface,
           border: Border(top: BorderSide(color: palette.borderSubtle)),
         ),
+        // Navigasi bawah 4 tab: warna latar & item aktif mengikuti tema
         child: BottomNavigationBar(
           currentIndex: _selectedIndex,
           onTap: _selectTab,
           type: BottomNavigationBarType.fixed,
-          backgroundColor: palette.surface,
+          backgroundColor: palette.surface, // Warna latar bottom nav
           elevation: 0,
-          selectedItemColor: palette.accent,
-          unselectedItemColor: palette.textSecondary,
+          selectedItemColor: palette.accent, // Warna ikon & label tab aktif
+          unselectedItemColor: palette.textSecondary, // Warna tab tidak aktif
           selectedLabelStyle: const TextStyle(
             fontFamily: kMonexFontFamily,
             fontSize: 11,

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../core/theme/app_ui_colors.dart';
 import '../core/theme/monex_theme.dart';
 import '../core/utils/formatters.dart';
 import '../core/widgets/monex_widgets.dart';
@@ -26,6 +27,7 @@ class WishlistTile extends StatelessWidget {
     final palette = MonexPalette.of(context);
 
     return MonexSurfaceCard(
+      color: AppUiColors.of(context).wishlistCardBg,
       onTap: onCheckPrice,
       padding: const EdgeInsets.all(MonexSpacing.cardPaddingCompact),
       radius: MonexSpacing.radiusMd,

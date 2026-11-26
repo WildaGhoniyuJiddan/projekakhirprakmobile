@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 
+import '../core/theme/app_ui_colors.dart';
 import '../core/theme/monex_theme.dart';
 import '../core/utils/formatters.dart';
 import '../core/widgets/monex_widgets.dart';
@@ -514,6 +515,7 @@ class _StoreTile extends StatelessWidget {
 
     return MonexSurfaceCard(
       key: Key('store_${store.id}'),
+      color: AppUiColors.of(context).tokoCardBg,
       onTap: onTap,
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
       radius: MonexSpacing.radiusMd,
@@ -582,11 +584,7 @@ class _StoreTile extends StatelessWidget {
             ),
           ),
           const SizedBox(width: 6),
-          Icon(
-            Icons.chevron_right_rounded,
-            size: 18,
-            color: palette.textMuted,
-          ),
+          Icon(Icons.chevron_right_rounded, size: 18, color: palette.textMuted),
         ],
       ),
     );

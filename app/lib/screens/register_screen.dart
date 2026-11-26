@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../core/theme/app_ui_colors.dart';
 import '../core/theme/monex_theme.dart';
 import '../core/utils/validators.dart';
 import '../core/widgets/monex_widgets.dart';
@@ -174,10 +175,13 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   AuthErrorBanner(message: _error!),
                 ],
                 const SizedBox(height: MonexSpacing.sectionGap + 6),
+                // Tombol utama Daftar dan Masuk (ubah warna di app_ui_colors.dart)
                 MonexPrimaryButton(
                   key: const Key('register_submit'),
                   label: 'Daftar dan Masuk',
                   icon: Icons.person_add_alt_1_rounded,
+                  backgroundColor: AppUiColors.of(context).registerDaftarBg,
+                  foregroundColor: AppUiColors.of(context).registerDaftarText,
                   loading: _loading,
                   onPressed: _submit,
                 ),
