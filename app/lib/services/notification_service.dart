@@ -23,7 +23,6 @@ abstract class NotificationService {
     required int hour,
     required int minute,
   });
-  Future<void> cancel(int id);
   Future<void> cancelDailyReminder();
 }
 
@@ -124,11 +123,6 @@ class LocalNotificationService implements NotificationService {
   }
 
   @override
-  Future<void> cancel(int id) async {
-    await _plugin.cancel(id: id);
-  }
-
-  @override
   Future<void> cancelDailyReminder() async {
     await _plugin.cancel(id: dailyReminderId);
   }
@@ -162,63 +156,5 @@ class LocalNotificationService implements NotificationService {
       scheduled = scheduled.add(const Duration(days: 1));
     }
     return scheduled;
-  }
-}
-
-/// Implementasi in-memory untuk testing (tanpa memanggil native platform).
-class FakeNotificationService implements NotificationService {
-  final List<Map<String, dynamic>> immediateHistory = [];
-  Map<String, dynamic>? scheduledReminder;
-  bool permissionGranted = true;
-
-  @override
-  Future<void> init() async {}
-
-  @override
-  Future<bool> requestPermission() async => permissionGranted;
-
-  @override
-  Future<bool> areNotificationsEnabled() async => permissionGranted;
-
-  @override
-  Future<void> showImmediate({
-    required int id,
-    required String title,
-    required String body,
-    String? payload,
-  }) async {
-    immediateHistory.add({
-      'id': id,
-      'title': title,
-      'body': body,
-      'payload': payload,
-    });
-  }
-
-  @override
-  Future<void> scheduleDailyReminder({
-    required int id,
-    required String title,
-    required String body,
-    required int hour,
-    required int minute,
-  }) async {
-    scheduledReminder = {
-      'id': id,
-      'title': title,
-      'body': body,
-      'hour': hour,
-      'minute': minute,
-    };
-  }
-
-  @override
-  Future<void> cancel(int id) async {
-    immediateHistory.removeWhere((item) => item['id'] == id);
-  }
-
-  @override
-  Future<void> cancelDailyReminder() async {
-    scheduledReminder = null;
   }
 }

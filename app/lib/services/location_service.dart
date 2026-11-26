@@ -6,18 +6,13 @@ import '../models/location_snapshot.dart';
 
 /// Kontrak pengambilan lokasi perangkat.
 abstract class LocationService {
-  Future<bool> isServiceEnabled();
   Future<LocationSnapshot> getCurrentLocation();
   Future<bool> openAppSettings();
-  Future<bool> openLocationSettings();
 }
 
 /// Implementasi berbasis `geolocator` dengan alur izin yang eksplisit.
 class GeolocatorLocationService implements LocationService {
   const GeolocatorLocationService();
-
-  @override
-  Future<bool> isServiceEnabled() => Geolocator.isLocationServiceEnabled();
 
   @override
   Future<LocationSnapshot> getCurrentLocation() async {
@@ -69,7 +64,4 @@ class GeolocatorLocationService implements LocationService {
 
   @override
   Future<bool> openAppSettings() => Geolocator.openAppSettings();
-
-  @override
-  Future<bool> openLocationSettings() => Geolocator.openLocationSettings();
 }

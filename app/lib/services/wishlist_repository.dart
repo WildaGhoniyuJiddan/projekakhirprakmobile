@@ -37,9 +37,4 @@ class WishlistRepository extends ChangeNotifier {
   }
 
   int get length => _box.length;
-
-  bool containsQuery(String query) {
-    final normalized = query.trim().toLowerCase();
-    return _box.values.any((item) => item.query.toLowerCase() == normalized);
-  }
 }

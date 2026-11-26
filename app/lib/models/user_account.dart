@@ -4,7 +4,6 @@ class UserAccount {
     required int id,
     required String name,
     required String email,
-    this.avatarUrl,
   }) : _id = id < 0 ? 0 : id,
        _name = _validateName(name),
        _email = _validateEmail(email);
@@ -19,14 +18,12 @@ class UserAccount {
       id: (map['id'] as num?)?.toInt() ?? 0,
       name: map['name'] as String? ?? '',
       email: map['email'] as String? ?? '',
-      avatarUrl: map['avatar_url'] as String?,
     );
   }
 
   final int _id;
   String _name;
   String _email;
-  String? avatarUrl;
 
   int get id => _id;
   String get name => _name;
@@ -50,7 +47,6 @@ class UserAccount {
     'id': _id,
     'name': _name,
     'email': _email,
-    'avatar_url': avatarUrl,
   };
 
   static String _validateName(String value) {

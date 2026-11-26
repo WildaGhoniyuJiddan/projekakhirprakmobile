@@ -26,12 +26,6 @@ abstract class CatalogItem {
     return sorted[sorted.length ~/ 2];
   }
 
-  /// Nama pendek untuk kartu/etalase.
-  String get displayName {
-    final short = model.split(' - ').first.trim();
-    return short.isEmpty ? model : short;
-  }
-
   Set<String> get searchTokens => model
       .toLowerCase()
       .split(RegExp(r'[^a-z0-9]+'))
